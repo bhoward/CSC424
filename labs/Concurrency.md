@@ -34,8 +34,10 @@ Given this datatype, we may write a prime sieve as follows (although this will s
 <script src="http://gist.github.com/393897.js?file=Sieve.scala">
 </script>
 Although `primes` represents an infinite stream of prime numbers, no real work has been done yet.  To start the computation going, we need to request values from the stream:
-    > primes take 10
-    List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
+~~~
+> primes take 10
+List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
+~~~
 
 **Exercise:** As mentioned, this implementation of streams is not very efficient.  Perform timing comparisons with a prime sieve built using the `Stream[Int]` class from the Scala library.  The functions `from` and `sieve` will need to be changed by replacing `FStream` with `Stream` everywhere; furthermore, the `take` method on `Stream[Int]` returns another stream, so you will have to force it into a list to actually perform the computation: *e.g.*. `primes take 10 toList`.
 
@@ -50,7 +52,7 @@ In Scala, actors are implemented as classes in the library, in the package `scal
 
 Consider this simple actor which serves as a bank account:
 
-{{{
+~~~
 import scala.actors.Actor
 
 case class Deposit(amount: Int)
@@ -66,25 +68,25 @@ class Account extends Actor {
     }
   }
 }
-}}}
+~~~
 You can set an `Account` instance in motion by calling the `start` method on a new `Account` object:
 
-{{{
+~~~
 val savings = new Account
 savings.start
-}}}
+~~~
 Now you interact with the account actor by sending it messages:
 
-{{{
+~~~
 savings ! Deposit(100)
-}}}
+~~~
 This sends the object `Deposit(100)` to `savings` asynchronously.  The message send operator, `!`, can send any value as a message; if an actor does not have a case handler for that value, it will simply remain in the mailbox.
 
 Messages may also be sent *synchronously* with the `!?` operator.  This is essentially like performing a method call -- the sender will wait until the recipient processes the message and sends back a value in reply.  In our account actor, this is how the balance is meant to be retrieved:
 
-{{{
+~~~
 println("Current balance is " + (savings !? Balance))
-}}}
+~~~
 There is a third message send operator which is of interest here: `savings !! Balance` will return immediately with a future value representing the eventual response to the message.  This allows the sender to continue processing while the recipient works on the request, and only block if the future's value is requested before the reply has been sent.
 
 **Exercise:** Extend the `Account` actor with a withdrawal message that takes the amount to withdraw as an argument.  Test that your extension works as expected, and verify that messages are processed in the order in which they were received.
@@ -93,7 +95,7 @@ Here is an extended example using actors to solve one of the classic synchroniza
 
 First, here are the imports and the definitions of the message objects:
 
-{{{
+~~~
 import scala.actors.Actor
 import scala.actors.Actor._
 
@@ -104,10 +106,10 @@ case object Next
 case object Full
 case object Start
 case object Done
-}}}
+~~~
 Customer actors know their name, and respond to various messages by printing their state to the console:
 
-{{{
+~~~
 class Customer(name: String) extends Actor {
   def act = loop {
     react {
@@ -129,10 +131,10 @@ class Customer(name: String) extends Actor {
   
   override def toString = name
 }
-}}}
+~~~
 The barber responds to the `Enter` and `Wait` messages from the waiting room, and knows how to cut hair:
 
-{{{
+~~~
 object Barber extends Actor {
   val random = new scala.util.Random
   
@@ -157,10 +159,10 @@ object Barber extends Actor {
     }
   }
 }
-}}}
+~~~
 The waiting room keeps track of the customers waiting in chairs and whether the barber is sleeping. It reacts to a customer entering (sent from an external source) and the barber calling "next!":
 
-{{{
+~~~
 object WaitingRoom extends Actor {
   import scala.collection.mutable.Queue
   
@@ -197,10 +199,10 @@ object WaitingRoom extends Actor {
     }
   }
 }
-}}}
+~~~
 Finally, here is a simple test program which randomly sends 10 customers into the barbershop:
 
-{{{
+~~~
 object BarberTest {
   def main(args : Array[String]) {
     val random = new scala.util.Random
@@ -228,7 +230,7 @@ object BarberTest {
     }
   }
 }
-}}}
+~~~
 **Exercise:** Adjust the customer arrival and service times, and waiting room capacity, to try to explore all the possible behaviors of this simulation.  As a more challenging exercise, try to change the simulation to have two or more barbers in the same shop.
 
 ## Transactional Memory
@@ -238,7 +240,7 @@ There is a more serious potential problem with using separate actors for each ac
 
 Imagine actor code to do this:
 
-{{{
+~~~
 ...
 react {
   // This is the public message:
@@ -251,7 +253,7 @@ react {
   case Deposit(amount) => balance += amount; reply()
 }
 ...
-}}}
+~~~
 The `synchronized` method and the synchronous message send (!?) are essential to make sure that the withdrawal and the deposit both happen without being interrupted -- what if an audit came along between the two steps?  Unfortunately, this can lead to deadlock: suppose we get simultaneous requests to transfer one amount from Alice to Bob and another amount from Bob to Alice.  Now Alice and Bob will each enter their synchronized blocks (meaning they can't be interrupted until they finish), each will subtract an amount from their own balance, and then each will send a synchronous message to the other to deposit that amount.  Since neither can be interrupted, however, neither one of them will be able to reply to the deposit message -- deadlock.
 
 There are solutions to this; for example, we could order the accounts by account number, and only perform transfers (possibly of negative amounts) from lower to higher numbered accounts.  This guarantees that there can't be cycles such as we saw between Alice and Bob.  However, this is very hard to get right as the system grows more complex.
