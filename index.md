@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CSC 424, Programming Languages
+title: CSC 424 Programming Languages
 ---
 # CSC 424: Programming Languages
 This site collects resources for use in CSC 424.  For information specific to a particular semester, consult the associated Moodle page:
@@ -16,14 +16,14 @@ Week | Topics                    | Readings                      | Assignments
 4    | Control Flow              | Scott: Ch. 6, Sects. 1-6      | Lab Four: Defining Control Structures
 5    | Data Types                | Scott: Ch. 7                  | Lab Five: Type Checking
 6    | Control Abstraction       | Scott: Ch. 8                  | Lab Six: Function Language
-7    | Midterm Exam              |                               |
+7    | Midterm Exam              | none                          | none
 8    | Data Abstraction and OOP  | Scott: Ch. 9                  | Lab Seven: Design Patterns
 9    | Functional Programming    | Scott: Ch. 10                 | Lab Eight: Higher-Order Control Structures
 10   | Logic Programming         | Scott: Ch. 11                 | Lab Nine: Prolog
 11   | Concurrency               | Scott: Ch. 6, Sect. 7; Ch. 12 | [Lab Ten: Approaches to Concurrency](labs/Concurrency.html)
 12   | Scripting Languages       | Scott: Ch. 13                 | Lab Eleven: JavaScript
-13   | Domain-Specific Languages |                               | Lab Twelve: Internal and External DSLs
-14   | Wrap-up and Presentations |                               |
+13   | Domain-Specific Languages | none                          | Lab Twelve: Internal and External DSLs
+14   | Wrap-up and Presentations | none                          | none
 
 ## Readings
 ### Textbooks
