@@ -16,32 +16,32 @@ Week | Topics                    | Readings                      | Assignments
 4    | Control Flow              | Scott: Ch. 6, Sects. 1-6      | Lab Four: Defining Control Structures
 5    | Data Types                | Scott: Ch. 7                  | Lab Five: Type Checking
 6    | Control Abstraction       | Scott: Ch. 8                  | Lab Six: Function Language
-7    | Midterm Exam              | none                          | none
+7    | Midterm Exam              | --                            | --
 8    | Data Abstraction and OOP  | Scott: Ch. 9                  | Lab Seven: Design Patterns
 9    | Functional Programming    | Scott: Ch. 10                 | Lab Eight: Higher-Order Control Structures
 10   | Logic Programming         | Scott: Ch. 11                 | Lab Nine: Prolog
 11   | Concurrency               | Scott: Ch. 6, Sect. 7; Ch. 12 | [Lab Ten: Approaches to Concurrency](labs/Concurrency.html)
 12   | Scripting Languages       | Scott: Ch. 13                 | Lab Eleven: JavaScript
-13   | Domain-Specific Languages | none                          | Lab Twelve: Internal and External DSLs
-14   | Wrap-up and Presentations | none                          | none
+13   | Domain-Specific Languages | --                            | Lab Twelve: Internal and External DSLs
+14   | Wrap-up and Presentations | --                            | --
 
 ## Readings
 ### Textbooks
 There are *many* textbooks covering the area of programming languages in general (to say nothing of the books that focus on specific languages); here are links to a few of the better ones (several of which are available online):
 
-* Michael Scott, [http://www.cs.rochester.edu/~scott/pragmatics/ Programming Language Pragmatics]
-* Adam Webber, [http://www.webber-labs.com/mpl.html Modern Programming Languages]
-* John Mitchell, [http://theory.stanford.edu/people/jcm/books/cpl-teaching.html Concepts in Programming Languages]
-* Daniel Friedman and Mitchell Wand, [http://www.eopl3.com/ Essentials of Programming Languages]
-* Allen Tucker and Robert Noonan, [http://www.bowdoin.edu/~allen/pl/ Programming Languages: Principles and Paradigms]
-* Maurizio Gabbrielli and Simone Martini, [http://www.springer.com/computer/book/978-1-84882-913-8 Programming Languages: Principles and Paradigms]
-* Franklyn Turbak and David Gifford, [http://mitpress.mit.edu/catalog/item/default.asp?ttype=2&tid=11656 Design Concepts in Programming Languages]
-* Shriram Krishnamurthi, [http://www.cs.brown.edu/~sk/Publications/Books/ProgLangs/ Programming Languages: Application and Interpretation]
-* Raphael Finkel, [http://c2.com/cgi/wiki?AdvancedProgrammingLanguageDesign Advanced Programming Language Design]
-* Mike Grant, Zachary Palmer, and Scott Smith, [http://www.cs.jhu.edu/~scott/pl/book/dist/index.html Programming Languages]
-* Mordechai Ben-Ari, [http://stwww.weizmann.ac.il/g-cs/benari/books/#upl Understanding Programming Languages]
-* Peter Van Roy and Seif Haridi, [http://www.info.ucl.ac.be/~pvr/book.html Concepts, Techniques, and Models of Computer Programming]
-* Harold Abelson and Gerald Jay Sussman [http://mitpress.mit.edu/sicp/ Structure and Interpretation of Computer Programs] -- these last two are more about programming in general, but contain many deep insights about the design of programming languages
+* Michael Scott, [Programming Language Pragmatics](http://www.cs.rochester.edu/~scott/pragmatics/)
+* Adam Webber, [Modern Programming Languages](http://www.webber-labs.com/mpl.html)
+* John Mitchell, [Concepts in Programming Languages](http://theory.stanford.edu/people/jcm/books/cpl-teaching.html)
+* Daniel Friedman and Mitchell Wand, [Essentials of Programming Languages](http://www.eopl3.com/)
+* Allen Tucker and Robert Noonan, [Programming Languages: Principles and Paradigms](http://www.bowdoin.edu/~allen/pl/)
+* Maurizio Gabbrielli and Simone Martini, [Programming Languages: Principles and Paradigms](http://www.springer.com/computer/book/978-1-84882-913-8)
+* Franklyn Turbak and David Gifford, [Design Concepts in Programming Languages](http://mitpress.mit.edu/catalog/item/default.asp?ttype=2&tid=11656)
+* Shriram Krishnamurthi, [Programming Languages: Application and Interpretation](http://www.cs.brown.edu/~sk/Publications/Books/ProgLangs/)
+* Raphael Finkel, [Advanced Programming Language Design](http://c2.com/cgi/wiki?AdvancedProgrammingLanguageDesign)
+* Mike Grant, Zachary Palmer, and Scott Smith, [Programming Languages](http://www.cs.jhu.edu/~scott/pl/book/dist/index.html)
+* Mordechai Ben-Ari, [Understanding Programming Languages](http://stwww.weizmann.ac.il/g-cs/benari/books/#upl)
+* Peter Van Roy and Seif Haridi, [Concepts, Techniques, and Models of Computer Programming](http://www.info.ucl.ac.be/~pvr/book.html)
+* Harold Abelson and Gerald Jay Sussman, [Structure and Interpretation of Computer Programs](http://mitpress.mit.edu/sicp/) -- these last two are more about programming in general, but contain many deep insights about the design of programming languages
 
 One of the common features of all of these texts is that they focus on the concepts behind various languages and paradigms, rather than simply presenting a catalog of different language features.
 
