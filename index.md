@@ -46,36 +46,36 @@ There are *many* textbooks covering the area of programming languages in general
 One of the common features of all of these texts is that they focus on the concepts behind various languages and paradigms, rather than simply presenting a catalog of different language features.
 
 ### Articles
-* Krste Asanovic, *et al.*, [http://www.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf The Landscape of Parallel Computing Research: A View from Berkeley]
-* John Backus, [http://www.thocp.net/biographies/papers/backus_turingaward_lecture.pdf Can Programming Be Liberated from the von Neumann Style?]
-* Kent Beck and Ward Cunningham, [http://c2.com/doc/oopsla89/paper.html A Laboratory For Teaching Object-Oriented Thinking]
-* Joseph Bergin, [http://csis.pace.edu/~bergin/patterns/persongender.html Moving Toward Object-Oriented Programming and Patterns]
-* Luca Cardelli and Peter Wegner, [http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.70.8559&rep=rep1&type=pdf On Understanding Types, Data Abstraction, and Polymorphism]
-* Edgar Codd, [http://www.cs.berkeley.edu/~christos/classics/Codd72a.pdf Relational Completeness of Data Base Sublanguages]
-* William Cook, [http://userweb.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf On Understanding Data Abstraction, Revisited]
-* Jeffrey Dean and Sanjay Ghemawat, [http://labs.google.com/papers/mapreduce.html MapReduce: Simplified Data Processing on Large Clusters]
-* Edsgar Dijkstra, [http://userweb.cs.utexas.edu/~EWD/transcriptions/EWD03xx/EWD340.html The Humble Programmer]
-* Edsgar Dijkstra, [http://userweb.cs.utexas.edu/users/EWD/ewd02xx/EWD215.PDF A Case against the GO TO Statement] (also known as "Go-to statement considered harmful")
-* Edsgar Dijkstra, [http://www.cs.utexas.edu/users/EWD/ewd02xx/EWD249.PDF Notes on Structured Programming]
-* Ulrich Drepper, [http://people.redhat.com/drepper/cpumemory.pdf What Every Programmer Should Know About Memory]
-* Richard Gabriel, [http://www.dreamsongs.com/WIB.html Lisp: Good News, Bad News, How to Win Big]
-* David Goldberg, [http://docs.sun.com/source/806-3568/ncg_goldberg.html What Every Computer Scientist Should Know About Floating-Point Arithmetic]
-* James Gosling and Henry McGilton, [http://java.sun.com/docs/white/langenv/ White Paper: The Java Language Environment]
-* Tony Hoare, [http://www.cs.berkeley.edu/~necula/cs263/handouts/hoarehints.pdf Hints on Programming Language Design]
-* John Hughes, [http://www.cs.chalmers.se/~rjmh/Papers/whyfp.html Why Functional Programming Matters]
-* John Knight and Nancy Leveson, [http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.29.363&rep=rep1&type=pdf An Experimental Evaluation of the Assumption of Independence in Multiversion Programming]
-* Donald Knuth, [http://pplab.snu.ac.kr/courses/adv_pl05/papers/p261-knuth.pdf Structured Programming with go to Statements]
-* Peter Landin, [http://www.thecorememory.com/Next_700.pdf The Next 700 Programming Languages]
-* John McCarthy, [http://www-formal.stanford.edu/jmc/recursive/recursive.html Recursive Functions of Symbolic Expressions and Their Computation by Machine, Part I]
-* James Noble, [http://www.laputan.org/pub/patterns/noble/noble.pdf Arguments and Results]
-* David Parnas, [http://sunnyday.mit.edu/16.355/parnas-criteria.html On the Criteria to be Used in Decomposing Systems into Modules]
-* Simon Peyton Jones, [http://research.microsoft.com/en-us/um/people/simonpj/papers/stm/beautiful.pdf Beautiful Concurrency]
-* Joel Spolsky, [http://www.joelonsoftware.com/printerFriendly/articles/Unicode.html The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)]
-* Guy Steele, [http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.10.1635&rep=rep1&type=pdf Growing a Language] ([http://video.google.com/videoplay?docid=-8860158196198824415 video])
-* Herb Sutter, [http://www.gotw.ca/publications/concurrency-ddj.htm The Free Lunch Is  Over: A Fundamental Turn Toward Concurrency in Software]
-* Ken Thompson, [http://cm.bell-labs.com/who/ken/trust.html Reflections on Trusting Trust]
-* David Ungar and Randall Smith, [http://research.sun.com/features/tenyears/volcd/papers/6Ungar.pdf Programming as an Experience: the Inspiration for Self]
-* Peter Van Roy, [http://www.info.ucl.ac.be/~pvr/VanRoyChapter.pdf Programming Paradigms for Dummies: What Every Programmer Should Know]
-* Jim Waldo, Geoff Wyant, Ann Wollrath, and Sam Kendall, [http://research.sun.com/techrep/1994/abstract-29.html A Note On Distributed Computing]
+* Krste Asanovic, *et al.*, [The Landscape of Parallel Computing Research: A View from Berkeley](http://www.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf)
+* John Backus, [Can Programming Be Liberated from the von Neumann Style?](http://www.thocp.net/biographies/papers/backus_turingaward_lecture.pdf)
+* Kent Beck and Ward Cunningham, [A Laboratory For Teaching Object-Oriented Thinking](http://c2.com/doc/oopsla89/paper.html)
+* Joseph Bergin, [Moving Toward Object-Oriented Programming and Patterns](http://csis.pace.edu/~bergin/patterns/persongender.html)
+* Luca Cardelli and Peter Wegner, [On Understanding Types, Data Abstraction, and Polymorphism](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.70.8559&rep=rep1&type=pdf)
+* Edgar Codd, [Relational Completeness of Data Base Sublanguages](http://www.cs.berkeley.edu/~christos/classics/Codd72a.pdf)
+* William Cook, [On Understanding Data Abstraction, Revisited](http://userweb.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf)
+* Jeffrey Dean and Sanjay Ghemawat, [MapReduce: Simplified Data Processing on Large Clusters](http://labs.google.com/papers/mapreduce.html)
+* Edsgar Dijkstra, [The Humble Programmer](http://userweb.cs.utexas.edu/~EWD/transcriptions/EWD03xx/EWD340.html)
+* Edsgar Dijkstra, [A Case against the GO TO Statement](http://userweb.cs.utexas.edu/users/EWD/ewd02xx/EWD215.PDF) (also known as "Go-to statement considered harmful")
+* Edsgar Dijkstra, [Notes on Structured Programming](http://www.cs.utexas.edu/users/EWD/ewd02xx/EWD249.PDF)
+* Ulrich Drepper, [What Every Programmer Should Know About Memory](http://people.redhat.com/drepper/cpumemory.pdf)
+* Richard Gabriel, [Lisp: Good News, Bad News, How to Win Big](http://www.dreamsongs.com/WIB.html)
+* David Goldberg, [What Every Computer Scientist Should Know About Floating-Point Arithmetic](http://docs.sun.com/source/806-3568/ncg_goldberg.html)
+* James Gosling and Henry McGilton, [White Paper: The Java Language Environment](http://java.sun.com/docs/white/langenv/)
+* Tony Hoare, [Hints on Programming Language Design](http://www.cs.berkeley.edu/~necula/cs263/handouts/hoarehints.pdf)
+* John Hughes, [Why Functional Programming Matters](http://www.cs.chalmers.se/~rjmh/Papers/whyfp.html)
+* John Knight and Nancy Leveson, [An Experimental Evaluation of the Assumption of Independence in Multiversion Programming](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.29.363&rep=rep1&type=pdf)
+* Donald Knuth, [Structured Programming with go to Statements](http://pplab.snu.ac.kr/courses/adv_pl05/papers/p261-knuth.pdf)
+* Peter Landin, [The Next 700 Programming Languages](http://www.thecorememory.com/Next_700.pdf)
+* John McCarthy, [Recursive Functions of Symbolic Expressions and Their Computation by Machine, Part I](http://www-formal.stanford.edu/jmc/recursive/recursive.html)
+* James Noble, [Arguments and Results](http://www.laputan.org/pub/patterns/noble/noble.pdf)
+* David Parnas, [On the Criteria to be Used in Decomposing Systems into Modules](http://sunnyday.mit.edu/16.355/parnas-criteria.html)
+* Simon Peyton Jones, [Beautiful Concurrency](http://research.microsoft.com/en-us/um/people/simonpj/papers/stm/beautiful.pdf)
+* Joel Spolsky, [The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)](http://www.joelonsoftware.com/printerFriendly/articles/Unicode.html)
+* Guy Steele, [Growing a Language](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.10.1635&rep=rep1&type=pdf) ([video](http://video.google.com/videoplay?docid=-8860158196198824415 video))
+* Herb Sutter, [The Free Lunch Is  Over: A Fundamental Turn Toward Concurrency in Software](http://www.gotw.ca/publications/concurrency-ddj.htm)
+* Ken Thompson, [Reflections on Trusting Trust](http://cm.bell-labs.com/who/ken/trust.html)
+* David Ungar and Randall Smith, [Programming as an Experience: the Inspiration for Self](http://research.sun.com/features/tenyears/volcd/papers/6Ungar.pdf)
+* Peter Van Roy, [Programming Paradigms for Dummies: What Every Programmer Should Know](http://www.info.ucl.ac.be/~pvr/VanRoyChapter.pdf)
+* Jim Waldo, Geoff Wyant, Ann Wollrath, and Sam Kendall, [A Note On Distributed Computing](http://research.sun.com/techrep/1994/abstract-29.html)
 
-Part of this list comes from a 2009 blog post by Michael Feathers, [http://blog.objectmentor.com/articles/2009/02/26/10-papers-every-programmer-should-read-at-least-twice 10 Papers Every Programmer Should Read (At Least Twice)].  The comments on that post suggest many additional worthwhile papers.
+Part of this list comes from a 2009 blog post by Michael Feathers, [10 Papers Every Programmer Should Read (At Least Twice)](http://blog.objectmentor.com/articles/2009/02/26/10-papers-every-programmer-should-read-at-least-twice).  The comments on that post suggest many additional worthwhile papers.
