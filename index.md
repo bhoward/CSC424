@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CSC 424: Programming Languages
+title: CSC 424, Programming Languages
 ---
 # CSC 424: Programming Languages
 This site collects resources for use in CSC 424.  For information specific to a particular semester, consult the associated Moodle page:
