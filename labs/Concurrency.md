@@ -126,7 +126,7 @@ Transactional memory was originally proposed as a mechanism in hardware, another
 
 One common approach to STM is to delimit blocks of operations which should be performed atomically, similar to the `synchronized` blocks in Java and Scala.  However, rather than implementing the atomicity by acquiring a lock at the start of the block, a transaction block proceeds *optimistically* -- it goes ahead and performs its operations as if it were working in isolation.  At the end of the transaction, a check is made to see if there was any interference -- for example, if one of the variables accessed by the block had its value changed by another task.  If not, then the transaction "commits" and any changes to the accessed data are made permanent.  On the other hand, if interference was detected, then the transaction fails and any changes it made are "rolled back"; at this point, the transaction starts over again.
 
-**Exercise:** Download the akka library from [http://akkasource.org/], play with the STM examples, then implement and test the bank account simulation.
+**Exercise:** Download the akka library from [http://akkasource.org/](http://akkasource.org/), play with the STM examples, then implement and test the bank account simulation.
 
 ## Further Reading
 * Jonas Bon&eacute;r, [State: You're Doing It Wrong - Alternative Concurrency Paradigms For The JVM](http://www.slideshare.net/jboner/state-youre-doing-it-wrong-javaone-2009) -- this is a presentation by the creator of the akka library for Scala, which provides implementations of most of the techniques discussed above.
