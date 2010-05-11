@@ -35,8 +35,8 @@ Given this datatype, we may write a prime sieve as follows (although this will s
 </script>
 Although `primes` represents an infinite stream of prime numbers, no real work has been done yet.  To start the computation going, we need to request values from the stream:
 
-    > primes take 10
-    List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
+    scala> primes take 10
+    res0: List[Int] = List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
 
 **Exercise:** As mentioned, this implementation of streams is not very efficient.  Perform timing comparisons with a prime sieve built using the `Stream[Int]` class from the Scala library.  The functions `from` and `sieve` will need to be changed by replacing `FStream` with `Stream` everywhere; furthermore, the `take` method on `Stream[Int]` returns another stream, so you will have to force it into a list to actually perform the computation: *e.g.*. `primes take 10 toList`.
 
@@ -71,7 +71,7 @@ There is a third message send operator which is of interest here: `savings !! Ba
 
 **Exercise:** Extend the `Account` actor with a withdrawal message that takes the amount to withdraw as an argument.  Test that your extension works as expected, and verify that messages are processed in the order in which they were received.
 
-Here is an extended example using actors to solve one of the classic synchronization problems, the [http://en.wikipedia.org/wiki/Sleeping_barber_problem Sleeping Barber].  The idea is to model a barbershop with one barber and a waiting room with a limited number of chairs.  If there are no customers, the barber takes a nap.  When the barber is working on a customer, new arrivals wait in the waiting room.  If all of the chairs in the waiting room are full, the arriving customer leaves.  The problem is to model all of the interactions correctly, especially in corner cases such as two customers arriving at once, or a customer arriving just as the barber goes to sleep.  The Scala code here is adapted from a [http://code.google.com/p/gparallelizer/wiki/ActorsExamples solution in Groovy].
+Here is an extended example using actors to solve one of the classic synchronization problems, the [Sleeping Barber](http://en.wikipedia.org/wiki/Sleeping_barber_problem).  The idea is to model a barbershop with one barber and a waiting room with a limited number of chairs.  If there are no customers, the barber takes a nap.  When the barber is working on a customer, new arrivals wait in the waiting room.  If all of the chairs in the waiting room are full, the arriving customer leaves.  The problem is to model all of the interactions correctly, especially in corner cases such as two customers arriving at once, or a customer arriving just as the barber goes to sleep.  The Scala code here is adapted from a [solution in Groovy](http://code.google.com/p/gparallelizer/wiki/ActorsExamples).
 
 First, here are the imports and the definitions of the message objects:
 <script src="http://gist.github.com/396819.js?file=Messages.scala">
