@@ -51,24 +51,8 @@ The Actor model was introduced by Carl Hewitt in 1973, and has inspired a great 
 In Scala, actors are implemented as classes in the library, in the package `scala.actors` (the `Future` class is defined here as well, because Scala implements futures on top of the more general actors).  There are several ways to create and use actors in Scala; read the documentation if you want to explore some of the design considerations we will be skipping over here.
 
 Consider this simple actor which serves as a bank account:
-
-~~~
-import scala.actors.Actor
-
-case class Deposit(amount: Int)
-case object Balance
-
-class Account extends Actor {
-  var balance = 0
-
-  def act = Actor.loop {
-    react {
-      case Deposit(amount) => balance += amount
-      case Balance => reply(balance)
-    }
-  }
-}
-~~~
+<script src="http://gist.github.com/396769.js?file=gistfile1.txt">
+</script>
 You can set an `Account` instance in motion by calling the `start` method on a new `Account` object:
 
 ~~~

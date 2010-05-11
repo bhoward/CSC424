@@ -12,17 +12,17 @@ Week | Topics                    | Readings                      | Assignments
 ---- | ------------------------- | ----------------------------- | -----------
 1    | Intro                     | Scott: Ch. 1                  | [Lab One: Scala Overview](labs/Scala.html)
 2    | Syntax                    | Scott: Ch. 2, only Sect. 1    | [Lab Two: Parsing](labs/Parsing.html)
-3    | Names and Bindings        | Scott: Ch. 3, except Sect. 4  | Lab Three: Expression Language
-4    | Control Flow              | Scott: Ch. 6, Sects. 1-6      | Lab Four: Defining Control Structures
-5    | Data Types                | Scott: Ch. 7                  | Lab Five: Type Checking
-6    | Control Abstraction       | Scott: Ch. 8                  | Lab Six: Function Language
+3    | Names and Bindings        | Scott: Ch. 3, except Sect. 4  | [Lab Three: Expression Language](labs/Expression.html)
+4    | Control Flow              | Scott: Ch. 6, Sects. 1-6      | [Lab Four: Defining Control Structures](labs/Control.html)
+5    | Data Types                | Scott: Ch. 7                  | [Lab Five: Type Checking](labs/Types.html)
+6    | Control Abstraction       | Scott: Ch. 8                  | [Lab Six: Function Language](labs/Function.html)
 7    | Midterm Exam              | --                            | --
-8    | Data Abstraction and OOP  | Scott: Ch. 9                  | Lab Seven: Design Patterns
-9    | Functional Programming    | Scott: Ch. 10                 | Lab Eight: Higher-Order Control Structures
-10   | Logic Programming         | Scott: Ch. 11                 | Lab Nine: Prolog
+8    | Data Abstraction and OOP  | Scott: Ch. 9                  | [Lab Seven: Design Patterns](labs/Patterns.html)
+9    | Functional Programming    | Scott: Ch. 10                 | [Lab Eight: Higher-Order Control Structures](labs/HOCS.html)
+10   | Logic Programming         | Scott: Ch. 11                 | [Lab Nine: Prolog](labs/Prolog.html)
 11   | Concurrency               | Scott: Ch. 6, Sect. 7; Ch. 12 | [Lab Ten: Approaches to Concurrency](labs/Concurrency.html)
-12   | Scripting Languages       | Scott: Ch. 13                 | Lab Eleven: JavaScript
-13   | Domain-Specific Languages | --                            | Lab Twelve: Internal and External DSLs
+12   | Scripting Languages       | Scott: Ch. 13                 | [Lab Eleven: JavaScript](labs/JavaScript.html)
+13   | Domain-Specific Languages | --                            | [Lab Twelve: Internal and External DSLs](labs/DSL.html)
 14   | Wrap-up and Presentations | --                            | --
 
 ## Readings
