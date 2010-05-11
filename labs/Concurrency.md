@@ -54,23 +54,20 @@ Consider this simple actor which serves as a bank account:
 <script src="http://gist.github.com/396811.js?file=Account.scala">
 </script>
 You can set an `Account` instance in motion by calling the `start` method on a new `Account` object:
-
-~~~
+{% highlight scala %}
 val savings = new Account
 savings.start
-~~~
+{% endhighlight %}
 Now you interact with the account actor by sending it messages:
-
-~~~
+{% highlight scala %}
 savings ! Deposit(100)
-~~~
+{% endhighlight %}
 This sends the object `Deposit(100)` to `savings` asynchronously.  The message send operator, `!`, can send any value as a message; if an actor does not have a case handler for that value, it will simply remain in the mailbox.
 
 Messages may also be sent *synchronously* with the `!?` operator.  This is essentially like performing a method call -- the sender will wait until the recipient processes the message and sends back a value in reply.  In our account actor, this is how the balance is meant to be retrieved:
-
-~~~
+{% highlight scala %}
 println("Current balance is " + (savings !? Balance))
-~~~
+{% endhighlight %}
 There is a third message send operator which is of interest here: `savings !! Balance` will return immediately with a future value representing the eventual response to the message.  This allows the sender to continue processing while the recipient works on the request, and only block if the future's value is requested before the reply has been sent.
 
 **Exercise:** Extend the `Account` actor with a withdrawal message that takes the amount to withdraw as an argument.  Test that your extension works as expected, and verify that messages are processed in the order in which they were received.
@@ -78,143 +75,25 @@ There is a third message send operator which is of interest here: `savings !! Ba
 Here is an extended example using actors to solve one of the classic synchronization problems, the [http://en.wikipedia.org/wiki/Sleeping_barber_problem Sleeping Barber].  The idea is to model a barbershop with one barber and a waiting room with a limited number of chairs.  If there are no customers, the barber takes a nap.  When the barber is working on a customer, new arrivals wait in the waiting room.  If all of the chairs in the waiting room are full, the arriving customer leaves.  The problem is to model all of the interactions correctly, especially in corner cases such as two customers arriving at once, or a customer arriving just as the barber goes to sleep.  The Scala code here is adapted from a [http://code.google.com/p/gparallelizer/wiki/ActorsExamples solution in Groovy].
 
 First, here are the imports and the definitions of the message objects:
+<script src="http://gist.github.com/396819.js?file=Messages.scala">
+</script>
 
-~~~
-import scala.actors.Actor
-import scala.actors.Actor._
-
-// These are the messages which the actors will exchange
-case class Enter(customer: Customer)
-case object Wait
-case object Next
-case object Full
-case object Start
-case object Done
-~~~
 Customer actors know their name, and respond to various messages by printing their state to the console:
+<script src="http://gist.github.com/396821.js?file=Customer.scala">
+</script>
 
-~~~
-class Customer(name: String) extends Actor {
-  def act = loop {
-    react {
-      case Full => {
-        println("Customer: " + name + ": The waiting room is full; I am leaving.")
-        exit
-      }
-      
-      case Wait => println("Customer: " + name + ": I will wait.")
-      
-      case Start => println("Customer: " + name + ": I am now being served.")
-      
-      case Done => {
-        println("Customer: " + name + ": I have been served.")
-        exit
-      }
-    }
-  }
-  
-  override def toString = name
-}
-~~~
 The barber responds to the `Enter` and `Wait` messages from the waiting room, and knows how to cut hair:
+<script src="http://gist.github.com/396822.js?file=Barber.scala">
+</script>
 
-~~~
-object Barber extends Actor {
-  val random = new scala.util.Random
-  
-  def cutHair(customer: Customer) {
-    customer ! Start
-    println("Barber: Processing customer " + customer)
-    // Randomly take from 1 to 10 seconds
-    Thread.sleep((random.nextInt(10) + 1) * 1000)
-    customer ! Done
-  }
-  
-  def act = loop {
-    react {
-      case Enter(customer) => {
-        cutHair(customer)
-        WaitingRoom ! Next
-      }
-      
-      case Wait => {
-        println("Barber: No customers. Going to have a sleep")
-      }
-    }
-  }
-}
-~~~
 The waiting room keeps track of the customers waiting in chairs and whether the barber is sleeping. It reacts to a customer entering (sent from an external source) and the barber calling "next!":
+<script src="http://gist.github.com/396824.js?file=WaitingRoom.scala">
+</script>
 
-~~~
-object WaitingRoom extends Actor {
-  import scala.collection.mutable.Queue
-  
-  val waitingCustomers = new Queue[Customer]
-  val capacity = 2 // waiting room has this many chairs
-  var barberAsleep = true
-  
-  def act = loop {
-    react {
-      case Enter(customer) => {
-        if (waitingCustomers.size == capacity) {
-          customer ! Full
-        } else {
-          waitingCustomers += customer
-          if (barberAsleep) {
-            // the only waiting customer should be the new arrival
-            assert(waitingCustomers.size == 1)
-            barberAsleep = false
-            self ! Next
-          } else {
-            customer ! Wait
-          }
-        }
-      }
-      
-      case Next => {
-        if (!waitingCustomers.isEmpty) {
-          Barber ! Enter(waitingCustomers.dequeue)
-        } else {
-          Barber ! Wait
-          barberAsleep = true
-        }
-      }
-    }
-  }
-}
-~~~
 Finally, here is a simple test program which randomly sends 10 customers into the barbershop:
+<script src="http://gist.github.com/396827.js?file=BarberTest.scala">
+</script>
 
-~~~
-object BarberTest {
-  def main(args : Array[String]) {
-    val random = new scala.util.Random
-    
-    Barber.start
-    WaitingRoom.start
-    val customers = List(
-        new Customer("Alice"),
-        new Customer("Bob"),
-        new Customer("Carol"),
-        new Customer("Dave"),
-        new Customer("Edith"),
-        new Customer("Fred"),
-        new Customer("Gina"),
-        new Customer("Harold"),
-        new Customer("Irma"),
-        new Customer("Joe")
-    )
-    
-    for (c <- customers) {
-      c.start
-      WaitingRoom ! Enter(c)
-      // Customers arrive every 0 to 4 seconds (several might arrive at once!)
-      Thread.sleep(random.nextInt(5) * 1000)
-    }
-  }
-}
-~~~
 **Exercise:** Adjust the customer arrival and service times, and waiting room capacity, to try to explore all the possible behaviors of this simulation.  As a more challenging exercise, try to change the simulation to have two or more barbers in the same shop.
 
 ## Transactional Memory
@@ -223,8 +102,7 @@ Occasionally you might find it necessary to share memory between tasks in order 
 There is a more serious potential problem with using separate actors for each account, at least if it is not implemented carefully.  Internally, banks don't really operate in terms of individual deposits and withdrawals; instead, every operation is a *transfer* of money between two accounts.  It is crucial that the total amount of money in the system is conserved (except at the boundaries where actual cash is exchanged, or funds are transferred with another institution), so a deposit to one account has to accompany a withdrawal from another.
 
 Imagine actor code to do this:
-
-~~~
+{% highlight scala %}
 ...
 react {
   // This is the public message:
@@ -237,7 +115,7 @@ react {
   case Deposit(amount) => balance += amount; reply()
 }
 ...
-~~~
+{% endhighlight %}
 The `synchronized` method and the synchronous message send (!?) are essential to make sure that the withdrawal and the deposit both happen without being interrupted -- what if an audit came along between the two steps?  Unfortunately, this can lead to deadlock: suppose we get simultaneous requests to transfer one amount from Alice to Bob and another amount from Bob to Alice.  Now Alice and Bob will each enter their synchronized blocks (meaning they can't be interrupted until they finish), each will subtract an amount from their own balance, and then each will send a synchronous message to the other to deposit that amount.  Since neither can be interrupted, however, neither one of them will be able to reply to the deposit message -- deadlock.
 
 There are solutions to this; for example, we could order the accounts by account number, and only perform transfers (possibly of negative amounts) from lower to higher numbered accounts.  This guarantees that there can't be cycles such as we saw between Alice and Bob.  However, this is very hard to get right as the system grows more complex.
