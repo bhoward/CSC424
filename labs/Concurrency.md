@@ -34,6 +34,7 @@ Given this datatype, we may write a prime sieve as follows (although this will s
 <script src="http://gist.github.com/393897.js?file=Sieve.scala">
 </script>
 Although `primes` represents an infinite stream of prime numbers, no real work has been done yet.  To start the computation going, we need to request values from the stream:
+
     > primes take 10
     List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
 
