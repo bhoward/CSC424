@@ -59,4 +59,5 @@
 .highlight .vi { color: #008080 } /* Name.Variable.Instance */
 .highlight .il { color: #009999 } /* Literal.Number.Integer.Long */
 .gist-highlight { line-height: 1em; font-family: monospace; }
+.align-left { float: left; margin: 0 15px 15px 0; border-style: none; }
 
