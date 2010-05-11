@@ -24,7 +24,6 @@ Week | Topics                    | Readings                      | Assignments
 12   | Scripting Languages       | Scott: Ch. 13                 | [Lab Eleven: JavaScript](labs/JavaScript.html)
 13   | Domain-Specific Languages | --                            | [Lab Twelve: Internal and External DSLs](labs/DSL.html)
 14   | Wrap-up and Presentations | --                            | --
----- | ------------------------- | ----------------------------- | -----------
 
 ## Readings
 ### Textbooks
