@@ -34,10 +34,8 @@ Given this datatype, we may write a prime sieve as follows (although this will s
 <script src="http://gist.github.com/393897.js?file=Sieve.scala">
 </script>
 Although `primes` represents an infinite stream of prime numbers, no real work has been done yet.  To start the computation going, we need to request values from the stream:
-~~~
-> primes take 10
-List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
-~~~
+    > primes take 10
+    List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
 
 **Exercise:** As mentioned, this implementation of streams is not very efficient.  Perform timing comparisons with a prime sieve built using the `Stream[Int]` class from the Scala library.  The functions `from` and `sieve` will need to be changed by replacing `FStream` with `Stream` everywhere; furthermore, the `take` method on `Stream[Int]` returns another stream, so you will have to force it into a list to actually perform the computation: *e.g.*. `primes take 10 toList`.
 
