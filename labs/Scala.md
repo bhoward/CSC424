@@ -140,7 +140,7 @@ In fact, we may write this somewhat more idiomatically as follows:
 trait Shape {
   def location: Point
   def location_=(p: Point): Unit
-  def draw(g: Graphics)
+  def draw(g: Graphics): Unit
 }
 
 class Square(var location: Point, val width: Int) extends Shape {
@@ -158,3 +158,14 @@ Here is a complete Scala program showing off these shapes:
 </script>
 
 **Exercise:** Test this program, then add a `Circle` with radius 50 to the list of shapes.
+
+Observe that the `main` method is defined in the *object* `ShapeTest`.  In Java, `main` would be a static method in a *class*.  Scala does away with the `static` keyword and replaces it with the more general concept of a "singleton" object: by declaring `ShapeTest` as an object, it creates a single-use class *and* constructs the only instance of that class in one step.  Scala allows the same name to be used for both a class and an object, which is then referred to as the class' "companion" object.  The companion object can hold data and methods that are shared among all instances of the class, just like static fields and methods in Java.  A common pattern is to define a "factory method" in the companion object -- a method which may be used to construct instances of the class:
+<script src="http://gist.github.com/398750.js?file=Square.scala">
+</script>
+Now the call `Square.apply(new Point(1, 2), 3)` will return a newly-constructed `Square` object.  The `apply` method is special, because it will be called whenever the object is used as the name of a function itself: `Square(new Point(1, 2), 3)` is equivalent.  This might seem to be a lot of machinery just to avoid typing the word "new", but it is an important part of making algebraic data types fit into the language naturally (see below).
+
+Something about mixin traits
+
+Something about algebraic data types
+
+Something about type parameters
