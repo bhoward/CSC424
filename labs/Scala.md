@@ -261,7 +261,8 @@ trait LocatableShape extends Shape {
   }
 }
 
-class LocatableSquare(var location: Point, width: Int) extends Square(width) with LocatableShape
+class LocatableSquare(var location: Point, width: Int) extends
+  Square(width) with LocatableShape
 
 // LocatableCircle is similar
 {% endhighlight %}
@@ -274,12 +275,27 @@ The modifier `abstract override` on the `draw` method in `LocatableShape` indica
 g.setColor(Color.RED)
 g.drawOval(-radius, -radius, radius * 2, radius * 2)
 {% endhighlight %}
-Now extend the `ShapeTest` program to use colorable locatable shapes.  You can define such a class as follows:
+Now extend the `ShapeTest` program to use colorable locatable shapes.  You ought to be able to define such a class as follows:
 {% highlight scala %}
 class ColorableLocatableSquare(var color: Color, var location: Point, width: Int) extends
   Square(width) with ColorableShape with LocatableShape
 {% endhighlight %}
 
-Something about algebraic data types
+## Algebraic Data Types
+
+The essence of the object-oriented paradigm is that each object has code associated with it, so that the object "knows" how to perform various operations on its data.  Two objects might respond to the same set of requests (*i.e.*, have the same interface), but they might perform their jobs in radically different ways.  Continuing the shape example, circles and squares both have `draw` methods, but they produce different shapes on the screen.  One advantage of this is that it is easy to introduce new varieties of objects (*e.g.*, triangles) without modifying existing code.  As a result, good OO style avoids code which is conditional on what kind of object one has -- a program that depended on shapes being either squares or circles would break if you introduced triangles.
+
+In fact, some people advocate OO programming without using `if` statements at all!  Indeed, the Smalltalk language doesn't *have* an `if` statement.  It does have `true` and `false` values, however.  These values are objects, just like everything else in Smalltalk, and they support several methods (in Smalltalk terms, they "respond to messages") including `ifTrue:ifFalse:`, which takes two arguments and evaluates the corresponding one depending on whether the object is `true` or `false`.  Here is equivalent code in Scala:
+<script src="http://gist.github.com/400128.js?file=gistfile1.txt">
+</script>
+We will learn more about the parameter type `=> Unit` later; the effect here is that `ifThenElse` takes a pair of unevaluated chunks of code, and only evaluates the one corresponding to the object's truth value.  Here is an example of using this:
+{% highlight scala %}
+def test(b: Bool) {
+  b.ifThenElse(println("it's true"), println("it's false"))
+}
+
+test(True)  // prints "it's true"
+test(False) // prints "it's false"
+{% endhighlight %}
 
 Something about type parameters
