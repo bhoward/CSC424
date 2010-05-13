@@ -297,5 +297,12 @@ def test(b: Bool) {
 test(True)  // prints "it's true"
 test(False) // prints "it's false"
 {% endhighlight %}
+Note that there are no conditionals in this code at all; the choice of whether to print "it's true" or "it's false" is entirely up to the `Bool` objects.  Also, as promised, it is easy to add a new kind of `Bool` object in this setting.  Suppose we wanted to model a "fuzzy" truth value (as in [Fuzzy Logic](http://mathworld.wolfram.com/FuzzyLogic.html)), which has a probability of truth between 0 and 1.  The following is one way to do this:
+{% highlight scala %}
+class Fuzzy(probability: Double) extends Bool {
+  def ifThenElse(trueClause: => Unit, falseClause: => Unit) =
+    if (Math.random < probability) trueClause else falseClause
+}
+{% endhighlight %}
 
 Something about type parameters
