@@ -52,7 +52,7 @@ Consider the following Java code, defining a simple hierarchy of shape classes:
 {% highlight java %}
 public interface Shape {
   Point getLocation();
-  void setLocation(Point p);
+  void setLocation(Point center);
   void draw(Graphics g);
 }
 
@@ -113,7 +113,7 @@ We may translate this directly into Scala as follows:
 {% highlight scala %}
 trait Shape {
   def getLocation: Point
-  def setLocation(p: Point): Unit
+  def setLocation(center: Point): Unit
   def draw(g: Graphics): Unit
 }
 
@@ -139,7 +139,7 @@ In fact, we may write this somewhat more idiomatically as follows:
 {% highlight scala %}
 trait Shape {
   def location: Point
-  def location_=(p: Point): Unit
+  def location_=(center: Point): Unit
   def draw(g: Graphics): Unit
 }
 
@@ -164,7 +164,121 @@ Observe that the `main` method is defined in the *object* `ShapeTest`.  In Java,
 </script>
 Now the call `Square.apply(new Point(1, 2), 3)` will return a newly-constructed `Square` object.  The `apply` method is special, because it will be called whenever the object is used as the name of a function itself: `Square(new Point(1, 2), 3)` is equivalent.  This might seem to be a lot of machinery just to avoid typing the word "new", but it is an important part of making algebraic data types fit into the language naturally (see below).
 
-Something about mixin traits
+## Inheritance and Mixins
+
+Suppose we wish to extend our shape example so that there are several kinds of shapes.  Ordinary shapes are centered at the origin; they can draw themselves and tell you their area, but that's all.  *Locatable* shapes add the ability to move to other locations.  Eventually we will have other categories such as *colorable* shapes, but let's work up to that.
+
+Here is a possible implementation in Java:
+{% highlight java %}
+public interface Shape {
+  void draw(Graphics g);
+  double getArea();
+}
+
+/** Ordinary (non-locatable) squares
+ */
+public class Square implements Shape {
+  private int width;
+  
+  public Square(int width) {
+    this.width = width;
+  }
+  
+  public void draw(Graphics g) {
+    g.drawRect(-width/2, -width/2, width, width);
+  }
+  
+  public double getArea() {
+    return width * width;
+  }
+}
+
+// Circle is similar
+
+public interface LocatableShape extends Shape {
+  Point getLocation();
+  void setLocation(Point center);
+}
+
+public class LocatableSquare extends Square implements LocatableShape {
+  private Point center;
+  
+  public LocatableSquare(Point center, int width) {
+    super(width);
+    this.center = center;
+  }
+  
+  public Point getLocation() {
+    return center;
+  }
+  
+  public void setLocation(Point center) {
+    this.center = center;
+  }
+  
+  @Override
+  public void draw(Graphics g) {
+    Graphics gshift = g.create();         // Make a copy of g
+    gshift.translate(center.x, center.y); // with origin at center
+    super.draw(gshift);
+  }
+}
+
+// LocatableCircle is similar
+{% endhighlight %}
+
+**Exercise:** Write out the code for `Circle` and `LocatableCircle`.
+
+Notice that there is nothing specific to squares in the `LocatableSquare` class; it inherits all of its square-like behavior from the `Square` class.  In fact, all of the code in `LocatableSquare` is about managing the shape's location; you should have written virtually the same code again for `LocatableCircle`.  According to the DRY ("Don't Repeat Yourself") principle, this duplication is bad -- it's extra work (imagine what you would have to do if we had dozens of ordinary shapes to make locatable), and it's a maintenance problem to find and fix all of the copies in case the common code needs to be changed.
+
+What we would like is if all of the location-specific code would come along with the `LocatableShape` interface.  Unfortunately, Java doesn't allow code (fields or method bodies) in interfaces.  A Java class is allowed to inherit behavior from only one superclass, although it may implement the methods of many interfaces.  We have to choose whether `LocatableSquare` inherits from `Square` and implements `LocatableShape` (as above), or whether it should extend some `AbstractLocatableShape` class and duplicate the square behavior.  Either way, there will be some repeated code.
+
+Scala solves this problem through the mechanism of *mixin traits*.  A mixin trait is essentially an interface plus the associated code.  When a subclass is defined using the trait, the code is "mixed in" along with the code inherited from the superclass.  Here is how the above example looks in Scala:
+{% highlight scala %}
+trait Shape {
+  def draw(g: Graphics): Unit
+  def getArea: Double
+}
+
+class Square(width: Int) extends Shape {
+  def draw(g: Graphics) {
+    g.drawRect(-width/2, -width/2, width, width)
+  }
+  
+  def getArea = width * width
+}
+
+// Circle is similar
+
+trait LocatableShape extends Shape {
+  def location: Point
+  def location_=(center: Point): Unit
+  
+  abstract override def draw(g: Graphics) {
+    val gshift = g.create
+    gshift.translate(location.x, location.y)
+    super.draw(gshift)
+  }
+}
+
+class LocatableSquare(var location: Point, width: Int) extends Square(width) with LocatableShape
+
+// LocatableCircle is similar
+{% endhighlight %}
+The modifier `abstract override` on the `draw` method in `LocatableShape` indicates that the class being mixed into must provide a `draw` method, but that it will be replaced by this new version.  The original `draw` method may still be called using the `super.draw` reference.
+
+**Exercise:** Fill in the missing `Circle` and `LocatableCircle` classes, then test these new shape classes in the `ShapeTest` program above (the list of shapes should now have type `List[LocatableShape]`).
+
+**Exercise:** Follow the pattern of `LocatableShape` and define a new trait `ColorableShape`.  Here is an example of AWT code to draw a red circle:
+{% highlight scala %}
+g.setColor(Color.RED)
+g.drawOval(-radius, -radius, radius * 2, radius * 2)
+{% endhighlight %}
+Now extend the `ShapeTest` program to use colorable locatable shapes.  You can define such a class as follows:
+{% highlight scala %}
+class ColorableLocatableSquare(var color: Color, var location: Point, width: Int) extends
+  Square(width) with ColorableShape with LocatableShape
+{% endhighlight %}
 
 Something about algebraic data types
 
