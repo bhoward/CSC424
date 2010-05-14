@@ -312,7 +312,11 @@ class Fuzzy(probability: Double) extends Bool {
 
 All of this is a prelude to looking at algebraic data types.  Where the OO paradigm emphasizes the association of code with each object, the functional paradigm does the opposite: it gives the code equal footing with the data, by treating functions as first-class values.  As a result, there is almost a dual nature between the two paradigms.  In OO, it is easy to add new kinds of objects without modifying existing code, but if you want to add a new method on those objects you often have to add it to every class (think of what it would take to add a `getPerimeter` method to the shape classes).  By contrast, we will see that the use of algebraic data types in the functional paradigm makes it easy to add new operations, but more difficult to extend the kinds of values those operations work with.  Nonetheless, there are substantial similarities between the two approaches, and one of the nice features of a multi-paradigm language like Scala is that you can work in either style, or a mixture of them.
 
-
+An algebraic data type is specified by giving a set of *constructors*.  Each constructor takes a list of zero or more data values as parameters, and represents one of the ways to create a value of the data type.  For example, consider the type of lists of integers.  A list may be empty, or it may consist of an integer at the head, plus a tail which is another list of integers.  Here is how this might be expressed in the functional language Haskell:
+{% highlight haskell %}
+data IntList = Nil
+             | Cons a IntList
+{% endhighlight %}
 
 ## Type Parameters
 

@@ -70,6 +70,7 @@ One of the common features of all of these texts is that they focus on the conce
 * James Noble, [Arguments and Results](http://www.laputan.org/pub/patterns/noble/noble.pdf)
 * David Parnas, [On the Criteria to be Used in Decomposing Systems into Modules](http://sunnyday.mit.edu/16.355/parnas-criteria.html)
 * Simon Peyton Jones, [Beautiful Concurrency](http://research.microsoft.com/en-us/um/people/simonpj/papers/stm/beautiful.pdf)
+* Simon Peyton Jones, [Tackling the Awkward Squad: Monadic Input/Output, Concurrency, Exceptions, and Foreign-Language Calls in Haskell](http://research.microsoft.com/en-us/um/people/simonpj/papers/marktoberdorf/mark.pdf)
 * Joel Spolsky, [The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)](http://www.joelonsoftware.com/printerFriendly/articles/Unicode.html)
 * Guy Steele, [Growing a Language](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.10.1635&rep=rep1&type=pdf) ([video](http://video.google.com/videoplay?docid=-8860158196198824415))
 * Herb Sutter, [The Free Lunch Is  Over: A Fundamental Turn Toward Concurrency in Software](http://www.gotw.ca/publications/concurrency-ddj.htm)
