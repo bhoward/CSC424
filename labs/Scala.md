@@ -288,7 +288,7 @@ The essence of the object-oriented paradigm is that each object has code associa
 In fact, some people advocate OO programming without using `if` statements at all!  Indeed, the Smalltalk language doesn't *have* an `if` statement.  It does have `true` and `false` values, however.  These values are objects, just like everything else in Smalltalk, and they support several methods (in Smalltalk terms, they "respond to messages") including `ifTrue:ifFalse:`, which takes two arguments and evaluates the corresponding one depending on whether the object is `true` or `false`.  Here is equivalent code in Scala:
 <script src="http://gist.github.com/400128.js?file=gistfile1.txt">
 </script>
-We will learn more about the parameter type `=> Unit` later; the effect here is that `ifThenElse` takes a pair of unevaluated chunks of code, and only evaluates the one corresponding to the object's truth value.  Here is an example of using this:
+We will learn more about the parameter type `=> T` later; the effect here is that `ifThenElse` takes a pair of unevaluated chunks of code (each of which would produce a result of type `T`), and only evaluates the one corresponding to the object's truth value.  Here is an example of using this:
 {% highlight scala %}
 def test(b: Bool) {
   b.ifThenElse(println("it's true"), println("it's false"))
@@ -304,5 +304,12 @@ class Fuzzy(probability: Double) extends Bool {
     if (Math.random < probability) trueClause else falseClause
 }
 {% endhighlight %}
+Now, when we evaluate `test(new Fuzzy(0.75))`, it should print "it's true" about three-fourths of the time.
+
+**Exercise:** Check that the following function provides a logical AND operation on `Bool` values:
+{% highlight scala %}
+def and(a: Bool, b: Bool) = a.ifThenElse(b, False)
+{% endhighlight %}
+Now define an analogous function for logical OR.  As a challenge, determine whether these functions behave reasonably on fuzzy truth values.
 
 Something about type parameters
