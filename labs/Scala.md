@@ -306,7 +306,7 @@ class Fuzzy(probability: Double) extends Bool {
     if (Math.random < probability) trueClause else falseClause
 }
 {% endhighlight %}
-(Note that we're forced to use an `if` statement here because the `<` operator returns a `Boolean` value rather than one of our `Bool` objects....) Now, when we evaluate `test(new Fuzzy(0.75))`, it should print "it's true" about three-fourths of the time.
+(We're forced to use an `if` statement here because the `<` operator returns a `Boolean` value rather than one of our `Bool` objects....) Now, when we evaluate `test(new Fuzzy(0.75))`, it should print "it's true" about three-fourths of the time.
 
 **Exercise:** Check that the `&&` method provides a logical AND operation on `Bool` values; that is, evaluate expressions such as `True && False` and see how it works.  Now define an analogous method for logical OR.  As a challenge, determine whether these functions behave reasonably on fuzzy truth values.
 
