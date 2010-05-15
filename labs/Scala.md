@@ -312,11 +312,62 @@ class Fuzzy(probability: Double) extends Bool {
 
 All of this is a prelude to looking at algebraic data types.  Where the OO paradigm emphasizes the association of code with each object, the functional paradigm does the opposite: it gives the code equal footing with the data, by treating functions as first-class values.  As a result, there is almost a dual nature between the two paradigms.  In OO, it is easy to add new kinds of objects without modifying existing code, but if you want to add a new method on those objects you often have to add it to every class (think of what it would take to add a `getPerimeter` method to the shape classes).  By contrast, we will see that the use of algebraic data types in the functional paradigm makes it easy to add new operations, but more difficult to extend the kinds of values those operations work with.  Nonetheless, there are substantial similarities between the two approaches, and one of the nice features of a multi-paradigm language like Scala is that you can work in either style, or a mixture of them.
 
-An algebraic data type is specified by giving a set of *constructors*.  Each constructor takes a list of zero or more data values as parameters, and represents one of the ways to create a value of the data type.  For example, consider the type of lists of integers.  A list may be empty, or it may consist of an integer at the head, plus a tail which is another list of integers.  Here is how this might be expressed in the functional language Haskell:
+An algebraic data type is specified by giving a set of *constructors*.  Each constructor takes a list of zero or more data values as parameters, and represents one of the ways to create a value of the data type.  For example, consider the type of lists of integers.  A list may be empty, or it may consist of an integer at the head, plus a tail which is another list of integers.  Here is how this might be expressed (though not quite idiomatically) in the functional language Haskell:
 {% highlight haskell %}
-data IntList = Nil
-             | Cons a IntList
+data List = Nil
+          | Cons(Int, List)
 {% endhighlight %}
+The constructors here are `Nil`, which needs no parameters to create an empty list, and `Cons`, which takes an `Int` and a `List` (the head and the tail).
+
+Scala's syntax for algebraic data types is not as concise as Haskell's, in exchange for the flexibility of mixing the functional and object-oriented paradigms.  Here is one way to express integer lists in Scala:
+{% highlight scala %}
+trait List
+object Nil extends List
+class Cons(val head: Int, val tail: List) extends List
+{% endhighlight %}
+Surprise!  It looks just like the OO class hierarchies we have already seen, except there are no member functions, and the only instance variables are the (immutable) constructor parameters.  In fact, these two points characterize the standard use of algebraic data types in functional languages: all of the contained data is supplied to the constructors (and thereafter remains unmodified), and operations on the data are defined as external functions.  In the Scala version, we may extract the data from a constructed object using accessor methods (`head` and `tail` in the above example), but the more common functional style is to access the data through "pattern matching."  Suppose we want to write a function `first` in Haskell which takes an integer list and returns either the head of the list, or 0 if the list is empty.  Here is one way to do this:
+{% highlight haskell %}
+first(list) = case list of
+                Nil -> 0
+                Cons(head, tail) -> head
+{% endhighlight %}
+It is more common in Haskell to combine pattern matching with function definition, which fits nicely with an algebraic notion of evaluation by substituting equals for equals, and also with the common practice in functional languages of recursive function definitions (mirroring the recursive data type definitions).  Here is the `first` function again, and a recursive function to sum the contents of an integer list:
+{% highlight haskell %}
+first(Nil) = 0
+first(Cons(head, tail)) = head
+
+sum(Nil) = 0
+sum(Cons(head, tail)) = head + sum(tail)
+{% endhighlight %}
+(For clarity, more parentheses have been inserted than would be typical in idiomatic Haskell.)
+**Exercise:** Complete the following evaluation process and check that the `sum` function works as expected:
+{% highlight haskell %}
+sum(Cons(1, Cons(2, Cons(3, Nil))))
+ = 1 + sum(Cons(2, Cons(3, Nil)))
+ = ...
+{% endhighlight %}
+
+Before translating these functions into Scala, we need to add some modifiers to the definitions given above for the `List` trait and its subclasses.  These modifiers tell Scala to generate some extra code for us automatically, to support pattern matching better:
+{% highlight scala %}
+sealed trait List
+case object Nil extends List
+case class Cons(head: Int, tail: List) extends List
+{% endhighlight %}
+The modifier `sealed` notifies Scala that `List` will only have the following subclasses; this lets it generate more efficient code in pattern matching because it can check that we have covered all of the possible varieties of `List`.  The modifier `case` causes several things to happen: the parameters of `Cons` are automatically declared as `val`s, a factory method is generated so that we can create a new `Cons` object without having to say `new`, and further methods are generated to handle operations such as equality testing between `List`s, converting a `List` to a string, and extracting the fields of a `Cons` object when doing a pattern match.  We could write all of these ourselves (as we did with the factory method earlier), but it is very convenient to have the compiler do this tedious work for us.
+
+Unfortunately, Scala does not support the pattern matching form of function definition, so the idiom we will use is the `match` expression, which corresponds to Haskell's `case` statement.  Here are Scala versions of `first` and `sum`:
+{% highlight scala %}
+def first(list: List): Int = list match {
+  case Nil => 0
+  case Cons(head, tail) => head
+}
+
+def sum(list: List): Int = list match {
+  case Nil => 0
+  case Cons(head, tail) => head + sum(tail)
+}
+{% endhighlight %}
+**Exercise:** Enter the definitions of `List`, `Nil`, and `Cons` in the REPL, then check that the `first` and `sum` functions work as expected.  Now write a function `last` which returns the *final* element of a `List`, or 0 if empty.  Hint: patterns may involve several constructors, such as `Cons(a, Cons(b, Nil))` -- this will match a two-element list, binding the elements to the names `a` and `b`.  The Scala compiler will tell you if your case patterns don't cover all of the possible values.
 
 ## Type Parameters
 
