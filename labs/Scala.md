@@ -340,6 +340,7 @@ sum(Nil) = 0
 sum(Cons(head, tail)) = head + sum(tail)
 {% endhighlight %}
 (For clarity, more parentheses have been inserted than would be typical in idiomatic Haskell.)
+
 **Exercise:** Complete the following evaluation process and check that the `sum` function works as expected:
 {% highlight haskell %}
 sum(Cons(1, Cons(2, Cons(3, Nil))))
@@ -368,6 +369,20 @@ def sum(list: List): Int = list match {
 }
 {% endhighlight %}
 **Exercise:** Enter the definitions of `List`, `Nil`, and `Cons` in the REPL, then check that the `first` and `sum` functions work as expected.  Now write a function `last` which returns the *final* element of a `List`, or 0 if empty.  Hint: patterns may involve several constructors, such as `Cons(a, Cons(b, Nil))` -- this will match a two-element list, binding the elements to the names `a` and `b`.  The Scala compiler will tell you if your case patterns don't cover all of the possible values.
+
+For comparison, here is an algebraic data type version of the boolean example:
+{% highlight scala %}
+sealed trait Bool
+case object True extends Bool
+case object False extends Bool
+
+def ifThenElse[T](b: Bool, trueClause: => T, falseClause: => T): T = b match {
+  case True => trueClause
+  case False => falseClause
+}
+{% endhighlight %}
+This particularly simple form of algebraic data type is known as an "enumeration" type -- the type consists of a (small) set of values, and functions are frequently defined by cases on those values.
+
 
 ## Type Parameters
 
