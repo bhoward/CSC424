@@ -46,6 +46,7 @@ There are *many* textbooks covering the area of programming languages in general
 One of the common features of all of these texts is that they focus on the concepts behind various languages and paradigms, rather than simply presenting a catalog of different language features.
 
 ### Articles
+* Joe Armstrong, [A History of Erlang](http://www.cs.chalmers.se/Cs/Grundutb/Kurser/ppxt/HT2007/general/languages/armstrong-erlang_history.pdf)
 * Krste Asanovic, *et al.*, [The Landscape of Parallel Computing Research: A View from Berkeley](http://www.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf)
 * John Backus, [Can Programming Be Liberated from the von Neumann Style?](http://www.thocp.net/biographies/papers/backus_turingaward_lecture.pdf)
 * Kent Beck and Ward Cunningham, [A Laboratory For Teaching Object-Oriented Thinking](http://c2.com/doc/oopsla89/paper.html)
@@ -66,6 +67,7 @@ One of the common features of all of these texts is that they focus on the conce
 * John Knight and Nancy Leveson, [An Experimental Evaluation of the Assumption of Independence in Multiversion Programming](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.29.363&rep=rep1&type=pdf)
 * Donald Knuth, [Structured Programming with go to Statements](http://pplab.snu.ac.kr/courses/adv_pl05/papers/p261-knuth.pdf)
 * Peter Landin, [The Next 700 Programming Languages](http://www.thecorememory.com/Next_700.pdf)
+* Robert Martin, [The Open-Closed Principle](http://www.objectmentor.com/resources/articles/ocp.pdf)
 * John McCarthy, [Recursive Functions of Symbolic Expressions and Their Computation by Machine, Part I](http://www-formal.stanford.edu/jmc/recursive/recursive.html)
 * James Noble, [Arguments and Results](http://www.laputan.org/pub/patterns/noble/noble.pdf)
 * David Parnas, [On the Criteria to be Used in Decomposing Systems into Modules](http://sunnyday.mit.edu/16.355/parnas-criteria.html)

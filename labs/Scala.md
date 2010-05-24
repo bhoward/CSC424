@@ -383,6 +383,8 @@ def ifThenElse[T](b: Bool, trueClause: => T, falseClause: => T): T = b match {
 {% endhighlight %}
 This particularly simple form of algebraic data type is known as an "enumeration" type -- the type consists of a (small) set of values, and functions are frequently defined by cases on those values.
 
+In general, values of an algebraic data type will have a *tree-like* structure: each constructor defines a kind of node in the structure, with the contained data as children.  (Technically, subtrees can be shared, so the most general description of the structure is a *directed acyclic graph*, but the difference is minor if the data is all immutable.)
+
 
 ## Type Parameters
 
