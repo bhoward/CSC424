@@ -15,7 +15,7 @@ title: Scala Overview Lab
 * `Math.pow(2, 6)`
 * `"Hello World".length`
 * `"Hello World".reverse`
-* `42.toDouble`
+* `42.toString`
 * `val nums = new java.util.ArrayList[Int]()`
 * `nums.add(42)`
 * `nums`
@@ -46,7 +46,7 @@ We will come back to a number of the above examples later in the course.
 
 ## Objects in Scala
 
-As in Java, the object is the basic unit for organizing data and code in Scala.  In addition, Scala regularizes and generalizes the treatment of objects in several directions.  One regularization seen above is that Scala hides the distinction between primitive and object types: `42` is an object belonging to class `Int`, which provides various methods such as `toDouble`.
+As in Java, the object is the basic unit for organizing data and code in Scala.  In addition, Scala regularizes and generalizes the treatment of objects in several directions.  One regularization seen above is that Scala hides the distinction between primitive and object types: `42` is an object belonging to class `Int`, which provides various methods such as `toString` and `toDouble`.
 
 Consider the following Java code, defining a simple hierarchy of shape classes:
 {% highlight java %}
@@ -135,7 +135,7 @@ class Square(private var center: Point, val width: Int) extends Shape {
 
 Except for a few changed keywords ("trait" instead of "interface", "extends" instead of "implements") and the slightly different syntax for defining variables and functions (the "var", "val", and "def" keywords, and the type after instead of before each identifier), the only real difference here is how we set up the instance fields for the subclasses.  Scala supports an abbreviation for the common pattern of declaring simple fields and initializing them in the constructor -- the first line of the `Square` class definition says that there will be a private mutable field named `center` and a public read-only field named `width`, both to be initialized when the object is constructed.  Since `width` is public, there will automatically be an accessor method named `width` on `Square` objects, corresponding to the `getWidth()` in the Java version.
 
-In fact, we may write this somewhat more idiomatically as follows:
+In fact, we may write this somewhat more idiomatically (and compactly) as follows:
 {% highlight scala %}
 trait Shape {
   def location: Point
@@ -314,6 +314,7 @@ All of this is a prelude to looking at algebraic data types.  Where the OO parad
 
 An algebraic data type is specified by giving a set of *constructors*.  Each constructor takes a list of zero or more data values as parameters, and represents one of the ways to create a value of the data type.  For example, consider the type of lists of integers.  A list may be empty, or it may consist of an integer at the head, plus a tail which is another list of integers.  Here is how this might be expressed (though not quite idiomatically) in the functional language Haskell:
 {% highlight haskell %}
+-- This is Haskell
 data List = Nil
           | Cons(Int, List)
 {% endhighlight %}
@@ -327,12 +328,14 @@ class Cons(val head: Int, val tail: List) extends List
 {% endhighlight %}
 Surprise!  It looks just like the OO class hierarchies we have already seen, except there are no member functions, and the only instance variables are the (immutable) constructor parameters.  In fact, these two points characterize the standard use of algebraic data types in functional languages: all of the contained data is supplied to the constructors (and thereafter remains unmodified), and operations on the data are defined as external functions.  In the Scala version, we may extract the data from a constructed object using accessor methods (`head` and `tail` in the above example), but the more common functional style is to access the data through "pattern matching."  Suppose we want to write a function `first` in Haskell which takes an integer list and returns either the head of the list, or 0 if the list is empty.  Here is one way to do this:
 {% highlight haskell %}
+-- This is Haskell
 first(list) = case list of
                 Nil -> 0
                 Cons(head, tail) -> head
 {% endhighlight %}
 It is more common in Haskell to combine pattern matching with function definition, which fits nicely with an algebraic notion of evaluation by substituting equals for equals, and also with the common practice in functional languages of recursive function definitions (mirroring the recursive data type definitions).  Here is the `first` function again, and a recursive function to sum the contents of an integer list:
 {% highlight haskell %}
+-- This is Haskell
 first(Nil) = 0
 first(Cons(head, tail)) = head
 
@@ -343,6 +346,7 @@ sum(Cons(head, tail)) = head + sum(tail)
 
 **Exercise:** Complete the following evaluation process and check that the `sum` function works as expected:
 {% highlight haskell %}
+-- This is Haskell
 sum(Cons(1, Cons(2, Cons(3, Nil))))
  = 1 + sum(Cons(2, Cons(3, Nil)))
  = ...
