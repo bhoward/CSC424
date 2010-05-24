@@ -387,8 +387,22 @@ def ifThenElse[T](b: Bool, trueClause: => T, falseClause: => T): T = b match {
 {% endhighlight %}
 This particularly simple form of algebraic data type is known as an "enumeration" type -- the type consists of a (small) set of values, and functions are frequently defined by cases on those values.
 
-In general, values of an algebraic data type will have a *tree-like* structure: each constructor defines a kind of node in the structure, with the contained data as children.  (Technically, subtrees can be shared, so the most general description of the structure is a *directed acyclic graph*, but the difference is minor if the data is all immutable.)
-
+In general, values of an algebraic data type will have a *tree-like* structure: each constructor defines a kind of node in the structure, with the contained data as children.  (Technically, subtrees can be shared, so the most general description of the structure is a *directed acyclic graph*, but the difference is minor if the data is all immutable.)  Here is a standard example, which we will be discussing more later:
+{% highlight scala %}
+sealed trait Expression
+case class Constant(value: Int) extends Expression
+case class Add(left: Expression, right: Expression) extends Expression
+case class Multiply(left: Expression, right: Expression) extends Expression
+{% endhighlight %}
+**Exercise:** Given the following definition of the `eval` function, test your ability to read Scala code by predicting the result of `eval(Add(Constant(1), Multiply(Constant(2), Constant(3))))`:
+{% highlight scala %}
+def eval(expr: Expression): Int = expr match {
+  case Constant(value) => value
+  case Add(left, right) => eval(left) + eval(right)
+  case Multiply(left, right) => eval(left) * eval(right)
+}
+{% endhighlight %}
+Now verify your prediction with the REPL, then extend the code to handle subtraction and negation expressions.
 
 ## Type Parameters
 
