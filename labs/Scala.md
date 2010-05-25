@@ -403,7 +403,3 @@ def eval(expr: Expression): Int = expr match {
 }
 {% endhighlight %}
 Now verify your prediction with the REPL, then extend the code to handle subtraction and negation expressions, such as `Subtract(Constant(35), Negate(Constant(7)))`.
-
-## Type Parameters
-
-Something about type parameters
