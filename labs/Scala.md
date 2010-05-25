@@ -402,7 +402,7 @@ def eval(expr: Expression): Int = expr match {
   case Multiply(left, right) => eval(left) * eval(right)
 }
 {% endhighlight %}
-Now verify your prediction with the REPL, then extend the code to handle subtraction and negation expressions.
+Now verify your prediction with the REPL, then extend the code to handle subtraction and negation expressions, such as `Subtract(Constant(35), Negate(Constant(7)))`.
 
 ## Type Parameters
 
