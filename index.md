@@ -76,6 +76,7 @@ One of the common features of all of these texts is that they focus on the conce
 * Joel Spolsky, [The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)](http://www.joelonsoftware.com/printerFriendly/articles/Unicode.html)
 * Guy Steele, [Growing a Language](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.10.1635&rep=rep1&type=pdf) ([video](http://video.google.com/videoplay?docid=-8860158196198824415))
 * Herb Sutter, [The Free Lunch Is  Over: A Fundamental Turn Toward Concurrency in Software](http://www.gotw.ca/publications/concurrency-ddj.htm)
+* Dave Thomas, [Functional Programming - Crossing the Chasm?](http://www.jot.fm/issues/issue_2009_07/column4/index.html)
 * Ken Thompson, [Reflections on Trusting Trust](http://cm.bell-labs.com/who/ken/trust.html)
 * David Ungar and Randall Smith, [Programming as an Experience: the Inspiration for Self](http://research.sun.com/features/tenyears/volcd/papers/6Ungar.pdf)
 * Peter Van Roy, [Programming Paradigms for Dummies: What Every Programmer Should Know](http://www.info.ucl.ac.be/~pvr/VanRoyChapter.pdf)
