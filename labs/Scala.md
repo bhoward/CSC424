@@ -403,3 +403,8 @@ def eval(expr: Expression): Int = expr match {
 }
 {% endhighlight %}
 Now verify your prediction with the REPL, then extend the code to handle subtraction and negation expressions, such as `Subtract(Constant(35), Negate(Constant(7)))`.
+
+## Further Reading
+
+* [Learning Scala in small bites](http://matt.might.net/articles/learning-scala-in-small-bites/) -- This is a nice series of small examples which might help to cement some of the Scala concepts discussed above.
+* [Learning Scala for the Java Programmer](http://www.scala-lang.org/node/1305#Java) -- This collects numerous links to other resources on making the transition from Java to Scala.
