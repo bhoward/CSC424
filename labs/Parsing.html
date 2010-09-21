@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+          <title>Parsing</title>
+          <script type="text/javascript" src="script/escalator.js"></script><script type="text/javascript" src="script/shCore.js"></script><script type="text/javascript" src="rushJava.js"></script><script type="text/javascript" src="script/shBrushScala.js"></script><script type="text/javascript" src="script/shBrushPlain.js"></script><script type="text/javascript" src="script/shBrushSpecs.js"></script><link href="style/shCore.css" rel="stylesheet" type="text/css"></link><link href="style/shThemeDefault.css" rel="stylesheet" type="text/css"></link><script type="text/javascript">
+      SyntaxHighlighter.config.clipboardSwf = 'script/clipboard.swf';
+      SyntaxHighlighter.all()
+    </script>
+        </head>
+        <body>
+          <h1>Parsing</h1>
+
+<p>In addition to providing access to virtually any library of code written in
+Java, the standard Scala distribution also supplies a number of powerful
+libraries of its own.  In this lab, we will get some preliminary experience
+using one of these, which we will be using several more times this semester:
+the combinator parsing library.  The details of how the parsing combinators
+are implemented are somewhat involved, but their use is quite straightforward.</p>
+
+<p>The basic idea is that the combinators can take very simple parsers,
+that can only recognize individual tokens such as identifiers, numbers, or
+punctuation, and build more complex parsers that can recognize sequences of
+tokens. These compound parsers, as Scala expressions, can be named and used
+to form ever more sophiticated parsers that bear a strong resemblance to
+BNF grammars and regular expressions.</p>
+
+<h2>S-Expressions</h2>
+
+<p>An S-Expression (sexpr), which stands for "Symbolic Expression", is either an
+"atom" (a single token such as an identifier or numeric literal) or a list of
+sexprs in parentheses.
+One of the strengths of the LISP family of languages is that this very
+simple formation rule is used to construct both the program code and the
+data on which it operates -- this enabled even the earliest versions of LISP,
+in the late 1950's, to implement their own interpreter in a small amount of
+code.</p>
+
+<p>Here is the sexpr formation rule expressed using parser combinators:</p>
+
+<div style="display: none;" id="raw1">
+        <small><a href="#" onclick="document.getElementById('raw1').style.display='none';document.getElementById('run1').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+import scala.util.parsing.combinator._
+
+object SExprParser extends JavaTokenParsers {
+  lazy val sexpr: Parser[Any] = atom | list
+
+  lazy val atom: Parser[Any] = ident | wholeNumber
+
+  lazy val list: Parser[Any] = &quot;(&quot; ~ rep(sexpr) ~ &quot;)&quot;
+
+  def apply(in: String) = parseAll(sexpr, in)
+}</pre>
+      </div>
+
+<div style="display: block;" id="run1">
+        <small><a href="#" onclick="document.getElementById('raw1').style.display='block';document.getElementById('run1').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; import scala.util.parsing.combinator._
+import scala.util.parsing.combinator._
+
+&gt; object SExprParser extends JavaTokenParsers {
+|   lazy val sexpr: Parser[Any] = atom | list
+|   
+|   lazy val atom: Parser[Any] = ident | wholeNumber
+|   
+|   lazy val list: Parser[Any] = &quot;(&quot; ~ rep(sexpr) ~ &quot;)&quot;
+|   
+|   def apply(in: String) = parseAll(sexpr, in)
+| }
+defined module SExprParser
+
+</pre>
+      </div>
+
+<p>The <code>javaTokenParsers</code> class provides the basic <code>ident</code> and <code>wholeNumber</code>
+parsers; other useful parsers in the class are <code>floatingPointNumber</code> and
+<code>stringLiteral</code> for matching Java-style numbers and quote-delimited strings.
+In each case, the parser's result is the matched string of characters -- if
+you want a number, you need to convert it yourself with <code>toInt</code> or
+<code>toDouble</code>.</p>
+
+<p>The <code>~</code> combinator is simply sequencing, or concatenation; the parser
+<code>p ~ q ~ r</code> matches a <code>p</code> followed by a <code>q</code> followed by an <code>r</code>. The result
+will be of the form <code>a ~ b ~ c</code>, where <code>a</code>, <code>b</code>, and <code>c</code> are the results
+of the individual parsers <code>p</code>, <code>q</code>, and <code>r</code>. The <code>|</code>
+combinator gives "alternation", or choice -- <code>p | q</code> first tries to match
+<code>p</code>; if this fails, then it will try to match <code>q</code> instead, starting at
+the same place in the input. Finally, the parser <code>rep(p)</code> matches 0 or
+more copies of <code>p</code> in sequence; its result is a list of all the matches.
+There is a variant, <code>rep1(p)</code>, which matches 1 or more; it is similar to
+<code>p ~ rep(p)</code>, except all of the matches are placed in a single list.</p>
+
+<p>This parser may be used as follows:</p>
+
+<div style="display: none;" id="raw2">
+        <small><a href="#" onclick="document.getElementById('raw2').style.display='none';document.getElementById('run2').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+SExprParser(&quot;(this is (a test))&quot;) // success
+SExprParser(&quot;(no closing parenthesis&quot;) // failure</pre>
+      </div>
+
+<div style="display: block;" id="run2">
+        <small><a href="#" onclick="document.getElementById('raw2').style.display='block';document.getElementById('run2').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; SExprParser(&quot;(this is (a test))&quot;) // success
+res0: SExprParser.ParseResult[Any] = [1.19] parsed: (((~List(this, is, (((~List(a, test))~))))~))
+
+&gt; SExprParser(&quot;(no closing parenthesis&quot;) // failure
+res1: SExprParser.ParseResult[Any] = 
+[1.24] failure: `)' expected but `' found
+
+(no closing parenthesis
+                       ^
+
+</pre>
+      </div>
+
+<p><strong>Exercise:</strong> Try more examples with this parser, and see if you can
+figure out the information in the result.</p>
+
+<p>Note that when the parse succeeds, the result contains all of the
+pieces of the input in parsed form. This is usually more than we want --
+rather than a full "parse tree", we generally want more of an "abstract
+syntax tree", preserving only the essential structure and data. By using
+the <code>^^</code> operator, we may grab and modify the return value from each
+grammar production:</p>
+
+<div style="display: none;" id="raw3">
+        <small><a href="#" onclick="document.getElementById('raw3').style.display='none';document.getElementById('run3').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+sealed trait SExpr
+case class IdentSExpr(id: String) extends SExpr
+case class IntLiteralSExpr(lit: String) extends SExpr
+case class ListSExpr(items: List[SExpr]) extends SExpr
+
+object SExprParser2 extends JavaTokenParsers {
+  lazy val sexpr: Parser[SExpr] = atom | list
+
+  lazy val atom: Parser[SExpr] =
+  ( ident       ^^ {case id =&gt; IdentSExpr(id)}
+  | wholeNumber ^^ {case lit =&gt; IntLiteralSExpr(lit)}
+  )
+
+  lazy val list: Parser[SExpr] =
+    &quot;(&quot; ~ rep(sexpr) ~ &quot;)&quot; ^^ {case (_ ~ items ~ _) =&gt; ListSExpr(items)}
+
+  def apply(in: String) = parseAll(sexpr, in)
+}</pre>
+      </div>
+
+<div style="display: block;" id="run3">
+        <small><a href="#" onclick="document.getElementById('raw3').style.display='block';document.getElementById('run3').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; sealed trait SExpr
+defined trait SExpr
+
+&gt; case class IdentSExpr(id: String) extends SExpr
+defined class IdentSExpr
+
+&gt; case class IntLiteralSExpr(lit: String) extends SExpr
+defined class IntLiteralSExpr
+
+&gt; case class ListSExpr(items: List[SExpr]) extends SExpr
+defined class ListSExpr
+
+&gt; object SExprParser2 extends JavaTokenParsers {
+|   lazy val sexpr: Parser[SExpr] = atom | list
+|   
+|   lazy val atom: Parser[SExpr] =
+|   ( ident       ^^ {case id =&gt; IdentSExpr(id)}
+|   | wholeNumber ^^ {case lit =&gt; IntLiteralSExpr(lit)}
+|   )
+|   
+|   lazy val list: Parser[SExpr] =
+|     &quot;(&quot; ~ rep(sexpr) ~ &quot;)&quot; ^^ {case (_ ~ items ~ _) =&gt; ListSExpr(items)}
+|     
+|   def apply(in: String) = parseAll(sexpr, in)
+| }
+defined module SExprParser2
+
+</pre>
+      </div>
+
+<p>Now we are returning a value in the algebraic data type <code>SExpr</code> on success:</p>
+
+<div style="display: none;" id="raw4">
+        <small><a href="#" onclick="document.getElementById('raw4').style.display='none';document.getElementById('run4').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+SExprParser2(&quot;(this is (a test))&quot;) // success
+SExprParser2(&quot;(no closing parenthesis&quot;) // failure</pre>
+      </div>
+
+<div style="display: block;" id="run4">
+        <small><a href="#" onclick="document.getElementById('raw4').style.display='block';document.getElementById('run4').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; SExprParser2(&quot;(this is (a test))&quot;) // success
+res2: SExprParser2.ParseResult[SExpr] = [1.19] parsed: ListSExpr(List(IdentSExpr(this), IdentSExpr(is), ListSExpr(List(IdentSExpr(a), IdentSExpr(test)))))
+
+&gt; SExprParser2(&quot;(no closing parenthesis&quot;) // failure
+res3: SExprParser2.ParseResult[SExpr] = 
+[1.24] failure: `)' expected but `' found
+
+(no closing parenthesis
+                       ^
+
+</pre>
+      </div>
+
+<p>Finally, we may extract the result with <code>get</code>:</p>
+
+<div style="display: none;" id="raw5">
+        <small><a href="#" onclick="document.getElementById('raw5').style.display='none';document.getElementById('run5').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+SExprParser2(&quot;(this is (a test))&quot;).get
+SExprParser2(&quot;(plus 17 (times 5 5))&quot;).get</pre>
+      </div>
+
+<div style="display: block;" id="run5">
+        <small><a href="#" onclick="document.getElementById('raw5').style.display='block';document.getElementById('run5').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; SExprParser2(&quot;(this is (a test))&quot;).get
+res4: SExpr = ListSExpr(List(IdentSExpr(this), IdentSExpr(is), ListSExpr(List(IdentSExpr(a), IdentSExpr(test)))))
+
+&gt; SExprParser2(&quot;(plus 17 (times 5 5))&quot;).get
+res5: SExpr = ListSExpr(List(IdentSExpr(plus), IntLiteralSExpr(17), ListSExpr(List(IdentSExpr(times), IntLiteralSExpr(5), IntLiteralSExpr(5)))))
+
+</pre>
+      </div>
+
+<p>Once we can parse a sexpr, here is an example of a simple evaluation
+function:</p>
+
+<div style="display: none;" id="raw6">
+        <small><a href="#" onclick="document.getElementById('raw6').style.display='none';document.getElementById('run6').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def eval(exp: SExpr): Int = exp match {
+  case IntLiteralSExpr(lit) =&gt; lit.toInt
+  case ListSExpr(IdentSExpr(&quot;plus&quot;) :: exps) =&gt;
+    exps.map(eval).sum
+  case ListSExpr(IdentSExpr(&quot;times&quot;) :: exps) =&gt;
+    exps.map(eval).product
+  case _ =&gt; error(&quot;Unrecognized expression&quot;)
+}
+
+eval(SExprParser2(&quot;(plus 17 (times 5 5))&quot;).get)</pre>
+      </div>
+
+<div style="display: block;" id="run6">
+        <small><a href="#" onclick="document.getElementById('raw6').style.display='block';document.getElementById('run6').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def eval(exp: SExpr): Int = exp match {
+|   case IntLiteralSExpr(lit) =&gt; lit.toInt
+|   case ListSExpr(IdentSExpr(&quot;plus&quot;) :: exps) =&gt;
+|     exps.map(eval).sum
+|   case ListSExpr(IdentSExpr(&quot;times&quot;) :: exps) =&gt;
+|     exps.map(eval).product
+|   case _ =&gt; error(&quot;Unrecognized expression&quot;)
+| }
+eval: (exp: SExpr)Int
+
+&gt; eval(SExprParser2(&quot;(plus 17 (times 5 5))&quot;).get)
+res6: Int = 42
+
+</pre>
+      </div>
+
+<p><strong>Exercise:</strong> Extend the parser so that it will also allow floating point
+literals, then extend the <code>eval</code> function so that it will compute a
+<code>Double</code> result.</p>
+
+<h2>Arithmetic Expressions</h2>
+
+<p>Here is a slightly larger example, based on the expression grammar given in
+Example 2.8 of Scott, "Programming Language Pragmatics" (3rd ed.):</p>
+
+<div style="display: none;" id="raw7">
+        <small><a href="#" onclick="document.getElementById('raw7').style.display='none';document.getElementById('run7').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+sealed trait Expr
+case class BinOpExpr(op: String, left: Expr, right: Expr) extends Expr
+case class UnOpExpr(op: String, expr: Expr) extends Expr
+case class IdExpr(id: String) extends Expr
+case class NumExpr(num: Int) extends Expr
+
+object ArithParser extends JavaTokenParsers with PackratParsers {
+  lazy val expr: PackratParser[Expr] =
+  ( expr ~ addop ~ term ^^ {case e ~ op ~ t =&gt; BinOpExpr(op, e, t)}
+  | term
+  )
+
+  lazy val term: PackratParser[Expr] =
+  ( term ~ mulop ~ factor ^^ {case t ~ op ~ f =&gt; BinOpExpr(op, t, f)}
+  | factor
+  )
+
+  lazy val factor: PackratParser[Expr] =
+  ( &quot;-&quot; ~ factor     ^^ {case op ~ f =&gt; UnOpExpr(op, f)}
+  | &quot;(&quot; ~ expr ~ &quot;)&quot; ^^ {case _ ~ e ~ _ =&gt; e}
+  | ident            ^^ {case id =&gt; IdExpr(id)}
+  | wholeNumber      ^^ {case numLit =&gt; NumExpr(numLit.toInt)}
+  )
+
+  lazy val addop: PackratParser[String] = &quot;+&quot; | &quot;-&quot;
+
+  lazy val mulop: PackratParser[String] = &quot;*&quot; | &quot;/&quot;
+
+  def apply(in: String) = parseAll(expr, in)
+}
+
+ArithParser(&quot;3+4*5&quot;)
+ArithParser(&quot;10-4-3&quot;)
+ArithParser(&quot;-1/(x+y)&quot;)</pre>
+      </div>
+
+<div style="display: block;" id="run7">
+        <small><a href="#" onclick="document.getElementById('raw7').style.display='block';document.getElementById('run7').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; sealed trait Expr
+defined trait Expr
+
+&gt; case class BinOpExpr(op: String, left: Expr, right: Expr) extends Expr
+defined class BinOpExpr
+
+&gt; case class UnOpExpr(op: String, expr: Expr) extends Expr
+defined class UnOpExpr
+
+&gt; case class IdExpr(id: String) extends Expr
+defined class IdExpr
+
+&gt; case class NumExpr(num: Int) extends Expr
+defined class NumExpr
+
+&gt; object ArithParser extends JavaTokenParsers with PackratParsers {
+|   lazy val expr: PackratParser[Expr] =
+|   ( expr ~ addop ~ term ^^ {case e ~ op ~ t =&gt; BinOpExpr(op, e, t)}
+|   | term
+|   )
+|     
+|   lazy val term: PackratParser[Expr] =
+|   ( term ~ mulop ~ factor ^^ {case t ~ op ~ f =&gt; BinOpExpr(op, t, f)}
+|   | factor
+|   )
+|     
+|   lazy val factor: PackratParser[Expr] =
+|   ( &quot;-&quot; ~ factor     ^^ {case op ~ f =&gt; UnOpExpr(op, f)}
+|   | &quot;(&quot; ~ expr ~ &quot;)&quot; ^^ {case _ ~ e ~ _ =&gt; e}
+|   | ident            ^^ {case id =&gt; IdExpr(id)}
+|   | wholeNumber      ^^ {case numLit =&gt; NumExpr(numLit.toInt)}
+|   )
+|     
+|   lazy val addop: PackratParser[String] = &quot;+&quot; | &quot;-&quot;
+|   
+|   lazy val mulop: PackratParser[String] = &quot;*&quot; | &quot;/&quot;
+|   
+|   def apply(in: String) = parseAll(expr, in)
+| }
+defined module ArithParser
+
+&gt; ArithParser(&quot;3+4*5&quot;)
+res7: ArithParser.ParseResult[Expr] = [1.6] parsed: BinOpExpr(+,NumExpr(3),BinOpExpr(*,NumExpr(4),NumExpr(5)))
+
+&gt; ArithParser(&quot;10-4-3&quot;)
+res8: ArithParser.ParseResult[Expr] = [1.7] parsed: BinOpExpr(-,BinOpExpr(-,NumExpr(10),NumExpr(4)),NumExpr(3))
+
+&gt; ArithParser(&quot;-1/(x+y)&quot;)
+res9: ArithParser.ParseResult[Expr] = [1.9] parsed: BinOpExpr(/,UnOpExpr(-,NumExpr(1)),BinOpExpr(+,IdExpr(x),IdExpr(y)))
+
+</pre>
+      </div>
+
+<p>Except for the algebraic data type definitions at the top, which define our
+abstract syntax, and the <code>^^</code> clauses on some of the rules describing how to
+construct the AST, this almost exactly matches the grammar rules given in the
+text. The only difference is in the ordering (and the explicit use of <code>~</code> for
+sequencing), because Scala's combinator parsers are sensitive to the order of
+the rules -- in general, you should put longer rules before shorter ones, or
+else a shorter one might succeed too early and prevent a longer one from
+matching.</p>
+
+<p>The <code>PackratParsers</code> trait mixed in here, and the <code>PackratParser</code> return type,
+indicate that we are using a variety of parser which can handle the kind of
+recursion present in these grammar rules.</p>
+
+<p><strong>Exercise:</strong> Add floating point numbers as before, as well as a square root
+function. This should involve adding two rules to the definition of a <code>factor</code>.
+The AST for the expression <code>sqrt(2.0)</code> should be <code>UnOpExpr("sqrt", NumExpr(2.0))</code>
+(change the parameter of a <code>NumExpr</code> to a <code>Double</code>). Then, write an evaluation
+function which takes an <code>Expr</code> and returns a <code>Double</code>; for now, you may
+throw an error if you encounter an <code>IdExpr</code>.</p>
+        </body>
+      </html>
