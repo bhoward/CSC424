@@ -57,7 +57,7 @@ printing the result on the console.
 
 The project is in the `public/ExprLang` folder on the I: drive. It is
 meant to be built with [SBT](http://code.google.com/p/simple-build-tool/),
-the Simple Build Tool. Double-clicking the SBT.BAT file in Windows should
+the Simple Build Tool. Double-clicking the RUNSBT.BAT file in Windows should
 start up an interactive session with SBT. At the prompt, you can issue
 commands such as "clean", "update", "compile", "test", or "console".
 A particularly useful mode is to execute the command "~test", which tells
@@ -71,26 +71,26 @@ The sources are in the subdirectories `src/main/scala/csc424` and
 ## Exercises
 
 1. Familiarize yourself with the interpreter as-is. Do `clean` and `update`
-when you first start working, then do `test` to run the tests. By saying
-`console`, SBT will start up a Scala command line with the classes available.
-Try the following:
+    when you first start working, then do `test` to run the tests. By saying
+    `console`, SBT will start up a Scala command line with the classes available.
+    Try the following:
 
-    import csc424._
-    val src = "1 + 2 * 3"
-    val ast = ExprLangParser(src).get
-    ExprLangInterpreter.eval(ast, EmptyEnvironment)
+        import csc424._
+        val src = "1 + 2 * 3"
+        val ast = ExprLangParser(src).get
+        ExprLangInterpreter.eval(ast, EmptyEnvironment)
 
-For convenience, you might want to define a function such as
+    For convenience, you might want to define a function such as
 
-    def eval(src: String) = {
-      val ast = ExprLangParser(src).get
-      ExprLangInterpreter.eval(ast, EmptyEnvironment)
-    }
+        def eval(src: String) = {
+          val ast = ExprLangParser(src).get
+          ExprLangInterpreter.eval(ast, EmptyEnvironment)
+        }
 
-Then you can test Expression Language programs by simply calling `eval`
-with the source as a (string) argument.
+    Then you can test Expression Language programs by simply calling `eval`
+    with the source as a (string) argument.
 
-Now try each of the example programs above.
+    Now try each of the example programs above.
 
 2. Extend the parser, interpreter, and test suite to handle floating
 point literals (we will do this together in class).
