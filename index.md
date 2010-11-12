@@ -63,7 +63,7 @@ One of the common features of all of these texts is that they focus on the conce
 * David Goldberg, [What Every Computer Scientist Should Know About Floating-Point Arithmetic](http://docs.sun.com/source/806-3568/ncg_goldberg.html)
 * James Gosling and Henry McGilton, [White Paper: The Java Language Environment](http://java.sun.com/docs/white/langenv/)
 * Tony Hoare, [Hints on Programming Language Design](http://www.cs.berkeley.edu/~necula/cs263/handouts/hoarehints.pdf)
-* John Hughes, [Why Functional Programming Matters](http://www.cs.chalmers.se/~rjmh/Papers/whyfp.html)
+* John Hughes, [Why Functional Programming Matters](http://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf)
 * Daniel Ingalls, [Design Principles Behind Smalltalk](http://web.archive.org/web/20070213165045/users.ipa.net/~dwighth/smalltalk/byte_aug81/design_principles_behind_smalltalk.html)
 * James Iry, [A Brief, Incomplete, and Mostly Wrong History of Programming Languages](http://james-iry.blogspot.com/2009/05/brief-incomplete-and-mostly-wrong.html)
 * John Knight and Nancy Leveson, [An Experimental Evaluation of the Assumption of Independence in Multiversion Programming](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.29.363&rep=rep1&type=pdf)
