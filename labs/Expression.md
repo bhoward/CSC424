@@ -56,8 +56,10 @@ printing the result on the console.
 ## Structure of the Interpreter
 
 The project is in the `public/ExprLang` folder on the I: drive. It is
-meant to be built with [SBT](http://code.google.com/p/simple-build-tool/),
-the Simple Build Tool. Double-clicking the RUNSBT.BAT file in Windows should
+meant to be built with [SBT](https://github.com/harrah/xsbt/wiki),
+the Simple Build Tool. On Windows, there is a .msi installer file (also
+on the I: drive); after running this, you may start a command prompt
+(cmd) and you should have the sbt command on your path. Running this will
 start up an interactive session with SBT. At the prompt, you can issue
 commands such as "clean", "update", "compile", "test", or "console".
 A particularly useful mode is to execute the command "~test", which tells
@@ -74,15 +76,19 @@ The sources are in the subdirectories `src/main/scala/csc424` and
     when you first start working, then do `test` to run the tests. By saying
     `console`, SBT will start up a Scala command line with the classes available.
     Try the following:
+
         import csc424._
         val src = "1 + 2 * 3"
         val ast = ExprLangParser(src).get
         ExprLangInterpreter.eval(ast, EmptyEnvironment)
+
     For convenience, you might want to define a function such as
+
         def eval(src: String) = {
           val ast = ExprLangParser(src).get
           ExprLangInterpreter.eval(ast, EmptyEnvironment)
         }
+
     Then you can test Expression Language programs by simply calling `eval`
     with the source as a (string) argument.
     Now try each of the example programs above.
