@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+          <title>/Users/bhoward/Dropbox/Webber/Ch5.esc</title>
+          <script type="text/javascript" src="script/escalator.js"></script><script type="text/javascript" src="script/shCore.js"></script><script type="text/javascript" src="script/shBrushJava.js"></script><script type="text/javascript" src="script/shBrushScala.js"></script><script type="text/javascript" src="script/shBrushPlain.js"></script><script type="text/javascript" src="script/shBrushSpecs.js"></script><link href="style/shCore.css" rel="stylesheet" type="text/css"></link><link href="style/shThemeDefault.css" rel="stylesheet" type="text/css"></link><script type="text/javascript">
+      SyntaxHighlighter.config.clipboardSwf = 'script/clipboard.swf';
+      SyntaxHighlighter.all()
+    </script>
+        </head>
+        <body>
+          <h1>Chapter 5: A First Look at <strike>ML</strike> Scala</h1>
+
+<p>This document simply shows the Scala equivalents to the code examples
+in Webber, "Modern Programming Languages" (2nd Edition).</p>
+
+<h2>Section 5.2: Getting Started</h2>
+
+<div style="display: none;" id="raw1">
+        <small><a href="#" onclick="document.getElementById('raw1').style.display='none';document.getElementById('run1').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+1 + 2 * 3</pre>
+      </div>
+
+<div style="display: block;" id="run1">
+        <small><a href="#" onclick="document.getElementById('raw1').style.display='block';document.getElementById('run1').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; 1 + 2 * 3
+res0: Int = 7
+
+</pre>
+      </div>
+
+<h2>Section 5.3: Constants</h2>
+
+<div style="display: none;" id="raw2">
+        <small><a href="#" onclick="document.getElementById('raw2').style.display='none';document.getElementById('run2').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+1234
+123.4
+true
+false
+&quot;fred&quot;
+&quot;H&quot;
+'H'</pre>
+      </div>
+
+<div style="display: block;" id="run2">
+        <small><a href="#" onclick="document.getElementById('raw2').style.display='block';document.getElementById('run2').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; 1234
+res1: Int = 1234
+
+&gt; 123.4
+res2: Double = 123.4
+
+&gt; true
+res3: Boolean = true
+
+&gt; false
+res4: Boolean = false
+
+&gt; &quot;fred&quot;
+res5: java.lang.String = fred
+
+&gt; &quot;H&quot;
+res6: java.lang.String = H
+
+&gt; 'H'
+res7: Char = H
+
+</pre>
+      </div>
+
+<h2>Section 5.4: Operators</h2>
+
+<p>Note that Scala uses the Java version of the modulo operator (%), where
+<code>-5 % 3</code> yields <code>-2</code>, unlike ML where the modulo is
+always non-negative (in ML, <code>-5 div 3</code> is <code>-2</code> and
+<code>-5 mod 3</code> is <code>1</code>).</p>
+
+<div style="display: none;" id="raw3">
+        <small><a href="#" onclick="document.getElementById('raw3').style.display='none';document.getElementById('run3').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+- 1 + 2 - 3 * 4 / 5 % 6
+- 1.0 + 2.0 - 3.0 * 4.0 / 5.0
+&quot;bibity&quot; + &quot;bobity&quot; + &quot;boo&quot;
+2 &lt; 3
+1.0 &lt;= 1.0
+'d' &gt; 'c'
+&quot;abce&quot; &gt;= &quot;abd&quot;
+1 &lt; 2 || 3 &gt; 4
+1 &lt; 2 &amp;&amp; !(3 &lt; 4)
+true || 1 / 0 == 0</pre>
+      </div>
+
+<div style="display: block;" id="run3">
+        <small><a href="#" onclick="document.getElementById('raw3').style.display='block';document.getElementById('run3').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; - 1 + 2 - 3 * 4 / 5 % 6
+res8: Int = -1
+
+&gt; - 1.0 + 2.0 - 3.0 * 4.0 / 5.0
+res9: Double = -1.4
+
+&gt; &quot;bibity&quot; + &quot;bobity&quot; + &quot;boo&quot;
+res10: java.lang.String = bibitybobityboo
+
+&gt; 2 &lt; 3
+res11: Boolean = true
+
+&gt; 1.0 &lt;= 1.0
+res12: Boolean = true
+
+&gt; 'd' &gt; 'c'
+res13: Boolean = true
+
+&gt; &quot;abce&quot; &gt;= &quot;abd&quot;
+res14: Boolean = false
+
+&gt; 1 &lt; 2 || 3 &gt; 4
+res15: Boolean = true
+
+&gt; 1 &lt; 2 &amp;&amp; !(3 &lt; 4)
+res16: Boolean = false
+
+&gt; true || 1 / 0 == 0
+res17: Boolean = true
+
+</pre>
+      </div>
+
+<h2>Section 5.5: Conditional Expressions</h2>
+
+<div style="display: none;" id="raw4">
+        <small><a href="#" onclick="document.getElementById('raw4').style.display='none';document.getElementById('run4').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+if (1 &lt; 2) 'x' else 'y'
+if (1 &gt; 2) 34 else 56
+(if (1 &lt; 2) 34 else 56) + 1</pre>
+      </div>
+
+<div style="display: block;" id="run4">
+        <small><a href="#" onclick="document.getElementById('raw4').style.display='block';document.getElementById('run4').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; if (1 &lt; 2) 'x' else 'y'
+res18: Char = x
+
+&gt; if (1 &gt; 2) 34 else 56
+res19: Int = 56
+
+&gt; (if (1 &lt; 2) 34 else 56) + 1
+res20: Int = 35
+
+</pre>
+      </div>
+
+<h2>Section 5.6: Type Conversion and Function Application</h2>
+
+<p>Scala is willing to silently convert from <code>Int</code> to
+<code>Double</code>, as well as from <code>Char</code> to
+<code>Int</code>. Explicit conversions may be requested with <em>methods</em>
+such as <code>.toInt</code> or <code>.toDouble</code>. The
+<code>math</code> object defines some other conversion functions. Note
+that Scala is more rigid about requiring parentheses around function
+arguments.</p>
+
+<div style="display: none;" id="raw5">
+        <small><a href="#" onclick="document.getElementById('raw5').style.display='none';document.getElementById('run5').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+123.toDouble
+math.floor(3.6)
+math.ceil(3.6)
+math.round(3.6)
+3.6.toInt
+'a'.toInt
+97.toChar
+'a'.toString</pre>
+      </div>
+
+<div style="display: block;" id="run5">
+        <small><a href="#" onclick="document.getElementById('raw5').style.display='block';document.getElementById('run5').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; 123.toDouble
+res21: Double = 123.0
+
+&gt; math.floor(3.6)
+res22: Double = 3.0
+
+&gt; math.ceil(3.6)
+res23: Double = 4.0
+
+&gt; math.round(3.6)
+res24: Long = 4
+
+&gt; 3.6.toInt
+res25: Int = 3
+
+&gt; 'a'.toInt
+res26: Int = 97
+
+&gt; 97.toChar
+res27: Char = a
+
+&gt; 'a'.toString
+res28: java.lang.String = a
+
+</pre>
+      </div>
+
+<h2>Section 5.7: Variable Definition</h2>
+
+<div style="display: none;" id="raw6">
+        <small><a href="#" onclick="document.getElementById('raw6').style.display='none';document.getElementById('run6').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+val x = 1 + 2 * 3
+x
+val y = if (x == 7) 1.0 else 2.0
+val fred = 23
+fred
+val fred = true
+fred</pre>
+      </div>
+
+<div style="display: block;" id="run6">
+        <small><a href="#" onclick="document.getElementById('raw6').style.display='block';document.getElementById('run6').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; val x = 1 + 2 * 3
+x: Int = 7
+
+&gt; x
+res29: Int = 7
+
+&gt; val y = if (x == 7) 1.0 else 2.0
+y: Double = 1.0
+
+&gt; val fred = 23
+fred: Int = 23
+
+&gt; fred
+res30: Int = 23
+
+&gt; val fred = true
+fred: Boolean = true
+
+&gt; fred
+res31: Boolean = true
+
+</pre>
+      </div>
+
+<h2>Section 5.9: Tuples and Lists</h2>
+
+<div style="display: none;" id="raw7">
+        <small><a href="#" onclick="document.getElementById('raw7').style.display='none';document.getElementById('run7').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+val barney = (1 + 2, 3.0 * 4.0, &quot;brown&quot;)
+val point1 = (&quot;red&quot;, (300, 200))
+barney._2
+point1._2._1
+List(1, 2, 3)
+List(1.0, 2.0)
+List(true)
+List((1, 2), (1, 3))
+List(List(1, 2, 3), List(1, 2))
+val x = (1, 2, 3)
+val y = List(1, 2, 3)
+List()
+Nil
+List().isEmpty
+List(1, 2, 3).isEmpty
+List(1, 2, 3) ::: List(4, 5, 6)
+val x = 'c' :: List()
+val y = 'b' :: x
+val z = 'a' :: y
+val z = 1 :: 2 :: 3 :: Nil
+z.head
+z.tail
+z.tail.tail
+z.tail.tail.tail
+&quot;hello&quot;.toList
+List('h', 'i').mkString</pre>
+      </div>
+
+<div style="display: block;" id="run7">
+        <small><a href="#" onclick="document.getElementById('raw7').style.display='block';document.getElementById('run7').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; val barney = (1 + 2, 3.0 * 4.0, &quot;brown&quot;)
+barney: (Int, Double, java.lang.String) = (3,12.0,brown)
+
+&gt; val point1 = (&quot;red&quot;, (300, 200))
+point1: (java.lang.String, (Int, Int)) = (red,(300,200))
+
+&gt; barney._2
+res32: Double = 12.0
+
+&gt; point1._2._1
+res33: Int = 300
+
+&gt; List(1, 2, 3)
+res34: List[Int] = List(1, 2, 3)
+
+&gt; List(1.0, 2.0)
+res35: List[Double] = List(1.0, 2.0)
+
+&gt; List(true)
+res36: List[Boolean] = List(true)
+
+&gt; List((1, 2), (1, 3))
+res37: List[(Int, Int)] = List((1,2), (1,3))
+
+&gt; List(List(1, 2, 3), List(1, 2))
+res38: List[List[Int]] = List(List(1, 2, 3), List(1, 2))
+
+&gt; val x = (1, 2, 3)
+x: (Int, Int, Int) = (1,2,3)
+
+&gt; val y = List(1, 2, 3)
+y: List[Int] = List(1, 2, 3)
+
+&gt; List()
+res39: List[Nothing] = List()
+
+&gt; Nil
+res40: scala.collection.immutable.Nil.type = List()
+
+&gt; List().isEmpty
+res41: Boolean = true
+
+&gt; List(1, 2, 3).isEmpty
+res42: Boolean = false
+
+&gt; List(1, 2, 3) ::: List(4, 5, 6)
+res43: List[Int] = List(1, 2, 3, 4, 5, 6)
+
+&gt; val x = 'c' :: List()
+x: List[Char] = List(c)
+
+&gt; val y = 'b' :: x
+y: List[Char] = List(b, c)
+
+&gt; val z = 'a' :: y
+z: List[Char] = List(a, b, c)
+
+&gt; val z = 1 :: 2 :: 3 :: Nil
+z: List[Int] = List(1, 2, 3)
+
+&gt; z.head
+res44: Int = 1
+
+&gt; z.tail
+res45: List[Int] = List(2, 3)
+
+&gt; z.tail.tail
+res46: List[Int] = List(3)
+
+&gt; z.tail.tail.tail
+res47: List[Int] = List()
+
+&gt; &quot;hello&quot;.toList
+res48: List[Char] = List(h, e, l, l, o)
+
+&gt; List('h', 'i').mkString
+res49: String = hi
+
+</pre>
+      </div>
+
+<h2>Section 5.10: Function Definitions</h2>
+
+<div style="display: none;" id="raw8">
+        <small><a href="#" onclick="document.getElementById('raw8').style.display='none';document.getElementById('run8').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def firstChar(s: String): Char = s.toList.head
+firstChar(&quot;abc&quot;)
+def quot(a: Int, b: Int): Int = a / b
+quot(6, 2)</pre>
+      </div>
+
+<div style="display: block;" id="run8">
+        <small><a href="#" onclick="document.getElementById('raw8').style.display='block';document.getElementById('run8').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def firstChar(s: String): Char = s.toList.head
+firstChar: (s: String)Char
+
+&gt; firstChar(&quot;abc&quot;)
+res50: Char = a
+
+&gt; def quot(a: Int, b: Int): Int = a / b
+quot: (a: Int,b: Int)Int
+
+&gt; quot(6, 2)
+res51: Int = 3
+
+</pre>
+      </div>
+
+<p>Scala does not merge tuples and parameter lists the way ML does, but given
+a function <code>f: (T1, T2) => T3</code>, taking two arguments of types
+<code>T1</code> and <code>T2</code>, the function <code>f.tupled</code>
+will have type <code>((T1, T2)) => T3</code> -- it takes a single argument
+which is a tuple of <code>T1</code> and <code>T2</code>. Also, in the
+example, note that <code>quot</code> is not technically a function, it is
+a <em>method</em>; the expression <code>(quot _)</code> converts it into a
+function value.</p>
+
+<div style="display: none;" id="raw9">
+        <small><a href="#" onclick="document.getElementById('raw9').style.display='none';document.getElementById('run9').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+val pair = (6, 2)
+quot _
+(quot _).tupled
+(quot _).tupled(pair)
+def fact(n: Int): Int = {
+  if (n == 0) 1
+  else n * fact(n - 1)
+}
+fact(5)
+def listsum(x: List[Int]): Int = {
+  if (x.isEmpty) 0
+  else x.head + listsum(x.tail)
+}
+listsum(List(1, 2, 3, 4, 5))
+def length[T](x: List[T]): Int = {
+  if (x.isEmpty) 0
+  else 1 + length(x.tail)
+}
+length(List(true, false, true))
+length(List(4.0, 3.0, 2.0, 1.0))</pre>
+      </div>
+
+<div style="display: block;" id="run9">
+        <small><a href="#" onclick="document.getElementById('raw9').style.display='block';document.getElementById('run9').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; val pair = (6, 2)
+pair: (Int, Int) = (6,2)
+
+&gt; quot _
+res52: (Int, Int) =&gt; Int = &lt;function2&gt;
+
+&gt; (quot _).tupled
+res53: ((Int, Int)) =&gt; Int = &lt;function1&gt;
+
+&gt; (quot _).tupled(pair)
+res54: Int = 3
+
+&gt; def fact(n: Int): Int = {
+|   if (n == 0) 1
+|   else n * fact(n - 1)
+| }
+fact: (n: Int)Int
+
+&gt; fact(5)
+res55: Int = 120
+
+&gt; def listsum(x: List[Int]): Int = {
+|   if (x.isEmpty) 0
+|   else x.head + listsum(x.tail)
+| }
+listsum: (x: List[Int])Int
+
+&gt; listsum(List(1, 2, 3, 4, 5))
+res56: Int = 15
+
+&gt; def length[T](x: List[T]): Int = {
+|   if (x.isEmpty) 0
+|   else 1 + length(x.tail)
+| }
+length: [T](x: List[T])Int
+
+&gt; length(List(true, false, true))
+res57: Int = 3
+
+&gt; length(List(4.0, 3.0, 2.0, 1.0))
+res58: Int = 4
+
+</pre>
+      </div>
+
+<p>Type inference is one of the more significant differences between Scala
+and ML. Because Scala is also an object-oriented language, and it supports
+<em>subtype polymorphism</em> as in Java alongside <em>parametric polymorphism</em> as
+in ML (see Chapter 8), the type inference problem is much more difficult.
+As a result, we need to explicitly specify more types in Scala code than in
+the equivalent ML. On the other hand, since every type is a subtype of
+<code>Any</code>, which has an equals method, Scala does not have a
+separate notion of "equality types" (whether this is a good thing is
+debateable...).</p>
+
+<div style="display: none;" id="raw10">
+        <small><a href="#" onclick="document.getElementById('raw10').style.display='none';document.getElementById('run10').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def reverse[T](L: List[T]): List[T] = {
+  if (L.isEmpty) Nil
+  else reverse(L.tail) ::: List(L.head)
+}</pre>
+      </div>
+
+<div style="display: block;" id="run10">
+        <small><a href="#" onclick="document.getElementById('raw10').style.display='block';document.getElementById('run10').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def reverse[T](L: List[T]): List[T] = {
+|   if (L.isEmpty) Nil
+|   else reverse(L.tail) ::: List(L.head)
+| }
+reverse: [T](L: List[T])List[T]
+
+</pre>
+      </div>
+
+<h2>Section 5.11: <strike>ML</strike> Scala Types and Type Annotations</h2>
+
+<p>This section does not apply to Scala, because parameter lists in Scala
+method definitions always have to have explicit types for each parameter:</p>
+
+<div style="display: none;" id="raw11">
+        <small><a href="#" onclick="document.getElementById('raw11').style.display='none';document.getElementById('run11').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def prod(a: Int, b: Int): Int = a * b
+def prod(a: Double, b: Double): Double = a * b</pre>
+      </div>
+
+<div style="display: block;" id="run11">
+        <small><a href="#" onclick="document.getElementById('raw11').style.display='block';document.getElementById('run11').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def prod(a: Int, b: Int): Int = a * b
+prod: (a: Int,b: Int)Int
+
+&gt; def prod(a: Double, b: Double): Double = a * b
+prod: (a: Double,b: Double)Double
+
+</pre>
+      </div>
+
+<p>For each of these, we may leave off the result type. However, if a function
+calls itself recursively, the result type must be specified (because of the
+type inference problem), so it is a good habit to get into to always
+provide a full function signature in Scala.</p>
+        </body>
+      </html>
