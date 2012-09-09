@@ -1,0 +1,571 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+          <title>/Users/bhoward/Dropbox/Webber/Ch7.esc</title>
+          <script type="text/javascript" src="/resource/script/escalator.js"></script><script type="text/javascript" src="/resource/jsMath/easy/load.js"></script><script type="text/javascript" src="/resource/script/shCore.js"></script><script type="text/javascript" src="/resource/script/shBrushJava.js"></script><script type="text/javascript" src="/resource/script/shBrushScala.js"></script><script type="text/javascript" src="/resource/script/shBrushPlain.js"></script><script type="text/javascript" src="/resource/script/shBrushSpecs.js"></script><link href="/resource/style/shCore.css" rel="stylesheet" type="text/css"></link><link href="/resource/style/shThemeDefault.css" rel="stylesheet" type="text/css"></link><script type="text/javascript">
+      SyntaxHighlighter.config.clipboardSwf = '/resource/script/clipboard.swf';
+      SyntaxHighlighter.all()
+    </script>
+        </head>
+        <body>
+          <h1>Chapter 7: A Second Look at <strike>ML</strike> Scala</h1>
+
+<h2>Section 7.2: Patterns You Already Know</h2>
+
+<p>As noted in <a href="Ch5.html">Chapter 5</a>, Scala does not treat parameter lists as tuples
+automatically. One reason for this is compatibility with Java, which uses
+conventional parameter lists for methods rather than passing a single object on
+which to pattern match. Throughout this chapter, when an ML function would be
+written in pattern matching style as</p>
+
+<pre><code>fun f pat1 = expr1
+|   f pat2 = expr2
+...
+</code></pre>
+
+<p>we will translate this into Scala as something like</p>
+
+<pre><code>def f(x: T): U = x match {
+  case pat1 =&gt; expr1
+  case pat2 =&gt; expr2
+}
+</code></pre>
+
+<p>(Also notice that Scala requires explicit parameter and return types.) Although
+this is somewhat more verbose, it is the best that the designers of Scala have been
+able to do so far in merging ML's functional idiom with Java's object-oriented
+features.</p>
+
+<h2>Section 7.3: More Simple Patterns</h2>
+
+<div style="display: none;" id="raw12">
+        <small><a href="#" onclick="document.getElementById('raw12').style.display='none';document.getElementById('run12').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def f(x: Any): String = x match {
+  case _ =&gt; &quot;yes&quot;
+}
+f(34.5)
+f(List())
+def f(x: Int): String = x match {
+  case 0 =&gt; &quot;yes&quot;
+}
+f(0)
+f(1)</pre>
+      </div>
+
+<div style="display: block;" id="run12">
+        <small><a href="#" onclick="document.getElementById('raw12').style.display='block';document.getElementById('run12').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def f(x: Any): String = x match {
+|   case _ =&gt; &quot;yes&quot;
+| }
+f: (x: Any)String
+
+&gt; f(34.5)
+res59: String = yes
+
+&gt; f(List())
+res60: String = yes
+
+&gt; def f(x: Int): String = x match {
+|   case 0 =&gt; &quot;yes&quot;
+| }
+f: (x: Int)String
+
+&gt; f(0)
+res61: String = yes
+
+&gt; f(1)
+scala.MatchError: 1
+    at .f(&lt;console&gt;:5)
+    at .&lt;init&gt;(&lt;console&gt;:7)
+    at .&lt;clinit&gt;(&lt;console&gt;)
+    at RequestResult$.&lt;init&gt;(&lt;console&gt;:9)
+    at RequestResult$.&lt;clinit&gt;(&lt;console&gt;)
+    at RequestResult$scala_repl_result(&lt;console&gt;)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:601)
+    at scala.tools.nsc.Interpreter$Request$$anonfun$loadAndRun$1$$anonfun$apply$18.apply(Interpreter.scala:981)
+    at scala.tools.nsc.Interpreter$Request$$anonfun$loadAndRun$1$$anonfun$apply$18.apply(Interpreter.scala:981)
+    at scala.util.control.Exception$Catch.apply(Exception.scala:79)
+    at scala....
+</pre>
+      </div>
+
+<h2>Section 7.4: Complex Patterns</h2>
+
+<div style="display: none;" id="raw13">
+        <small><a href="#" onclick="document.getElementById('raw13').style.display='none';document.getElementById('run13').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def f(x: List[Any]): Any = x match {
+  case List(a, _) =&gt; a
+}
+f(List('f', 'g'))
+def f(y: List[Any]): Any = y match {
+  case x :: xs =&gt; x
+}
+f(List(1, 2, 3))</pre>
+      </div>
+
+<div style="display: block;" id="run13">
+        <small><a href="#" onclick="document.getElementById('raw13').style.display='block';document.getElementById('run13').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def f(x: List[Any]): Any = x match {
+|   case List(a, _) =&gt; a
+| }
+f: (x: List[Any])Any
+
+&gt; f(List('f', 'g'))
+res63: Any = f
+
+&gt; def f(y: List[Any]): Any = y match {
+|   case x :: xs =&gt; x
+| }
+&lt;console&gt;:5: warning: match is not exhaustive!
+missing combination            Nil
+
+       def f(y: List[Any]): Any = y match {
+                                  ^
+f: (y: List[Any])Any
+
+&gt; f(List(1, 2, 3))
+res64: Any = 1
+
+</pre>
+      </div>
+
+<p>After looking at polymorphism in Chapter 8, a closer translation for these
+functions will be to take a parametric type <code>T</code> instead of <code>Any</code>. Here is how
+this last example would look:</p>
+
+<div style="display: none;" id="raw14">
+        <small><a href="#" onclick="document.getElementById('raw14').style.display='none';document.getElementById('run14').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def f[T](y: List[T]): T = y match {
+  case x :: xs =&gt; x
+}
+f(List(1, 2, 3))</pre>
+      </div>
+
+<div style="display: block;" id="run14">
+        <small><a href="#" onclick="document.getElementById('raw14').style.display='block';document.getElementById('run14').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def f[T](y: List[T]): T = y match {
+|   case x :: xs =&gt; x
+| }
+&lt;console&gt;:6: warning: match is not exhaustive!
+missing combination            Nil
+
+       def f[T](y: List[T]): T = y match {
+                                 ^
+f: [T](y: List[T])T
+
+&gt; f(List(1, 2, 3))
+res65: Int = 1
+
+</pre>
+      </div>
+
+<p>Note how the type of the result is the specific type used for <code>T</code> (in this case,
+<code>Int</code>), rather than the catch-all type <code>Any</code>.</p>
+
+<h2>Section 7.6: Using Multiple Patterns for Functions</h2>
+
+<div style="display: none;" id="raw15">
+        <small><a href="#" onclick="document.getElementById('raw15').style.display='none';document.getElementById('run15').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def f(x: Int): String = x match {
+  case 0 =&gt; &quot;zero&quot;
+  case 1 =&gt; &quot;one&quot;
+}
+def f(x: Int): String = x match {
+  case 0 =&gt; &quot;zero&quot;
+  case _ =&gt; &quot;non-zero&quot;
+}</pre>
+      </div>
+
+<div style="display: block;" id="run15">
+        <small><a href="#" onclick="document.getElementById('raw15').style.display='block';document.getElementById('run15').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def f(x: Int): String = x match {
+|   case 0 =&gt; &quot;zero&quot;
+|   case 1 =&gt; &quot;one&quot;
+| }
+f: (x: Int)String
+
+&gt; def f(x: Int): String = x match {
+|   case 0 =&gt; &quot;zero&quot;
+|   case _ =&gt; &quot;non-zero&quot;
+| }
+f: (x: Int)String
+
+</pre>
+      </div>
+
+<h2>Section 7.7: Pattern-Matching Style</h2>
+
+<div style="display: none;" id="raw16">
+        <small><a href="#" onclick="document.getElementById('raw16').style.display='none';document.getElementById('run16').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def f(x: Int): String = x match {
+  case 0 =&gt; &quot;zero&quot;
+  case _ =&gt; &quot;non-zero&quot;
+}
+def f(n: Int): String = {
+  if (n == 0) &quot;zero&quot;
+  else &quot;non-zero&quot;
+}
+def fact(n: Int): Int = {
+  if (n == 0) 1
+  else n * fact(n - 1)
+}
+def fact(x: Int): Int = x match {
+  case 0 =&gt; 1
+  case n =&gt; n * fact(n - 1)
+}
+def reverse[T](L: List[T]): List[T] = {
+  if (L.isEmpty) Nil
+  else reverse(L.tail) ::: List(L.head)
+}
+def reverse[T](L: List[T]): List[T] = L match {
+  case Nil =&gt; Nil
+  case first :: rest =&gt; reverse(rest) ::: List(first)
+}
+def f(L: List[Int]): Int = L match {
+  case Nil =&gt; 0
+  case first :: rest =&gt; first + f(rest)
+}
+def f(L: List[Boolean]): Int = L match {
+  case Nil =&gt; 0
+  case true :: rest =&gt; 1 + f(rest)
+  case false :: rest =&gt; f(rest)
+}
+def f(L: List[Int]): List[Int] = L match {
+  case Nil =&gt; Nil
+  case first :: rest =&gt; first + 1 :: f(rest)
+}</pre>
+      </div>
+
+<div style="display: block;" id="run16">
+        <small><a href="#" onclick="document.getElementById('raw16').style.display='block';document.getElementById('run16').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def f(x: Int): String = x match {
+|   case 0 =&gt; &quot;zero&quot;
+|   case _ =&gt; &quot;non-zero&quot;
+| }
+f: (x: Int)String
+
+&gt; def f(n: Int): String = {
+|   if (n == 0) &quot;zero&quot;
+|   else &quot;non-zero&quot;
+| }
+f: (n: Int)String
+
+&gt; def fact(n: Int): Int = {
+|   if (n == 0) 1
+|   else n * fact(n - 1)
+| }
+fact: (n: Int)Int
+
+&gt; def fact(x: Int): Int = x match {
+|   case 0 =&gt; 1
+|   case n =&gt; n * fact(n - 1)
+| }
+fact: (x: Int)Int
+
+&gt; def reverse[T](L: List[T]): List[T] = {
+|   if (L.isEmpty) Nil
+|   else reverse(L.tail) ::: List(L.head)
+| }
+reverse: [T](L: List[T])List[T]
+
+&gt; def reverse[T](L: List[T]): List[T] = L match {
+|   case Nil =&gt; Nil
+|   case first :: rest =&gt; reverse(rest) ::: List(first)
+| }
+reverse: [T](L: List[T])List[T]
+
+&gt; def f(L: List[Int]): Int = L match {
+|   case Nil =&gt; 0
+|   case first :: rest =&gt; first + f(rest)
+| }
+f: (L: List[Int])Int
+
+&gt; def f(L: List[Boolean]): Int = L match {
+|   case Nil =&gt; 0
+|   case true :: rest =&gt; 1 + f(rest)
+|   case false :: rest =&gt; f(rest)
+| }
+f: (L: List[Boolean])Int
+
+&gt; def f(L: List[Int]): List[Int] = L match {
+|   case Nil =&gt; Nil
+|   case first :: rest =&gt; first + 1 :: f(rest)
+| }
+f: (L: List[Int])List[Int]
+
+</pre>
+      </div>
+
+<p>Although Scala, like ML, does not allow repeated variables in a pattern, it does
+have an extension to patterns, called a "guard", which can often give the desired
+effect:</p>
+
+<pre><code>case (a, b) if a == b =&gt; ... for pairs of equal elements
+case (a, b) =&gt; ... for pairs of unequal elements (must follow previous case)
+</code></pre>
+
+<div style="display: none;" id="raw17">
+        <small><a href="#" onclick="document.getElementById('raw17').style.display='none';document.getElementById('run17').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+val (a, b) = (1, 2.3)
+val a :: b = List(1, 2, 3, 4, 5)</pre>
+      </div>
+
+<div style="display: block;" id="run17">
+        <small><a href="#" onclick="document.getElementById('raw17').style.display='block';document.getElementById('run17').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; val (a, b) = (1, 2.3)
+a: Int = 1
+b: Double = 2.3
+
+&gt; val a :: b = List(1, 2, 3, 4, 5)
+a: Int = 1
+b: List[Int] = List(2, 3, 4, 5)
+
+</pre>
+      </div>
+
+<h2>Section 7.8: Local Variable Definitions</h2>
+
+<p>The Scala equivalent of the <code>let</code> expression of ML is the block expression. Just
+like a block in C/C++/Java, variables may be declared local to the block; the value
+of the whole expression is the value of the final expression in the block.</p>
+
+<div style="display: none;" id="raw18">
+        <small><a href="#" onclick="document.getElementById('raw18').style.display='none';document.getElementById('run18').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+{ val x = 1; val y = 2; x + y }
+x
+{
+  val x = 1
+  val y = 2
+  x + y
+}
+def days2ms(days: Double): Double = {
+  val hours = days * 24.0
+  val minutes = hours * 60.0
+  val seconds = minutes * 60.0
+  seconds * 1000.0
+}
+def halve[T](L: List[T]): (List[T], List[T]) = L match {
+  case Nil =&gt; (Nil, Nil)
+  case List(a) =&gt; (List(a), Nil)
+  case a :: b :: cs =&gt; {
+    val (x, y) = halve(cs)
+    (a :: x, b :: y)
+  }
+}
+def halve[T](L: List[T]): (List[T], List[T]) = L match {
+  case Nil =&gt; (Nil, Nil)
+  case List(a) =&gt; (List(a), Nil)
+  case a :: b :: cs =&gt; {
+    val halved = halve(cs)
+    val x = halved._1
+    val y = halved._2
+    (a :: x, b :: y)
+  }
+}
+halve(List(1))
+halve(List(1, 2))
+halve(List(1, 2, 3, 4, 5, 6))
+def merge(L1: List[Int], L2: List[Int]): List[Int] = (L1, L2) match {
+  case (Nil, ys) =&gt; ys
+  case (xs, Nil) =&gt; xs
+  case (x :: xs, y :: ys) =&gt;
+    if (x &lt; y) x :: merge(xs, y :: ys)
+    else y :: merge(x :: xs, ys)
+}
+merge(List(2), List(1, 3))
+merge(List(1, 3, 4, 7, 8), List(2, 3, 5, 6, 10))
+def mergeSort(L: List[Int]): List[Int] = L match {
+  case Nil =&gt; Nil
+  case List(a) =&gt; List(a)
+  case theList =&gt; {
+    val (x, y) = halve(theList)
+    merge(mergeSort(x), mergeSort(y))
+  }
+}
+mergeSort(List(4, 3, 2, 1))
+mergeSort(List(4, 2, 3, 1, 5, 3, 6))</pre>
+      </div>
+
+<div style="display: block;" id="run18">
+        <small><a href="#" onclick="document.getElementById('raw18').style.display='block';document.getElementById('run18').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; { val x = 1; val y = 2; x + y }
+res66: Int = 3
+
+&gt; x
+&lt;console&gt;:6: error: not found: value x
+       x
+       ^
+
+&gt; {
+|   val x = 1
+|   val y = 2
+|   x + y
+| }
+res68: Int = 3
+
+&gt; def days2ms(days: Double): Double = {
+|   val hours = days * 24.0
+|   val minutes = hours * 60.0
+|   val seconds = minutes * 60.0
+|   seconds * 1000.0
+| }
+days2ms: (days: Double)Double
+
+&gt; def halve[T](L: List[T]): (List[T], List[T]) = L match {
+|   case Nil =&gt; (Nil, Nil)
+|   case List(a) =&gt; (List(a), Nil)
+|   case a :: b :: cs =&gt; {
+|     val (x, y) = halve(cs)
+|     (a :: x, b :: y)
+|   }
+| }
+halve: [T](L: List[T])(List[T], List[T])
+
+&gt; def halve[T](L: List[T]): (List[T], List[T]) = L match {
+|   case Nil =&gt; (Nil, Nil)
+|   case List(a) =&gt; (List(a), Nil)
+|   case a :: b :: cs =&gt; {
+|     val halved = halve(cs)
+|     val x = halved._1
+|     val y = halved._2
+|     (a :: x, b :: y)
+|   }
+| }
+halve: [T](L: List[T])(List[T], List[T])
+
+&gt; halve(List(1))
+res69: (List[Int], List[Int]) = (List(1),List())
+
+&gt; halve(List(1, 2))
+res70: (List[Int], List[Int]) = (List(1),List(2))
+
+&gt; halve(List(1, 2, 3, 4, 5, 6))
+res71: (List[Int], List[Int]) = (List(1, 3, 5),List(2, 4, 6))
+
+&gt; def merge(L1: List[Int], L2: List[Int]): List[Int] = (L1, L2) match {
+|   case (Nil, ys) =&gt; ys
+|   case (xs, Nil) =&gt; xs
+|   case (x :: xs, y :: ys) =&gt;
+|     if (x &lt; y) x :: merge(xs, y :: ys)
+|     else y :: merge(x :: xs, ys)
+| }
+merge: (L1: List[Int],L2: List[Int])List[Int]
+
+&gt; merge(List(2), List(1, 3))
+res72: List[Int] = List(1, 2, 3)
+
+&gt; merge(List(1, 3, 4, 7, 8), List(2, 3, 5, 6, 10))
+res73: List[Int] = List(1, 2, 3, 3, 4, 5, 6, 7, 8, 10)
+
+&gt; def mergeSort(L: List[Int]): List[Int] = L match {
+|   case Nil =&gt; Nil
+|   case List(a) =&gt; List(a)
+|   case theList =&gt; {
+|     val (x, y) = halve(theList)
+|     merge(mergeSort(x), mergeSort(y))
+|   }
+| }
+mergeSort: (L: List[Int])List[Int]
+
+&gt; mergeSort(List(4, 3, 2, 1))
+res74: List[Int] = List(1, 2, 3, 4)
+
+&gt; mergeSort(List(4, 2, 3, 1, 5, 3, 6))
+res75: List[Int] = List(1, 2, 3, 3, 4, 5, 6)
+
+</pre>
+      </div>
+
+<h2>Section 7.9: Nested Function Definitions</h2>
+
+<div style="display: none;" id="raw19">
+        <small><a href="#" onclick="document.getElementById('raw19').style.display='none';document.getElementById('run19').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+/* Sort a list of integers */
+def mergeSort(L: List[Int]): List[Int] = L match {
+  case Nil =&gt; Nil
+  case List(a) =&gt; List(a)
+  case theList =&gt; {
+    /* From the given list make a pair of lists
+     * (x, y), where half the elements of the
+     * original are in x and half are in y.
+     */
+    def halve[T](L: List[T]): (List[T], List[T]) = L match {
+      case Nil =&gt; (Nil, Nil)
+      case List(a) =&gt; (List(a), Nil)
+      case a :: b :: cs =&gt; {
+        val (x, y) = halve(cs)
+        (a :: x, b :: y)
+      }
+    }
+
+    /* Merge two sorted lists of integers into
+     * a single sorted list
+     */
+    def merge(L1: List[Int], L2: List[Int]): List[Int] = (L1, L2) match {
+      case (Nil, ys) =&gt; ys
+      case (xs, Nil) =&gt; xs
+      case (x :: xs, y :: ys) =&gt;
+        if (x &lt; y) x :: merge(xs, y :: ys)
+        else y :: merge(x :: xs, ys)
+    }
+
+    val (x, y) = halve(theList)
+    merge(mergeSort(x), mergeSort(y))
+  }
+}</pre>
+      </div>
+
+<div style="display: block;" id="run19">
+        <small><a href="#" onclick="document.getElementById('raw19').style.display='block';document.getElementById('run19').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; /* Sort a list of integers */
+
+&gt; def mergeSort(L: List[Int]): List[Int] = L match {
+|   case Nil =&gt; Nil
+|   case List(a) =&gt; List(a)
+|   case theList =&gt; {
+|     /* From the given list make a pair of lists
+|      * (x, y), where half the elements of the
+|      * original are in x and half are in y.
+|      */
+|     def halve[T](L: List[T]): (List[T], List[T]) = L match {
+|       case Nil =&gt; (Nil, Nil)
+|       case List(a) =&gt; (List(a), Nil)
+|       case a :: b :: cs =&gt; {
+|         val (x, y) = halve(cs)
+|         (a :: x, b :: y)
+|       }
+|     }
+|     
+|     /* Merge two sorted lists of integers into
+|      * a single sorted list
+|      */
+|     def merge(L1: List[Int], L2: List[Int]): List[Int] = (L1, L2) match {
+|       case (Nil, ys) =&gt; ys
+|       case (xs, Nil) =&gt; xs
+|       case (x :: xs, y :: ys) =&gt;
+|         if (x &lt; y) x :: merge(xs, y :: ys)
+|         else y :: merge(x :: xs, ys)
+|     }
+| 
+|     val (x, y) = halve(theList)
+|     merge(mergeSort(x), mergeSort(y))
+|   }
+| }
+mergeSort: (L: List[Int])List[Int]
+
+</pre>
+      </div>
+        </body>
+      </html>
