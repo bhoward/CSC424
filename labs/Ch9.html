@@ -1,0 +1,450 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+          <title>/Users/bhoward/Dropbox/Webber/Ch9.esc</title>
+          <script type="text/javascript" src="script/escalator.js"></script><script type="text/javascript" src="script/shCore.js"></script><script type="text/javascript" src="script/shBrushJava.js"></script><script type="text/javascript" src="script/shBrushScala.js"></script><script type="text/javascript" src="script/shBrushPlain.js"></script><script type="text/javascript" src="script/shBrushSpecs.js"></script><link href="style/shCore.css" rel="stylesheet" type="text/css"></link><link href="style/shThemeDefault.css" rel="stylesheet" type="text/css"></link><script type="text/javascript">
+      SyntaxHighlighter.config.clipboardSwf = 'script/clipboard.swf';
+      SyntaxHighlighter.all()
+    </script>
+        </head>
+        <body>
+          <h1>Chapter 9: A Third Look at <strike>ML</strike> Scala</h1>
+
+<h2>Section 9.2: More Pattern Matching</h2>
+
+<div style="display: none;" id="raw20">
+        <small><a href="#" onclick="document.getElementById('raw20').style.display='none';document.getElementById('run20').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+1 + 1 match {
+  case 3 =&gt; &quot;three&quot;
+  case 2 =&gt; &quot;two&quot;
+  case _ =&gt; &quot;hmm&quot;
+}
+def f(x: List[Int]): Int = x match {
+  case _ :: _ :: c :: _ =&gt; c
+  case _ :: b :: _ =&gt; b
+  case a :: _ =&gt; a
+  case Nil =&gt; 0
+}</pre>
+      </div>
+
+<div style="display: block;" id="run20">
+        <small><a href="#" onclick="document.getElementById('raw20').style.display='block';document.getElementById('run20').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; 1 + 1 match {
+|   case 3 =&gt; &quot;three&quot;
+|   case 2 =&gt; &quot;two&quot;
+|   case _ =&gt; &quot;hmm&quot;
+| }
+res62: java.lang.String = two
+
+&gt; def f(x: List[Int]): Int = x match {
+|   case _ :: _ :: c :: _ =&gt; c
+|   case _ :: b :: _ =&gt; b
+|   case a :: _ =&gt; a
+|   case Nil =&gt; 0
+| }
+f: (x: List[Int])Int
+
+</pre>
+      </div>
+
+<h2>Section 9.3: Function Values and Anonymous Functions</h2>
+
+<p>Scala has relatively few predefined standalone functions (or function-like
+objects -- an object may be used as a function if it has an <code>apply</code> method).
+As we saw in <a href="Ch5.html">Chapter 5</a>, all of the conversion operators are either
+methods on the object to be converted (such as <code>'a'.toInt</code>) or methods on a
+singleton object (such as <code>math.round</code>). Similarly, all of the operators are
+actually methods on one of their operands (so <code>1 + 1</code> is really <code>1.+(1)</code>, while
+<code>"hello" :: Nil</code> is interpreted as <code>Nil.::("hello")</code>). This is one way of dealing
+with the namespace-pollution problem in ML -- instead of a global function <code>ord</code>
+which converts characters to ints, there is a <code>toInt</code> method on characters, and a
+<code>toInt</code> method on doubles, etc. Similarly, instead of a global unary operator <code>~</code>
+which negates numbers (and which, through a bit of magic, defaults in ML to the
+negation operator on ints), the Scala prefix operation <code>-</code> turns into a call to
+the <code>unary_-</code> method on its operand. The upshot of this is that the Scala
+equivalents of <code>ord</code> and <code>~</code> need more context to be treated as function values;
+the closest equivalent to the predefined functions of ML are probably the
+methods of the <code>math</code> object (and even then we need to follow the method name
+with an underscore to make it clear to Scala that we want the function value --
+in fact, there is still the issue of overloading, and we need to do more if we
+want the <code>Double =&gt; Long</code> version...):</p>
+
+<div style="display: none;" id="raw21">
+        <small><a href="#" onclick="document.getElementById('raw21').style.display='none';document.getElementById('run21').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+math.round _
+val x: (Double =&gt; Long) = math.round _
+x(3.14)
+def f(x: Int): Int = x + 2
+f(1)
+(x: Int) =&gt; x + 2
+((x: Int) =&gt; x + 2)(1)</pre>
+      </div>
+
+<div style="display: block;" id="run21">
+        <small><a href="#" onclick="document.getElementById('raw21').style.display='block';document.getElementById('run21').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; math.round _
+res67: (Float) =&gt; Int = &lt;function1&gt;
+
+&gt; val x: (Double =&gt; Long) = math.round _
+x: (Double) =&gt; Long = &lt;function1&gt;
+
+&gt; x(3.14)
+res76: Long = 3
+
+&gt; def f(x: Int): Int = x + 2
+f: (x: Int)Int
+
+&gt; f(1)
+res77: Int = 3
+
+&gt; (x: Int) =&gt; x + 2
+res78: (Int) =&gt; Int = &lt;function1&gt;
+
+&gt; ((x: Int) =&gt; x + 2)(1)
+res79: Int = 3
+
+</pre>
+      </div>
+
+<p>The Scala standard library defines a <code>sortWith</code> method on lists which takes a
+comparison function as an argument:</p>
+
+<div style="display: none;" id="raw22">
+        <small><a href="#" onclick="document.getElementById('raw22').style.display='none';document.getElementById('run22').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def intBefore(a: Int, b: Int): Boolean = a &lt; b
+List(1, 4, 3, 2, 5).sortWith(intBefore)
+List(1, 4, 3, 2, 5).sortWith((a: Int, b: Int) =&gt; a &lt; b)
+List(1, 4, 3, 2, 5).sortWith((a: Int, b: Int) =&gt; a &gt; b)
+List(1, 4, 3, 2, 5).sortWith(_ &lt; _)
+List(1, 4, 3, 2, 5).sortWith(_ &gt; _)</pre>
+      </div>
+
+<div style="display: block;" id="run22">
+        <small><a href="#" onclick="document.getElementById('raw22').style.display='block';document.getElementById('run22').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def intBefore(a: Int, b: Int): Boolean = a &lt; b
+intBefore: (a: Int,b: Int)Boolean
+
+&gt; List(1, 4, 3, 2, 5).sortWith(intBefore)
+res80: List[Int] = List(1, 2, 3, 4, 5)
+
+&gt; List(1, 4, 3, 2, 5).sortWith((a: Int, b: Int) =&gt; a &lt; b)
+res81: List[Int] = List(1, 2, 3, 4, 5)
+
+&gt; List(1, 4, 3, 2, 5).sortWith((a: Int, b: Int) =&gt; a &gt; b)
+res82: List[Int] = List(5, 4, 3, 2, 1)
+
+&gt; List(1, 4, 3, 2, 5).sortWith(_ &lt; _)
+res83: List[Int] = List(1, 2, 3, 4, 5)
+
+&gt; List(1, 4, 3, 2, 5).sortWith(_ &gt; _)
+res84: List[Int] = List(5, 4, 3, 2, 1)
+
+</pre>
+      </div>
+
+<p>Although Scala does not have enough context to know which operator we intend
+when we just write <code>_ &lt; _</code> by itself, it is able to do enough type inference to
+figure out in the above that we want a function of type <code>(Int, Int) =&gt; Boolean</code>.</p>
+
+<h2>Section 9.4: Higher-Order Functions and Currying</h2>
+
+<div style="display: none;" id="raw23">
+        <small><a href="#" onclick="document.getElementById('raw23').style.display='none';document.getElementById('run23').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def f(a: Int, b: Int): Int = a + b
+def g(a: Int): Int =&gt; Int = (b: Int) =&gt; a + b
+f(2, 3)
+g(2)(3)
+val add2 = g(2)
+add2(3)
+add2(10)
+def sort[T](compare: (T, T) =&gt; Boolean)(L: List[T]): List[T] =
+  L.sortWith(compare)
+sort[Int](_ &lt; _)(List(1, 4, 3, 2, 5))</pre>
+      </div>
+
+<div style="display: block;" id="run23">
+        <small><a href="#" onclick="document.getElementById('raw23').style.display='block';document.getElementById('run23').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def f(a: Int, b: Int): Int = a + b
+f: (a: Int,b: Int)Int
+
+&gt; def g(a: Int): Int =&gt; Int = (b: Int) =&gt; a + b
+g: (a: Int)(Int) =&gt; Int
+
+&gt; f(2, 3)
+res85: Int = 5
+
+&gt; g(2)(3)
+res86: Int = 5
+
+&gt; val add2 = g(2)
+add2: (Int) =&gt; Int = &lt;function1&gt;
+
+&gt; add2(3)
+res87: Int = 5
+
+&gt; add2(10)
+res88: Int = 12
+
+&gt; def sort[T](compare: (T, T) =&gt; Boolean)(L: List[T]): List[T] =
+|   L.sortWith(compare)
+sort: [T](compare: (T, T) =&gt; Boolean)(L: List[T])List[T]
+
+&gt; sort[Int](_ &lt; _)(List(1, 4, 3, 2, 5))
+res89: List[Int] = List(1, 2, 3, 4, 5)
+
+</pre>
+      </div>
+
+<p>Note that there is not enough type inference in Scala to know that the <code>_ &lt; _</code>
+comparison should be the <code>Int</code> version, because it handles curried functions
+one argument list at a time; therefore, we needed to supply the type parameter
+<code>Int</code> to the <code>sort</code> function.</p>
+
+<div style="display: none;" id="raw24">
+        <small><a href="#" onclick="document.getElementById('raw24').style.display='none';document.getElementById('run24').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+val sortBackward = sort[Int](_ &gt; _) _
+sortBackward(List(1, 4, 3, 2, 5))
+def f(a: Int, b: Int, c: Int): Int = a + b + c
+def g(a: Int): Int =&gt; Int =&gt; Int = (b: Int) =&gt; (c: Int) =&gt; a + b + c
+f(1, 2, 3)
+g(1)(2)(3)
+def g(a: Int)(b: Int)(c: Int): Int = a + b + c</pre>
+      </div>
+
+<div style="display: block;" id="run24">
+        <small><a href="#" onclick="document.getElementById('raw24').style.display='block';document.getElementById('run24').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; val sortBackward = sort[Int](_ &gt; _) _
+sortBackward: (List[Int]) =&gt; List[Int] = &lt;function1&gt;
+
+&gt; sortBackward(List(1, 4, 3, 2, 5))
+res90: List[Int] = List(5, 4, 3, 2, 1)
+
+&gt; def f(a: Int, b: Int, c: Int): Int = a + b + c
+f: (a: Int,b: Int,c: Int)Int
+
+&gt; def g(a: Int): Int =&gt; Int =&gt; Int = (b: Int) =&gt; (c: Int) =&gt; a + b + c
+g: (a: Int)(Int) =&gt; (Int) =&gt; Int
+
+&gt; f(1, 2, 3)
+res91: Int = 6
+
+&gt; g(1)(2)(3)
+res92: Int = 6
+
+&gt; def g(a: Int)(b: Int)(c: Int): Int = a + b + c
+g: (a: Int)(b: Int)(c: Int)Int
+
+</pre>
+      </div>
+
+<h2>Section 9.5: Predefined Higher-Order Functions</h2>
+
+<p>As mentioned above, Scala prefers to attach methods to objects of particular
+classes, rather than define free-floating functions (which technically aren't even
+allowed in Java, although Scala provides ways around this). So, instead of <code>map</code>,
+<code>foldr</code>, and <code>foldl</code> functions, there are <code>map</code>, <code>foldRight</code>, and <code>foldLeft</code> methods
+on various collection classes, including lists.</p>
+
+<h3>The <code>map</code> Function</h3>
+
+<div style="display: none;" id="raw25">
+        <small><a href="#" onclick="document.getElementById('raw25').style.display='none';document.getElementById('run25').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+List(1, 2, 3, 4).map(- _)
+List(1, 2, 3, 4).map((x: Int) =&gt; x + 1)
+List(1, 2, 3, 4).map((x: Int) =&gt; x % 2 == 0)
+List((1, 2), (3, 4), (5, 6)).map({ case (a, b) =&gt; a + b })</pre>
+      </div>
+
+<div style="display: block;" id="run25">
+        <small><a href="#" onclick="document.getElementById('raw25').style.display='block';document.getElementById('run25').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; List(1, 2, 3, 4).map(- _)
+res93: List[Int] = List(-1, -2, -3, -4)
+
+&gt; List(1, 2, 3, 4).map((x: Int) =&gt; x + 1)
+res94: List[Int] = List(2, 3, 4, 5)
+
+&gt; List(1, 2, 3, 4).map((x: Int) =&gt; x % 2 == 0)
+res95: List[Boolean] = List(false, true, false, true)
+
+&gt; List((1, 2), (3, 4), (5, 6)).map({ case (a, b) =&gt; a + b })
+res96: List[Int] = List(3, 7, 11)
+
+</pre>
+      </div>
+
+<p>The last example above shows another way to create an anonymous function in Scala,
+with a <code>case</code> block to permit pattern-matching on the argument. This is necessary
+for this example because of the way Scala differentiates tuples and parameter lists.
+Passing the argument <code>_ + _</code> would give a function taking two <code>Int</code> parameters,
+rather than the required function taking a single pair (tuple) of <code>Int</code>s.</p>
+
+<p>Instead of currying to specialize the map operation to a given function, a more
+general technique is simply to define an appropriate function value:</p>
+
+<div style="display: none;" id="raw26">
+        <small><a href="#" onclick="document.getElementById('raw26').style.display='none';document.getElementById('run26').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+val f = (L: List[(Int, Int)]) =&gt; L.map({ case (a, b) =&gt; a + b })
+f(List((1, 2), (3, 4)))</pre>
+      </div>
+
+<div style="display: block;" id="run26">
+        <small><a href="#" onclick="document.getElementById('raw26').style.display='block';document.getElementById('run26').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; val f = (L: List[(Int, Int)]) =&gt; L.map({ case (a, b) =&gt; a + b })
+f: (List[(Int, Int)]) =&gt; List[Int] = &lt;function1&gt;
+
+&gt; f(List((1, 2), (3, 4)))
+res97: List[Int] = List(3, 7)
+
+</pre>
+      </div>
+
+<h3>The <code>foldRight</code> Function</h3>
+
+<div style="display: none;" id="raw27">
+        <small><a href="#" onclick="document.getElementById('raw27').style.display='none';document.getElementById('run27').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+List(1, 2, 3, 4).foldRight(0)(_ + _)
+List(1, 2, 3, 4).foldRight(1)(_ * _)
+List(&quot;abc&quot;, &quot;def&quot;, &quot;ghi&quot;).foldRight(&quot;&quot;)(_ + _)
+List(1, 2, 3, 4).foldRight(List(5))(_ :: _)</pre>
+      </div>
+
+<div style="display: block;" id="run27">
+        <small><a href="#" onclick="document.getElementById('raw27').style.display='block';document.getElementById('run27').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; List(1, 2, 3, 4).foldRight(0)(_ + _)
+res98: Int = 10
+
+&gt; List(1, 2, 3, 4).foldRight(1)(_ * _)
+res99: Int = 24
+
+&gt; List(&quot;abc&quot;, &quot;def&quot;, &quot;ghi&quot;).foldRight(&quot;&quot;)(_ + _)
+res100: java.lang.String = abcdefghi
+
+&gt; List(1, 2, 3, 4).foldRight(List(5))(_ :: _)
+res101: List[Int] = List(1, 2, 3, 4, 5)
+
+</pre>
+      </div>
+
+<p>Note that, from the context of having a list of strings instead of numbers, Scala
+is able to infer the correct version of the <code>+</code> operator in the next-to-last
+example above.</p>
+
+<p>As with map, the object-oriented order of the pieces of the <code>foldRight</code> operation
+prevent using currying for the common case of fixing the starting value and combining
+function, while allowing the list to vary. Again, we may define an appropriate
+partially-applied version using an anonymous function:</p>
+
+<div style="display: none;" id="raw28">
+        <small><a href="#" onclick="document.getElementById('raw28').style.display='none';document.getElementById('run28').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+val addup = (L: List[Int]) =&gt; L.foldRight(0)(_ + _)
+addup(List(1, 2, 3, 4, 5))
+def thin(L: List[Int]): List[Int] =
+  L.foldRight(List[Int]())((a, b) =&gt; if (a &lt; 0) b else a :: b)</pre>
+      </div>
+
+<div style="display: block;" id="run28">
+        <small><a href="#" onclick="document.getElementById('raw28').style.display='block';document.getElementById('run28').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; val addup = (L: List[Int]) =&gt; L.foldRight(0)(_ + _)
+addup: (List[Int]) =&gt; Int = &lt;function1&gt;
+
+&gt; addup(List(1, 2, 3, 4, 5))
+res102: Int = 15
+
+&gt; def thin(L: List[Int]): List[Int] =
+|   L.foldRight(List[Int]())((a, b) =&gt; if (a &lt; 0) b else a :: b)
+thin: (L: List[Int])List[Int]
+
+</pre>
+      </div>
+
+<p>Incidentally, it is common in Scala to put more complicated arguments in a
+separate parameter list, so that they may be passed as block expressions:</p>
+
+<div style="display: none;" id="raw29">
+        <small><a href="#" onclick="document.getElementById('raw29').style.display='none';document.getElementById('run29').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def thin(L: List[Int]): List[Int] =
+  L.foldRight(List[Int]()) {(a, b) =&gt;
+    if (a &lt; 0) b
+    else a :: b
+  }</pre>
+      </div>
+
+<div style="display: block;" id="run29">
+        <small><a href="#" onclick="document.getElementById('raw29').style.display='block';document.getElementById('run29').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def thin(L: List[Int]): List[Int] =
+|   L.foldRight(List[Int]()) {(a, b) =&gt;
+|     if (a &lt; 0) b
+|     else a :: b
+|   }
+thin: (L: List[Int])List[Int]
+
+</pre>
+      </div>
+
+<h3>The <code>foldLeft</code> Function</h3>
+
+<div style="display: none;" id="raw30">
+        <small><a href="#" onclick="document.getElementById('raw30').style.display='none';document.getElementById('run30').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+List(1, 2, 3, 4).foldLeft(0)(_ + _)
+List(1, 2, 3, 4).foldLeft(1)(_ * _)
+List(&quot;abc&quot;, &quot;def&quot;, &quot;ghi&quot;).foldRight(&quot;&quot;)(_ + _)
+List(&quot;abc&quot;, &quot;def&quot;, &quot;ghi&quot;).foldLeft(&quot;&quot;)(_ + _)
+List(1, 2, 3, 4).foldRight(0)(_ - _)
+List(1, 2, 3, 4).foldLeft(0)(_ - _)</pre>
+      </div>
+
+<div style="display: block;" id="run30">
+        <small><a href="#" onclick="document.getElementById('raw30').style.display='block';document.getElementById('run30').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; List(1, 2, 3, 4).foldLeft(0)(_ + _)
+res103: Int = 10
+
+&gt; List(1, 2, 3, 4).foldLeft(1)(_ * _)
+res104: Int = 24
+
+&gt; List(&quot;abc&quot;, &quot;def&quot;, &quot;ghi&quot;).foldRight(&quot;&quot;)(_ + _)
+res105: java.lang.String = abcdefghi
+
+&gt; List(&quot;abc&quot;, &quot;def&quot;, &quot;ghi&quot;).foldLeft(&quot;&quot;)(_ + _)
+res106: java.lang.String = abcdefghi
+
+&gt; List(1, 2, 3, 4).foldRight(0)(_ - _)
+res107: Int = -2
+
+&gt; List(1, 2, 3, 4).foldLeft(0)(_ - _)
+res108: Int = -10
+
+</pre>
+      </div>
+
+<p>Note that the <code>foldLeft</code> operation in Scala is defined slightly differently
+from ML, so that it doesn't flip the operands. Thus, it only requires an operation
+that is associative (and not necessarily commutative) for the <code>foldLeft</code> and
+<code>foldRight</code> to return the same value. In more detail, whereas in ML the call
+<code>foldl f c [x1, ..., xn]</code> produces</p>
+
+<pre><code>f(xn, f(..., f(x1, c)...)),
+</code></pre>
+
+<p>the call <code>List(x1, ..., xn).foldLeft(c)(f)</code> in Scala produces</p>
+
+<pre><code>f(f(...f(c, x1), ...), xn).
+</code></pre>
+
+<p>By comparison, the right fold in each will produce</p>
+
+<pre><code>f(x1, f(..., f(xn, c)...)).
+</code></pre>
+        </body>
+      </html>
