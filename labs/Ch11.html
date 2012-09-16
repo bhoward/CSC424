@@ -1,0 +1,646 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+          <title>/Users/bhoward/Dropbox/Webber/Ch11.esc</title>
+          <script type="text/javascript" src="/resource/script/escalator.js"></script><script type="text/javascript" src="/resource/jsMath/easy/load.js"></script><script type="text/javascript" src="/resource/script/shCore.js"></script><script type="text/javascript" src="/resource/script/shBrushJava.js"></script><script type="text/javascript" src="/resource/script/shBrushScala.js"></script><script type="text/javascript" src="/resource/script/shBrushPlain.js"></script><script type="text/javascript" src="/resource/script/shBrushSpecs.js"></script><link href="/resource/style/shCore.css" rel="stylesheet" type="text/css"></link><link href="/resource/style/shThemeDefault.css" rel="stylesheet" type="text/css"></link><script type="text/javascript">
+      SyntaxHighlighter.config.clipboardSwf = '/resource/script/clipboard.swf';
+      SyntaxHighlighter.all()
+    </script>
+        </head>
+        <body>
+          <h1>Chapter 11: A Fourth Look at <strike>ML</strike> Scala</h1>
+
+<h2>Section 11.1: Introduction</h2>
+
+<p>Although the Scala type <code>Boolean</code> is <em>not</em> defined this way (for compatibility
+with Java's <code>boolean</code>s), it can be though of as if it were:</p>
+
+<pre><code>sealed trait Boolean
+case object true extends Boolean
+case object false extends Boolean
+</code></pre>
+
+<p>The <code>List</code> type constructor <em>is</em> defined this way in the standard library.
+Although the real definition has many additional methods and a few complications,
+the essence of it is:</p>
+
+<pre><code>sealed trait List[T]
+case object Nil extends List[Nothing]
+case class ::[T](head: T, tail: List[T]) extends List[T]
+</code></pre>
+
+<h2>Section 11.2: Enumerations</h2>
+
+<div style="display: none;" id="raw1">
+        <small><a href="#" onclick="document.getElementById('raw1').style.display='none';document.getElementById('run1').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+sealed trait Day
+case object Mon extends Day
+case object Tue extends Day
+case object Wed extends Day
+case object Thu extends Day
+case object Fri extends Day
+case object Sat extends Day
+case object Sun extends Day
+
+def isWeekday(x: Day): Boolean = !(x == Sat || x == Sun)
+
+isWeekday(Mon)
+isWeekday(Sat)
+
+sealed trait Flip
+case object Heads extends Flip
+case object Tails extends Flip
+
+def isHeads(x: Flip): Boolean = (x == Heads)
+
+isHeads(Tails)
+isHeads(Mon)
+
+def isWeekday(x: Day): Boolean = x match {
+  case Sat =&gt; false
+  case Sun =&gt; false
+  case _ =&gt; true
+}</pre>
+      </div>
+
+<div style="display: block;" id="run1">
+        <small><a href="#" onclick="document.getElementById('raw1').style.display='block';document.getElementById('run1').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; sealed trait Day
+defined trait Day
+
+&gt; case object Mon extends Day
+defined module Mon
+
+&gt; case object Tue extends Day
+defined module Tue
+
+&gt; case object Wed extends Day
+defined module Wed
+
+&gt; case object Thu extends Day
+defined module Thu
+
+&gt; case object Fri extends Day
+defined module Fri
+
+&gt; case object Sat extends Day
+defined module Sat
+
+&gt; case object Sun extends Day
+defined module Sun
+
+&gt; def isWeekday(x: Day): Boolean = !(x == Sat || x == Sun)
+isWeekday: (x: Day)Boolean
+
+&gt; isWeekday(Mon)
+res0: Boolean = true
+
+&gt; isWeekday(Sat)
+res1: Boolean = false
+
+&gt; sealed trait Flip
+defined trait Flip
+
+&gt; case object Heads extends Flip
+defined module Heads
+
+&gt; case object Tails extends Flip
+defined module Tails
+
+&gt; def isHeads(x: Flip): Boolean = (x == Heads)
+isHeads: (x: Flip)Boolean
+
+&gt; isHeads(Tails)
+res2: Boolean = false
+
+&gt; isHeads(Mon)
+&lt;console&gt;:11: error: type mismatch;
+ found   : Mon.type (with underlying type object Mon)
+ required: Flip
+       isHeads(Mon)
+               ^
+
+&gt; def isWeekday(x: Day): Boolean = x match {
+|   case Sat =&gt; false
+|   case Sun =&gt; false
+|   case _ =&gt; true
+| }
+isWeekday: (x: Day)Boolean
+
+</pre>
+      </div>
+
+<h2>Section 11.3: Data Constructors with Parameters</h2>
+
+<div style="display: none;" id="raw2">
+        <small><a href="#" onclick="document.getElementById('raw2').style.display='none';document.getElementById('run2').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+sealed trait ExInt
+case class Value(n: Int) extends ExInt
+case object PlusInf extends ExInt
+case object MinusInf extends ExInt
+PlusInf
+MinusInf
+Value.apply _
+Value(3)
+val x = Value(5)
+x + x
+val Value(y) = x
+val s = (x: ExInt) match {
+  case PlusInf =&gt; &quot;infinity&quot;
+  case MinusInf =&gt; &quot;-infinity&quot;
+  case Value(y) =&gt; y.toString
+}
+def square(x: ExInt): ExInt = x match {
+  case PlusInf =&gt; PlusInf
+  case MinusInf =&gt; PlusInf
+  case Value(y) =&gt; Value(y * y)
+}
+square(MinusInf)
+square(Value(3))</pre>
+      </div>
+
+<div style="display: block;" id="run2">
+        <small><a href="#" onclick="document.getElementById('raw2').style.display='block';document.getElementById('run2').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; sealed trait ExInt
+defined trait ExInt
+
+&gt; case class Value(n: Int) extends ExInt
+defined class Value
+
+&gt; case object PlusInf extends ExInt
+defined module PlusInf
+
+&gt; case object MinusInf extends ExInt
+defined module MinusInf
+
+&gt; PlusInf
+res4: PlusInf.type = PlusInf
+
+&gt; MinusInf
+res5: MinusInf.type = MinusInf
+
+&gt; Value.apply _
+res6: (Int) =&gt; Value = &lt;function1&gt;
+
+&gt; Value(3)
+res7: Value = Value(3)
+
+&gt; val x = Value(5)
+x: Value = Value(5)
+
+&gt; x + x
+&lt;console&gt;:10: error: type mismatch;
+ found   : Value
+ required: String
+       x + x
+           ^
+
+&gt; val Value(y) = x
+y: Int = 5
+
+&gt; val s = (x: ExInt) match {
+|   case PlusInf =&gt; &quot;infinity&quot;
+|   case MinusInf =&gt; &quot;-infinity&quot;
+|   case Value(y) =&gt; y.toString
+| }
+s: java.lang.String = 5
+
+&gt; def square(x: ExInt): ExInt = x match {
+|   case PlusInf =&gt; PlusInf
+|   case MinusInf =&gt; PlusInf
+|   case Value(y) =&gt; Value(y * y)
+| }
+square: (x: ExInt)ExInt
+
+&gt; square(MinusInf)
+res9: ExInt = PlusInf
+
+&gt; square(Value(3))
+res10: ExInt = Value(9)
+
+</pre>
+      </div>
+
+<p>Scala does not throw an exception on integer overflow (because Java doesn't...),
+so we will skip the exception handling version of <code>square</code>.</p>
+
+<h2>Section 11.4: Type Constructors with Parameters</h2>
+
+<p>As with <code>List</code>, the <code>Option</code> type constructor is already defined in Scala; its
+definition is essentially:</p>
+
+<pre><code>sealed trait Option[T]
+case object None extends Option[Nothing]
+case class Some[T](x: T) extends Option[T]
+</code></pre>
+
+<div style="display: none;" id="raw3">
+        <small><a href="#" onclick="document.getElementById('raw3').style.display='none';document.getElementById('run3').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+Some(4)
+Some(1.2)
+Some(&quot;pig&quot;)
+
+def optdiv(a: Int, b: Int): Option[Int] =
+  if (b == 0) None else Some(a / b)
+optdiv(7, 2)
+optdiv(7, 0)
+
+sealed trait Bunch[T]
+case class One[T](x: T) extends Bunch[T]
+case class Group[T](xs: List[T]) extends Bunch[T]
+
+Group(List(true, false))
+
+def size[T](b: Bunch[T]): Int = b match {
+  case One(_) =&gt; 1
+  case Group(xs) =&gt; xs.size
+}
+size(One(1.0))
+size(Group(List(true, false)))
+
+def sum(b: Bunch[Int]): Int = b match {
+  case One(x) =&gt; x
+  case Group(xs) =&gt; xs.foldRight(0)(_ + _)
+}
+
+sum(One(5))
+sum(Group(List(1, 2, 3)))</pre>
+      </div>
+
+<div style="display: block;" id="run3">
+        <small><a href="#" onclick="document.getElementById('raw3').style.display='block';document.getElementById('run3').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; Some(4)
+res11: Some[Int] = Some(4)
+
+&gt; Some(1.2)
+res12: Some[Double] = Some(1.2)
+
+&gt; Some(&quot;pig&quot;)
+res13: Some[java.lang.String] = Some(pig)
+
+&gt; def optdiv(a: Int, b: Int): Option[Int] =
+|   if (b == 0) None else Some(a / b)
+optdiv: (a: Int,b: Int)Option[Int]
+
+&gt; optdiv(7, 2)
+res14: Option[Int] = Some(3)
+
+&gt; optdiv(7, 0)
+res15: Option[Int] = None
+
+&gt; sealed trait Bunch[T]
+defined trait Bunch
+
+&gt; case class One[T](x: T) extends Bunch[T]
+defined class One
+
+&gt; case class Group[T](xs: List[T]) extends Bunch[T]
+defined class Group
+
+&gt; Group(List(true, false))
+res16: Group[Boolean] = Group(List(true, false))
+
+&gt; def size[T](b: Bunch[T]): Int = b match {
+|   case One(_) =&gt; 1
+|   case Group(xs) =&gt; xs.size
+| }
+size: [T](b: Bunch[T])Int
+
+&gt; size(One(1.0))
+res17: Int = 1
+
+&gt; size(Group(List(true, false)))
+res18: Int = 2
+
+&gt; def sum(b: Bunch[Int]): Int = b match {
+|   case One(x) =&gt; x
+|   case Group(xs) =&gt; xs.foldRight(0)(_ + _)
+| }
+sum: (b: Bunch[Int])Int
+
+&gt; sum(One(5))
+res19: Int = 5
+
+&gt; sum(Group(List(1, 2, 3)))
+res20: Int = 6
+
+</pre>
+      </div>
+
+<p>Note that, as usual, Scala needs some help with inferring the type of the
+parameter to <code>sum</code>.</p>
+
+<h2>Section 11.5: Recursively Defined Type Constructors</h2>
+
+<div style="display: none;" id="raw4">
+        <small><a href="#" onclick="document.getElementById('raw4').style.display='none';document.getElementById('run4').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+sealed trait IntList
+case object INTNIL extends IntList
+case class INTCONS(head: Int, tail: IntList) extends IntList
+
+INTNIL
+INTCONS(1, INTNIL)
+INTCONS(1, INTCONS(2, INTNIL))
+
+def intListLength(L: IntList): Int = L match {
+  case INTNIL =&gt; 0
+  case INTCONS(_, tail) =&gt; 1 + intListLength(tail)
+}
+def listLength[T](L: List[T]): Int = L match {
+  case Nil =&gt; 0
+  case _ :: tail =&gt; 1 + listLength(tail)
+}
+
+sealed trait MyList[+T]
+case object NIL extends MyList[Nothing]
+case class CONS[T](head: T, tail: MyList[T]) extends MyList[T]
+
+CONS(1.0, NIL)
+CONS(1, CONS(2, NIL))</pre>
+      </div>
+
+<div style="display: block;" id="run4">
+        <small><a href="#" onclick="document.getElementById('raw4').style.display='block';document.getElementById('run4').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; sealed trait IntList
+defined trait IntList
+
+&gt; case object INTNIL extends IntList
+defined module INTNIL
+
+&gt; case class INTCONS(head: Int, tail: IntList) extends IntList
+defined class INTCONS
+
+&gt; INTNIL
+res21: INTNIL.type = INTNIL
+
+&gt; INTCONS(1, INTNIL)
+res22: INTCONS = INTCONS(1,INTNIL)
+
+&gt; INTCONS(1, INTCONS(2, INTNIL))
+res23: INTCONS = INTCONS(1,INTCONS(2,INTNIL))
+
+&gt; def intListLength(L: IntList): Int = L match {
+|   case INTNIL =&gt; 0
+|   case INTCONS(_, tail) =&gt; 1 + intListLength(tail)
+| }
+intListLength: (L: IntList)Int
+
+&gt; def listLength[T](L: List[T]): Int = L match {
+|   case Nil =&gt; 0
+|   case _ :: tail =&gt; 1 + listLength(tail)
+| }
+listLength: [T](L: List[T])Int
+
+&gt; sealed trait MyList[+T]
+defined trait MyList
+
+&gt; case object NIL extends MyList[Nothing]
+defined module NIL
+
+&gt; case class CONS[T](head: T, tail: MyList[T]) extends MyList[T]
+defined class CONS
+
+&gt; CONS(1.0, NIL)
+res24: CONS[Double] = CONS(1.0,NIL)
+
+&gt; CONS(1, CONS(2, NIL))
+res25: CONS[Int] = CONS(1,CONS(2,NIL))
+
+</pre>
+      </div>
+
+<p>Scala requires one extra piece of information here -- because <code>NIL</code> has to be
+usable as the empty list of type <code>MyList[T]</code> for any <code>T</code>, and because Scala doesn't
+allow values with unspecified type parameters, the empty list is declared to have
+type <code>List[Nothing]</code>. The type <code>Nothing</code> is a subtype of every other type <code>T</code>, so
+<code>Nil</code> may be used as if it were a value of type <code>List[T]</code>, <strong>provided</strong> we declare
+that the <code>List</code> constructor is <em>covariant</em>. The <code>+</code> annotation on the type parameter
+of <code>List</code> achieves this; it says that, whenever <code>U</code> is a subtype of <code>T</code>, then also
+<code>List[U]</code> will be a subtype of <code>List[T]</code>. For some type constructors, it is more
+appropriate that they be <em>contravariant</em>, which means that if <code>U</code> is a subtype of
+<code>T</code>, then <code>C[U]</code> will be a <em>supertype</em> of <code>C[T]</code>; the annotation in this case is
+<code>C[-T]</code>. The default, with no annotation, is that the constructor is <em>invariant</em>,
+which simply means that there is no relation between <code>C[T]</code> and <code>C[U]</code>.</p>
+
+<div style="display: none;" id="raw5">
+        <small><a href="#" onclick="document.getElementById('raw5').style.display='none';document.getElementById('run5').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+def myListLength[T](L: MyList[T]): Int = L match {
+  case NIL =&gt; 0
+  case CONS(_ , tail) =&gt; 1 + myListLength(tail)
+}
+
+def addup(L: MyList[Int]): Int = L match {
+  case NIL =&gt; 0
+  case CONS(head, tail) =&gt; head + addup(tail)
+}
+
+def myfoldr[T, U](f: (T, U) =&gt; U, c: U, L: MyList[T]): U = L match {
+  case NIL =&gt; c
+  case CONS(a, b) =&gt; f(a, myfoldr(f, c, b))
+}
+
+val x = CONS(1, CONS(2, NIL))
+myListLength(x)
+addup(x)
+myfoldr((p: Int, q: Int) =&gt; p + q, 0, x)</pre>
+      </div>
+
+<div style="display: block;" id="run5">
+        <small><a href="#" onclick="document.getElementById('raw5').style.display='block';document.getElementById('run5').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; def myListLength[T](L: MyList[T]): Int = L match {
+|   case NIL =&gt; 0
+|   case CONS(_ , tail) =&gt; 1 + myListLength(tail)
+| }
+myListLength: [T](L: MyList[T])Int
+
+&gt; def addup(L: MyList[Int]): Int = L match {
+|   case NIL =&gt; 0
+|   case CONS(head, tail) =&gt; head + addup(tail)
+| }
+addup: (L: MyList[Int])Int
+
+&gt; def myfoldr[T, U](f: (T, U) =&gt; U, c: U, L: MyList[T]): U = L match {
+|   case NIL =&gt; c
+|   case CONS(a, b) =&gt; f(a, myfoldr(f, c, b))
+| }
+myfoldr: [T,U](f: (T, U) =&gt; U,c: U,L: MyList[T])U
+
+&gt; val x = CONS(1, CONS(2, NIL))
+x: CONS[Int] = CONS(1,CONS(2,NIL))
+
+&gt; myListLength(x)
+res26: Int = 2
+
+&gt; addup(x)
+res27: Int = 3
+
+&gt; myfoldr((p: Int, q: Int) =&gt; p + q, 0, x)
+res28: Int = 3
+
+</pre>
+      </div>
+
+<p>Although we may not directly declare <code>CONS</code> to be a right-associative infix
+operator, we can define our own <code>::</code> operator on <code>MyList[T]</code> as follows:</p>
+
+<div style="display: none;" id="raw6">
+        <small><a href="#" onclick="document.getElementById('raw6').style.display='none';document.getElementById('run6').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+{
+  sealed trait MyList[+T] {
+    def ::[U &gt;: T](head: U): MyList[U] = CONS(head, this)
+  }
+  case object NIL extends MyList[Nothing]
+  case class CONS[T](head: T, tail: MyList[T]) extends MyList[T]
+
+  println(1.0 :: NIL)
+  println(1 :: 2 :: NIL)
+}</pre>
+      </div>
+
+<div style="display: block;" id="run6">
+        <small><a href="#" onclick="document.getElementById('raw6').style.display='block';document.getElementById('run6').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; {
+|   sealed trait MyList[+T] {
+|     def ::[U &gt;: T](head: U): MyList[U] = CONS(head, this)
+|   }
+|   case object NIL extends MyList[Nothing]
+|   case class CONS[T](head: T, tail: MyList[T]) extends MyList[T]
+| 
+|   println(1.0 :: NIL)
+|   println(1 :: 2 :: NIL)
+| }
+CONS(1.0,NIL)
+CONS(1,CONS(2,NIL))
+
+</pre>
+      </div>
+
+<p>The type parameter on the <code>::</code> operator, <code>[U &gt;: T]</code>, says that it can be used to
+prepend any value of a type <code>U</code> which is a supertype of <code>T</code>; this is needed to
+allow values to be put in front of the empty list, of type <code>List[Nothing]</code>. Also,
+because the definition of <code>MyList</code> depends on the definition of <code>CONS</code>, all of the
+definitions had to be wrapped in a block so that they could be mutually recursive;
+this is purely a limitation of the console-based interpreter being used to produce
+these notes, and the full Scala compiler would be able to handle this correctly.</p>
+
+<div style="display: none;" id="raw7">
+        <small><a href="#" onclick="document.getElementById('raw7').style.display='none';document.getElementById('run7').style.display='block';return false;">Show result</a></small>
+        <pre class="brush: scala;">
+sealed trait Tree[+T]
+case object Empty extends Tree[Nothing]
+case class Node[T](left: Tree[T], data: T, right: Tree[T]) extends Tree[T]
+
+val treeEmpty = Empty
+val tree2 = Node(Empty, 2, Empty)
+val tree123 = Node(Node(Empty, 1, Empty),
+                   2,
+                   Node(Empty, 3, Empty))
+
+def incall(t: Tree[Int]): Tree[Int] = t match {
+  case Empty =&gt; Empty
+  case Node(x, y, z) =&gt; Node(incall(x), y + 1, incall(z))
+}
+
+incall(tree123)
+
+def sumall(t: Tree[Int]): Int = t match {
+  case Empty =&gt; 0
+  case Node(x, y, z) =&gt; sumall(x) + y + sumall(z)
+}
+
+sumall(tree123)
+
+def listall[T](t: Tree[T]): List[T] = t match {
+  case Empty =&gt; Nil
+  case Node(x, y, z) =&gt; listall(x) ::: y :: listall(z)
+}
+
+listall(tree123)
+
+def isintree[T](x: T, t: Tree[T]): Boolean = t match {
+  case Empty =&gt; false
+  case Node(left, y, right) =&gt;
+    x == y ||
+    isintree(x, left) ||
+    isintree(x, right)
+}
+
+isintree(4, tree123)
+isintree(3, tree123)</pre>
+      </div>
+
+<div style="display: block;" id="run7">
+        <small><a href="#" onclick="document.getElementById('raw7').style.display='block';document.getElementById('run7').style.display='none';return false;">Show source</a></small>
+        <pre class="brush: plain; light: true;">&gt; sealed trait Tree[+T]
+defined trait Tree
+
+&gt; case object Empty extends Tree[Nothing]
+defined module Empty
+
+&gt; case class Node[T](left: Tree[T], data: T, right: Tree[T]) extends Tree[T]
+defined class Node
+
+&gt; val treeEmpty = Empty
+treeEmpty: Empty.type = Empty
+
+&gt; val tree2 = Node(Empty, 2, Empty)
+tree2: Node[Int] = Node(Empty,2,Empty)
+
+&gt; val tree123 = Node(Node(Empty, 1, Empty),
+|                    2,
+|                    Node(Empty, 3, Empty))
+tree123: Node[Int] = Node(Node(Empty,1,Empty),2,Node(Empty,3,Empty))
+
+&gt; def incall(t: Tree[Int]): Tree[Int] = t match {
+|   case Empty =&gt; Empty
+|   case Node(x, y, z) =&gt; Node(incall(x), y + 1, incall(z))
+| }
+incall: (t: Tree[Int])Tree[Int]
+
+&gt; incall(tree123)
+res30: Tree[Int] = Node(Node(Empty,2,Empty),3,Node(Empty,4,Empty))
+
+&gt; def sumall(t: Tree[Int]): Int = t match {
+|   case Empty =&gt; 0
+|   case Node(x, y, z) =&gt; sumall(x) + y + sumall(z)
+| }
+sumall: (t: Tree[Int])Int
+
+&gt; sumall(tree123)
+res31: Int = 6
+
+&gt; def listall[T](t: Tree[T]): List[T] = t match {
+|   case Empty =&gt; Nil
+|   case Node(x, y, z) =&gt; listall(x) ::: y :: listall(z)
+| }
+listall: [T](t: Tree[T])List[T]
+
+&gt; listall(tree123)
+res32: List[Int] = List(1, 2, 3)
+
+&gt; def isintree[T](x: T, t: Tree[T]): Boolean = t match {
+|   case Empty =&gt; false
+|   case Node(left, y, right) =&gt;
+|     x == y ||
+|     isintree(x, left) ||
+|     isintree(x, right)
+| }
+isintree: [T](x: T,t: Tree[T])Boolean
+
+&gt; isintree(4, tree123)
+res33: Boolean = false
+
+&gt; isintree(3, tree123)
+res34: Boolean = true
+
+</pre>
+      </div>
+        </body>
+      </html>
