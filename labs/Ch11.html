@@ -3,8 +3,8 @@
         <head>
           <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
           <title>/Users/bhoward/Dropbox/Webber/Ch11.esc</title>
-          <script type="text/javascript" src="/resource/script/escalator.js"></script><script type="text/javascript" src="/resource/jsMath/easy/load.js"></script><script type="text/javascript" src="/resource/script/shCore.js"></script><script type="text/javascript" src="/resource/script/shBrushJava.js"></script><script type="text/javascript" src="/resource/script/shBrushScala.js"></script><script type="text/javascript" src="/resource/script/shBrushPlain.js"></script><script type="text/javascript" src="/resource/script/shBrushSpecs.js"></script><link href="/resource/style/shCore.css" rel="stylesheet" type="text/css"></link><link href="/resource/style/shThemeDefault.css" rel="stylesheet" type="text/css"></link><script type="text/javascript">
-      SyntaxHighlighter.config.clipboardSwf = '/resource/script/clipboard.swf';
+          <script type="text/javascript" src="script/escalator.js"></script><script type="text/javascript" src="script/shCore.js"></script><script type="text/javascript" src="script/shBrushJava.js"></script><script type="text/javascript" src="script/shBrushScala.js"></script><script type="text/javascript" src="script/shBrushPlain.js"></script><script type="text/javascript" src="script/shBrushSpecs.js"></script><link href="style/shCore.css" rel="stylesheet" type="text/css"></link><link href="style/shThemeDefault.css" rel="stylesheet" type="text/css"></link><script type="text/javascript">
+      SyntaxHighlighter.config.clipboardSwf = 'script/clipboard.swf';
       SyntaxHighlighter.all()
     </script>
         </head>
@@ -22,7 +22,7 @@ case object false extends Boolean
 </code></pre>
 
 <p>The <code>List</code> type constructor <em>is</em> defined this way in the standard library.
-Although the real definition has many additional methods and a few complications,
+Although the real definition has many additional methods and a few complications (see below),
 the essence of it is:</p>
 
 <pre><code>sealed trait List[T]
