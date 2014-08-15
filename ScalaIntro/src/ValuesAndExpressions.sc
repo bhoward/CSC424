@@ -19,8 +19,8 @@ object ValuesAndExpressions {
 
   "Hello World"                                   //> res13: String("Hello World") = Hello World
   "I said, \"Hello!\""                            //> res14: String("I said, \"Hello!\"") = I said, "Hello!"
-  "line one\nline two"                            //> res15: String("line one\nline two") = line one
-                                                  //| line two
+  "line 1\nline 2"                                //> res15: String("line 1\nline 2") = line 1
+                                                  //| line 2
                                                   
   """This is a string with several lines.
 This is the second line, which contains a quotation: "Hello World".
