@@ -1,0 +1,609 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\geometry{letterpaper} 
+
+\usepackage{framed}
+\newenvironment{quotationb}%
+{\begin{leftbar}\begin{quotation}}%
+{\end{quotation}\end{leftbar}}
+
+\title{Scala for the Study of Programming Languages}
+\author{Brian Howard}
+
+\newcommand{\qhead}[1]{\vspace{5mm}\noindent\textbf{#1}\\}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+This document provides an overview of the Scala language as it will be used in our programming languages course. It assumes that you are already familiar with programming in Java and/or C++; you should already have learned some Scala or another functional language in Foundations, but you are not expected to be an expert.
+
+Before diving into the details, here is a description of Scala written by Martin Odersky, the language's designer, for the main Scala website, \texttt{http://www.scala-lang.org/}:
+\begin{quotationb}\vspace{-5mm}
+\qhead{A Scalable language}
+Scala is an acronym for ``Scalable Language''. This means that Scala grows with you. You can play with it by typing one-line expressions and observing the results. But you can also rely on it for large mission critical systems, as many companies, including Twitter, LinkedIn, or Intel do.
+
+To some, Scala feels like a scripting language. Its syntax is concise and low ceremony; its types get out of the way because the compiler can infer them. There's a REPL and IDE worksheets for quick feedback. Developers like it so much that Scala won the ScriptBowl contest at the 2012 JavaOne conference.
+
+At the same time, Scala is the preferred workhorse language for many mission critical server systems. The generated code is on a par with Java's and its precise typing means that many problems are caught at compile-time rather than after deployment.
+
+At the root, the language's scalability is the result of a careful integration of object-oriented and functional language concepts.
+
+\qhead{Object-Oriented}
+Scala is a pure-bred object-oriented language. Conceptually, every value is an object and every operation is a method-call. The language supports advanced component architectures through classes and traits.
+
+Many traditional design patterns in other languages are already natively supported. For instance, singletons are supported through object definitions and visitors are supported through pattern matching. Using implicit classes, Scala even allows you to add new operations to existing classes, no matter whether they come from Scala or Java!
+
+\qhead{Functional}
+Even though its syntax is fairly conventional, Scala is also a full-blown functional language. It has everything you would expect, including first-class functions, a library with efficient immutable data structures, and a general preference of immutability over mutation.
+
+Unlike with many traditional functional languages, Scala allows a gradual, easy migration to a more functional style. You can start to use it as a “Java without semicolons”. Over time, you can progress to gradually eliminate mutable state in your applications, phasing in safe functional composition patterns instead. As Scala programmers we believe that this progression is often a good idea. At the same time, Scala is not opinionated; you can use it with any style you prefer.
+
+\qhead{Seamless Java Interop}
+Scala runs on the JVM. Java and Scala classes can be freely mixed, no matter whether they reside in different projects or in the same. They can even mutually refer to each other, the Scala compiler contains a subset of a Java compiler to make sense of such recursive dependencies.
+
+Java libraries, frameworks and tools are all available. Build tools like ant or maven, IDEs like Eclipse, IntelliJ, or Netbeans, frameworks like Spring or Hibernate all work seamlessly with Scala. Scala runs on all common JVMs and also on Android.
+
+The Scala community is an important part of the Java ecosystem. Popular Scala frameworks, including Akka, Finagle, and the Play web framework include dual APIs for Java and Scala.
+
+\qhead{Functions are Objects}
+Scala's approach is to develop a small set of core constructs that can be combined in flexible ways. This applies also to its object-oriented and functional natures. Features from both sides are unified to a degree where Functional and Object-oriented can be seen as two sides of the same coin.
+
+Some examples: Functions in Scala are objects. The function type is just a regular class. The algebraic data types found in languages such as Haskell, F$\sharp$ or ML are modelled in Scala as class hierarchies. Pattern matching is possible over arbitrary classes.
+
+\qhead{Future-Proof}
+Scala particularly shines when it comes to scalable server software that makes use of concurrent and synchronous processing, parallel utilization of multiple cores, and distributed processing in the cloud.
+
+Its functional nature makes it easier to write safe and performant multi-threaded code. There's typically less reliance on mutable state and Scala's futures and actors provide powerful tools for organizing concurrent system at a high-level of abstraction.
+
+\qhead{Fun}
+Maybe most important is that programming in Scala tends to be very enjoyable. No boilerplate, rapid iteration, but at the same time the safety of a strong static type system. As Graham Tackley from the Guardian says: ``We've found that Scala has enabled us to deliver things faster with less code. It's reinvigorated the team.''
+\end{quotationb}
+
+For our purposes, the main advantages of Scala, beyond its kinship to Java, are its modern, multi-paradigm design, and its ``batteries included'' library support for easily defining new languages and language extensions. In addition to comparing Scala's language features with those of other common real-world languages, we will be exploring the basics of language implementation by constructing interpreters for several ``toy'' languages.
+
+The following sections will give a series of examples of Scala code alongside equivalent code in C++, Standard ML, and Java. This is not intended to give exhaustive coverage of the language, but rather to gain enough familiarity with Scala that it may be used for exercises and small projects.
+
+\section{Scala as an Imperative Language}
+Scala inherited much of its basic syntax from C, C++, and Java. The two most noticeable departures stem from the Scala compiler doing extra work to ``infer'' some pieces of syntax that don't add much information:
+\begin{itemize}
+\item Semicolons are inferred at the end of a statement if it coincides with the end of a line;
+\item Types are inferred from the initial values for variable declarations. One consequence of this is that it is more convenient for types, when needed, to be annotated as \verb|thing: type| (Pascal-style), instead of the C-style \verb|type thing|.
+\end{itemize}
+
+\newpage
+First, here are programs to provide a friendly greeting to each name given on the command line:
+
+\noindent\rule{\textwidth}{1pt}\\\textbf{C++}
+\begin{verbatim}
+#include <iostream>
+using namespace std;
+
+int main(int argc, char *argv[])
+{
+  int i = 1; // skip argv[0], which is the program name
+  while (i < argc) {
+    cout << "Hello, " << argv[i] << endl;
+    ++i;
+  }
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}\\\textbf{Java}
+\begin{verbatim}
+public class Demo {
+  public static void main(String args[]) {
+    int i = 0;
+    while (i < args.length) {
+      System.out.println("Hello, " + args[i]);
+      ++i;
+    }
+  }
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}\\\textbf{Scala}
+\begin{verbatim}
+object Demo {
+  def main(args: Array[String]): Unit = {
+    var i = 0
+    while (i < args.length) {
+      println("Hello, " + args(i))
+      i += 1
+    }
+  }
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}
+
+\newpage
+Those \texttt{while} loops in C++ and Java would more typically be written as \texttt{for} loops. Scala has a more general form of \texttt{for} loop that we will see more of later; the omission of the C-style \texttt{for} loop (and the increment operator \verb|++|) is meant to discourage programs that rely too much on side-effects.
+
+\noindent\rule{\textwidth}{1pt}\\\textbf{Java}
+\begin{verbatim}
+public class Demo {
+  public static void main(String args[]) {
+    for (int i = 0; i < args.length; ++i) {
+      System.out.println("Hello, " + args[i]);
+    }
+  }
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}\\\textbf{Scala}
+\begin{verbatim}
+object Demo {
+  def main(args: Array[String]): Unit = {
+    for (i <- 0 until args.length) {
+      println("Hello, " + args(i))
+    }
+  }
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}
+
+The next set of examples show insertion sort, to demonstrate breaking up a program into functions and passing parameters:
+
+\noindent\rule{\textwidth}{1pt}\\\textbf{C++}
+\begin{verbatim}
+#include <iostream>
+using namespace std;
+
+// Forward declarations of functions defined later
+void isort(int a[], int N);
+void display(int a[], int N);
+
+int main()
+{
+  int data[] = {3, 1, 4, 1, 5, 9, 2, 6, 5};
+  const int size = sizeof(data) / sizeof(int);
+
+  isort(data, size);
+  display(data, size);
+}
+
+void isort(int a[], int N)
+{
+  for (int i = 1; i < N; ++i) {
+    int value = a[i];
+    int j = i;
+    while (j > 0 && a[j-1] > value) {
+      a[j] = a[j-1];
+      --j;
+    }
+    a[j] = value;
+  }
+}
+
+void display(int a[], int N)
+{
+  for (int i = 0; i < N; ++i) {
+    cout << a[i] << " ";
+  }
+  cout << endl;
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}\\\textbf{Scala}
+\begin{verbatim}
+object ISort {
+  // Functions may be defined in any order, but must belong to an object
+  def main(args: Array[String]): Unit = {
+    val data = Array(3, 1, 4, 1, 5, 9, 2, 6, 5)
+    isort(data)
+    display(data)
+  }
+  
+  def isort(a: Array[Int]): Unit = {
+    for (i <- 1 until a.length) {
+      val value = a(i)
+      var j = i
+      while (j > 0 && a(j-1) > value) {
+        a(j) = a(j-1)
+        j -= 1
+      }
+      a(j) = value
+    }
+  }
+  
+  def display(a: Array[Int]): Unit = {
+    for (i <- 0 until a.length) {
+      print(a(i) + " ")
+    }
+    println()
+  }
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}
+
+\section{Scala as a Functional Language}
+We will cover a wide variety of language features that are typically associated with functional languages, including:
+\begin{itemize}
+\item Emphasis on side-effect-free expressions and recursive functions;
+\item Immutable data structures, often defined recursively;
+\item Algebraic data types and pattern matching;
+\item Higher-order functions, and anonymous function values.
+\end{itemize}
+The functional part of Scala's design was strongly influenced by both Standard ML (SML) and Haskell. The design of Scala's actor system, to be discussed when we look at concurrency, was based on Erlang.
+
+Here is an example comparing SML to Scala that shows most of the above features. It implements a binary search tree plus some utility functions.
+
+\noindent\rule{\textwidth}{1pt}\\\textbf{SML}
+\begin{verbatim}
+datatype Tree = Empty | Node of Tree * int * Tree;
+
+fun insert Empty x = Node(Empty, x, Empty)
+  | insert (t as Node(smaller, value, larger)) x =
+      if x < value
+        then Node(insert smaller x, value, larger)
+      else if x > value
+        then Node(smaller, value, insert larger x)
+      else t;
+      
+fun insertAll t [] = t
+  | insertAll t (head::tail) = insertAll (insert t head) tail;
+
+fun contains Empty _ = false
+  | contains (Node(smaller, value, larger)) x =
+      if x < value
+        then contains smaller x
+      else if x > value
+        then contains larger x
+      else true;
+
+fun traverse Empty e _ = e
+  | traverse (Node(smaller, value, larger)) e n =
+      n (traverse smaller e n, value, traverse larger e n);
+      
+let
+  val tree = insertAll Empty [3, 1, 4, 1, 5, 9, 2, 6, 5];
+
+  val preorder = traverse tree [] (fn (s, v, l) => (v :: s) @ l);
+  val inorder = traverse tree [] (fn (s, v, l) => (s @ [v]) @ l);
+in
+  (* No built-in for loop in SML -- define a custom one *)
+  let
+    fun loop i max =
+      if i > max then ()
+      else (
+        print ("Contains " ^ (Int.toString i) ^ ": "
+          ^ (if contains tree i then "true" else "false") ^ "\n");
+        loop (i+1) max
+      );
+  in
+    loop 1 9
+  end;
+
+  print "Preorder:";
+  List.app (fn n => print (" " ^ Int.toString n)) preorder;
+  print "\n";
+
+  print "Inorder:";
+  List.app (fn n => print (" " ^ Int.toString n)) inorder;
+  print "\n"
+end;
+\end{verbatim}
+\rule{\textwidth}{1pt}\\\textbf{Scala}
+\begin{verbatim}
+object BST {
+  sealed trait Tree
+  case object Empty extends Tree
+  case class Node(smaller: Tree, value: Int, larger: Tree) extends Tree
+
+  def insert(t: Tree, x: Int): Tree = t match {
+    case Empty => Node(Empty, x, Empty)
+    case Node(smaller, value, larger) =>
+      if (x < value)
+        Node(insert(smaller, x), value, larger)
+      else if (x > value)
+        Node(smaller, value, insert(larger, x))
+      else t // ignore duplicates
+  }
+
+  def insertAll(t: Tree, xs: List[Int]): Tree = xs match {
+    case Nil => t
+    case head::tail => insertAll(insert(t, head), tail)
+  }
+
+  def contains(t: Tree, x: Int): Boolean = t match {
+    case Empty => false
+    case Node(smaller, value, larger) =>
+      if (x < value)
+        contains(smaller, x)
+      else if (x > value)
+        contains(larger, x)
+      else true
+  }
+
+  def traverse[T](t: Tree, e: T, n: (T, Int, T) => T): T = t match {
+    case Empty => e
+    case Node(smaller, value, larger) =>
+      n(traverse(smaller, e, n), value, traverse(larger, e, n))
+  }
+}
+
+object BSTDemo {
+  import BST._
+  
+  def main(args: Array[String]): Unit = {
+    val tree = insertAll(Empty, List(3, 1, 4, 1, 5, 9, 2, 6, 5))
+    for (i <- 1 to 9)
+      println(s"Contains $i: ${contains(tree, i)}")
+      
+    val preorder =
+      traverse[List[Int]](tree, Nil, (s, v, l) => (v :: s) ::: l)
+    val inorder =
+      traverse[List[Int]](tree, Nil, (s, v, l) => (s :+ v) ::: l)
+    println("Preorder: " + preorder)
+    println("Inorder: " + inorder)
+  }
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}
+
+\section{Scala as an Object-Oriented Language}
+
+Since it is hard to see the utility of an object-oriented approach in a small program, here is a somewhat longer example, first in C++ and then in Scala, of defining classes to represent and use expression trees. In this code, an expression (represented by the base class \verb|Expr|) is either an integer constant (\verb|Const_Expr|) or the sum of two subexpressions (\verb|Plus_Expr|); later we will build on this example to handle more cases. The common interface provided by the base class consists of two methods (besides the virtual destructor needed in C++ to free up memory properly on deletion): \verb|eval()| returns the integer result of evaluating the expression, and \verb|accept(visitor)| uses the Visitor design pattern to apply some operation to each node in the expression tree. In the example, two subclasses of \verb|Visitor| are shown: \verb|Infix_Visitor| and \verb|Postfix_Visitor| will print out the expression in either infix or postfix form.
+
+\newpage
+\noindent\rule{\textwidth}{1pt}\\\textbf{C++}
+\begin{verbatim}
+#include <iostream>
+using namespace std;
+
+class Const_Expr;
+class Plus_Expr;
+
+class Visitor {
+public:
+  virtual void visit(Const_Expr *const_expr) = 0;
+
+  virtual void visit(Plus_Expr *plus_expr) = 0;
+};
+
+class Expr {
+public:
+  virtual ~Expr() { }
+
+  virtual int eval() const = 0;
+
+  virtual void accept(Visitor &) = 0;
+};
+
+class Const_Expr : public Expr {
+public:
+  Const_Expr(int value) : value(value) { }
+
+  ~Const_Expr() { }
+
+  int eval() const { return value; }
+
+  void accept(Visitor &visitor) { visitor.visit(this); }
+
+  int getValue() const { return value; }
+
+private:
+  int value;
+};
+
+class Plus_Expr : public Expr {
+public:
+  Plus_Expr(Expr *left, Expr *right) : left(left), right(right) { }
+
+  ~Plus_Expr() { delete left; delete right; }
+
+  int eval() const { return left->eval() + right->eval(); }
+
+  void accept(Visitor &visitor) { visitor.visit(this); }
+
+  Expr *getLeft() const { return left; }
+
+  Expr *getRight() const { return right; }
+
+private:
+  Expr *left, *right;
+};
+
+// Define other operators similarly: Minus_Expr, Times_Expr, ...
+
+class Infix_Visitor : public Visitor {
+public:
+  Infix_Visitor(ostream &out) : out(out) { }
+
+  void visit(Const_Expr *const_expr)
+  {
+    out << const_expr->getValue();
+  }
+
+  void visit(Plus_Expr *plus_expr)
+  {
+    out << "(";
+    plus_expr->getLeft()->accept(*this);
+    out << "+";
+    plus_expr->getRight()->accept(*this);
+    out << ")";
+  }
+
+private:
+  ostream &out;
+};
+
+class Postfix_Visitor : public Visitor {
+public:
+  Postfix_Visitor(ostream &out) : out(out) { }
+
+  void visit(Const_Expr *const_expr)
+  {
+    out << const_expr->getValue() << " ";
+  }
+
+  void visit(Plus_Expr *plus_expr)
+  {
+    plus_expr->getLeft()->accept(*this);
+    plus_expr->getRight()->accept(*this);
+    out << "+ ";
+  }
+
+private:
+  ostream &out;
+};
+
+int main()
+{
+  Expr *e1 = new Plus_Expr(new Const_Expr(7), new Const_Expr(14));
+  Expr *e2 = new Const_Expr(21);
+  Expr *expr = new Plus_Expr(e1, e2);
+
+  cout << "Value is: " << expr->eval() << endl;
+
+  Infix_Visitor infix(cout);
+  cout << "Infix is: ";
+  expr->accept(infix);
+  cout << endl;
+
+  Postfix_Visitor postfix(cout);
+  cout << "Postfix is: ";
+  expr->accept(postfix);
+  cout << endl;
+
+  delete expr;
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}\\\textbf{Scala}
+\begin{verbatim}
+import java.io.PrintStream
+
+trait Expr {
+  def eval(): Int
+  def accept(visitor: Visitor): Unit
+}
+
+class Const_Expr(val value: Int) extends Expr {
+  def eval(): Int = value
+  def accept(visitor: Visitor): Unit =  visitor.visit(this)
+}
+
+class Plus_Expr(val left: Expr, val right: Expr) extends Expr {
+  def eval(): Int = left.eval() + right.eval()
+  def accept(visitor: Visitor): Unit = visitor.visit(this)
+}
+
+// Define other operators similarly: Minus_Expr, Times_Expr, ...
+
+trait Visitor {
+  def visit(const_expr: Const_Expr): Unit
+  def visit(plus_expr: Plus_Expr): Unit
+}
+
+class Infix_Visitor(out: PrintStream) extends Visitor {
+  def visit(const_expr: Const_Expr): Unit = {
+    out.print(const_expr.value)
+  }
+
+  def visit(plus_expr: Plus_Expr): Unit = {
+    out.print("(")
+    plus_expr.left.accept(this)
+    out.print("+")
+    plus_expr.right.accept(this)
+    out.print(")")
+  }
+}
+
+class Postfix_Visitor(out: PrintStream) extends Visitor {
+  def visit(const_expr: Const_Expr): Unit = {
+    out.print(const_expr.value + " ")
+  }
+
+  def visit(plus_expr: Plus_Expr): Unit = {
+    plus_expr.left.accept(this)
+    plus_expr.right.accept(this)
+    out.print("+ ")
+  }
+}
+
+object ExprDemo {
+  def main(args: Array[String]) = {
+    val e1 = new Plus_Expr(new Const_Expr(7), new Const_Expr(14))
+    val e2 = new Const_Expr(21)
+    val expr = new Plus_Expr(e1, e2)
+
+    println("Value is: " + expr.eval())
+
+    val infix = new Infix_Visitor(Console.out)
+    print("Infix is: ")
+    expr.accept(infix)
+    println()
+
+    val postfix = new Postfix_Visitor(Console.out)
+    print("Postfix is: ")
+    expr.accept(postfix)
+    println()
+  }
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}
+
+Scala improves on the ``boilerplate'' (repetitive code that is copied with only minor changes for each use) required by C++ in several ways:
+\begin{itemize}
+\item Simple constructors, private data members, and (where desired) getters are combined in class parameters (if the parameter is prefixed with \verb|val|, it will have a getter; if the prefix is \verb|var|, then it will also have a setter);
+\item Destructors are not needed, because Scala (and Java) use garbage collection to manage memory automatically.
+\end{itemize}
+Furthermore, as noted in the quote from Odersky, common design patterns such as Visitor are not needed when Scala's functional features (in this case, pattern matching) are available. Here is a rewrite of the above code in a more idiomatic Scala style:
+
+\noindent\rule{\textwidth}{1pt}\\\textbf{Scala}
+\begin{verbatim}
+import java.io.PrintStream
+
+trait Expr {
+  def eval(): Int
+}
+
+case class Const_Expr(value: Int) extends Expr {
+  def eval(): Int = value
+}
+
+case class Plus_Expr(left: Expr, right: Expr) extends Expr {
+  def eval(): Int = left.eval() + right.eval()
+}
+
+// Define other operators similarly: Minus_Expr, Times_Expr, ...
+
+object ExprDemo {
+  def infix(expr: Expr, out: PrintStream): Unit = expr match {
+    case Const_Expr(value) =>
+      out.print(value)
+
+    case Plus_Expr(left, right) =>
+      out.print("(")
+      infix(left, out)
+      out.print("+")
+      infix(right, out)
+      out.print(")")
+  }
+
+  def postfix(expr: Expr, out: PrintStream): Unit = expr match {
+    case Const_Expr(value) =>
+      out.print(value + " ")
+
+    case Plus_Expr(left, right) =>
+      postfix(left, out)
+      postfix(right, out)
+      out.print("+ ")
+  }
+
+  def main(args: Array[String]) = {
+    val e1 = new Plus_Expr(new Const_Expr(7), new Const_Expr(14))
+    val e2 = new Const_Expr(21)
+    val expr = new Plus_Expr(e1, e2)
+
+    println("Value is: " + expr.eval())
+
+    print("Infix is: ")
+    infix(expr, Console.out)
+    println()
+
+    print("Postfix is: ")
+    postfix(expr, Console.out)
+    println()
+  }
+}
+\end{verbatim}
+\rule{\textwidth}{1pt}
+
+\end{document}
+
