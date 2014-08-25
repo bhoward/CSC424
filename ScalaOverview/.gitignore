@@ -5,6 +5,8 @@ bin/
 *.aux
 *.gz
 *.pdf
+*.dvi
+*.texlipse
 
 # sbt specific
 dist/*
@@ -17,7 +19,4 @@ project/plugins/project/
 # Scala-IDE specific
 .scala_dependencies
 /.settings
-.classpath
-.project
 .worksheet
-/ScalaOverview.dvi
