@@ -7,6 +7,8 @@
 {\begin{leftbar}\begin{quotation}}%
 {\end{quotation}\end{leftbar}}
 
+\usepackage{fancyvrb}
+
 \title{Scala for the Study of Programming Languages}
 \author{Brian Howard}
 
@@ -36,7 +38,7 @@ Many traditional design patterns in other languages are already natively support
 \qhead{Functional}
 Even though its syntax is fairly conventional, Scala is also a full-blown functional language. It has everything you would expect, including first-class functions, a library with efficient immutable data structures, and a general preference of immutability over mutation.
 
-Unlike with many traditional functional languages, Scala allows a gradual, easy migration to a more functional style. You can start to use it as a “Java without semicolons”. Over time, you can progress to gradually eliminate mutable state in your applications, phasing in safe functional composition patterns instead. As Scala programmers we believe that this progression is often a good idea. At the same time, Scala is not opinionated; you can use it with any style you prefer.
+Unlike with many traditional functional languages, Scala allows a gradual, easy migration to a more functional style. You can start to use it as a ``Java without semicolons''. Over time, you can progress to gradually eliminate mutable state in your applications, phasing in safe functional composition patterns instead. As Scala programmers we believe that this progression is often a good idea. At the same time, Scala is not opinionated; you can use it with any style you prefer.
 
 \qhead{Seamless Java Interop}
 Scala runs on the JVM. Java and Scala classes can be freely mixed, no matter whether they reside in different projects or in the same. They can even mutually refer to each other, the Scala compiler contains a subset of a Java compiler to make sense of such recursive dependencies.
@@ -70,50 +72,11 @@ Scala inherited much of its basic syntax from C, C++, and Java. The two most not
 \item Types are inferred from the initial values for variable declarations. One consequence of this is that it is more convenient for types, when needed, to be annotated as \verb|thing: type| (Pascal-style), instead of the C-style \verb|type thing|.
 \end{itemize}
 
-\newpage
 First, here are programs to provide a friendly greeting to each name given on the command line:
+\VerbatimInput[frame=single, numbers=left, label=C++: HelloAll.cpp]{src/main/cpp/HelloAll.cpp}
+\VerbatimInput[frame=single, numbers=left, label=Java: HelloAllJ.java]{src/main/java/HelloAllJ.java}
+\VerbatimInput[frame=single, numbers=left, label=Scala: HelloAllS.scala]{src/main/scala/HelloAllS.scala}
 
-\noindent\rule{\textwidth}{1pt}\\\textbf{C++}
-\begin{verbatim}
-#include <iostream>
-using namespace std;
-
-int main(int argc, char *argv[])
-{
-  int i = 1; // skip argv[0], which is the program name
-  while (i < argc) {
-    cout << "Hello, " << argv[i] << endl;
-    ++i;
-  }
-}
-\end{verbatim}
-\rule{\textwidth}{1pt}\\\textbf{Java}
-\begin{verbatim}
-public class Demo {
-  public static void main(String args[]) {
-    int i = 0;
-    while (i < args.length) {
-      System.out.println("Hello, " + args[i]);
-      ++i;
-    }
-  }
-}
-\end{verbatim}
-\rule{\textwidth}{1pt}\\\textbf{Scala}
-\begin{verbatim}
-object Demo {
-  def main(args: Array[String]): Unit = {
-    var i = 0
-    while (i < args.length) {
-      println("Hello, " + args(i))
-      i += 1
-    }
-  }
-}
-\end{verbatim}
-\rule{\textwidth}{1pt}
-
-\newpage
 Those \texttt{while} loops in C++ and Java would more typically be written as \texttt{for} loops. Scala has a more general form of \texttt{for} loop that we will see more of later; the omission of the C-style \texttt{for} loop (and the increment operator \verb|++|) is meant to discourage programs that rely too much on side-effects.
 
 \noindent\rule{\textwidth}{1pt}\\\textbf{Java}
