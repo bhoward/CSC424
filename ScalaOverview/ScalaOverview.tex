@@ -163,13 +163,11 @@ written as \texttt{for} loops. Scala has a more general form of
 \texttt{for} loop that we will see more of later; the omission of
 the C-style \texttt{for} loop (and the increment operator \verb|++|)
 is meant to discourage programs that rely too much on side-effects.
-
 \Source[label=Java: HelloAll2J.java]{src/main/java/HelloAll2J.java}
 \Source[label=Scala: HelloAll2S.scala]{src/main/scala/HelloAll2S.scala}
 
 The next set of examples show insertion sort, to demonstrate breaking
 up a program into functions and passing parameters:
-
 \Source[label=C++: ISort.cpp]{src/main/cpp/ISort.cpp}
 \Source[label=Scala: ISort.scala]{src/main/scala/ISort.scala}
 
@@ -190,12 +188,10 @@ Erlang.
 Here is an example comparing SML to Scala that shows most of the
 above features. It implements a binary search tree plus some utility
 functions.
-
 \Source[label=SML: BSTDemo.sml]{src/main/sml/BSTDemo.sml}
 \Source[label=Scala: BSTDemo.scala]{src/main/scala/BSTDemo.scala}
 
 \section{Scala as an Object-Oriented Language}
-
 Since it is hard to see the utility of an object-oriented approach
 in a small program, here is a somewhat longer example, first in C++
 and then in Scala, of defining classes to represent and use expression
@@ -211,7 +207,6 @@ pattern to apply some operation to each node in the expression tree.
 In the example, two subclasses of \verb|Visitor| are shown:
 \verb|Infix_Visitor| and \verb|Postfix_Visitor| will print out the
 expression in either infix or postfix form.
-
 \Source[label=C++: ExprDemo.cpp]{src/main/cpp/ExprDemo.cpp}
 \Source[label=Scala: ExprDemo.scala]{src/main/scala/ExprDemo.scala}
 
@@ -230,7 +225,6 @@ Furthermore, as noted in the quote from Odersky, common design
 patterns such as Visitor are not needed when Scala's functional
 features (in this case, pattern matching) are available. Here is a
 rewrite of the above code in a more idiomatic Scala style:
-
 \Source[label=Scala: ExprDemo2.scala]{src/main/scala/ExprDemo2.scala}
 
 \end{document}

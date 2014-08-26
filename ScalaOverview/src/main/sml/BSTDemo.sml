@@ -29,8 +29,7 @@ let
   val preorder = traverse tree [] (fn (s, v, l) => (v :: s) @ l);
   val inorder = traverse tree [] (fn (s, v, l) => (s @ [v]) @ l);
 in
-  (* No built-in for loop in SML -- define a custom one *)
-  let
+  let (* No built-in for loop in SML -- define a custom one *)
     fun loop i max =
       if i > max then ()
       else (
