@@ -75,41 +75,41 @@ class ELPTest extends Specification {
   	ExprLangParser(src).get must_== ast
   }
   
-  "String literals may be used in I/O statements" in {
-  	val src = """let
-  	            |  var x = 0
-  	            |in do
-  	            |  read "Enter a number: ", x
-  	            |  x = x * 2
-  	            |  write "Your number doubled is"
-  	            |  write x
-  	            |in x""".stripMargin
-  	val ast = LetExpr(List(VarDecl("x", NumExpr(0))),
-  	                  DoExpr(List(PromptReadStmt("Enter a number: ", "x"),
-  	                              AssignStmt("x", BinOpExpr("*", IdExpr("x"), NumExpr(2))),
-  	                              StringWriteStmt("Your number doubled is"),
-  	                              WriteStmt(IdExpr("x"))),
-  	                         IdExpr("x")))
-  	ExprLangParser(src).get must_== ast
-  }
-  
-  "swap statements are parsed" in {
-  	val src = "let var first = 1 var second = 2 in do swap first, second in first - second"
-  	val ast = LetExpr(List(VarDecl("first", NumExpr(1)),
-  	                       VarDecl("second", NumExpr(2))),
-  	                  DoExpr(List(SwapStmt("first", "second")),
-  	                         BinOpExpr("-", IdExpr("first"), IdExpr("second"))))
-  	ExprLangParser(src).get must_== ast
-  }
-
-  "swapif statements are parsed" in {
-    val src = "let var first = 1 var second = 2 in do swapif first, second in first - second"
-    val ast = LetExpr(List(VarDecl("first", NumExpr(1)),
-                           VarDecl("second", NumExpr(2))),
-                      DoExpr(List(SwapIfStmt("first", "second")),
-                             BinOpExpr("-", IdExpr("first"), IdExpr("second"))))
-    ExprLangParser(src).get must_== ast
-  }
+//  "String literals may be used in I/O statements" in {
+//  	val src = """let
+//  	            |  var x = 0
+//  	            |in do
+//  	            |  read "Enter a number: ", x
+//  	            |  x = x * 2
+//  	            |  write "Your number doubled is"
+//  	            |  write x
+//  	            |in x""".stripMargin
+//  	val ast = LetExpr(List(VarDecl("x", NumExpr(0))),
+//  	                  DoExpr(List(PromptReadStmt("Enter a number: ", "x"),
+//  	                              AssignStmt("x", BinOpExpr("*", IdExpr("x"), NumExpr(2))),
+//  	                              StringWriteStmt("Your number doubled is"),
+//  	                              WriteStmt(IdExpr("x"))),
+//  	                         IdExpr("x")))
+//  	ExprLangParser(src).get must_== ast
+//  }
+//  
+//  "swap statements are parsed" in {
+//  	val src = "let var first = 1 var second = 2 in do swap first, second in first - second"
+//  	val ast = LetExpr(List(VarDecl("first", NumExpr(1)),
+//  	                       VarDecl("second", NumExpr(2))),
+//  	                  DoExpr(List(SwapStmt("first", "second")),
+//  	                         BinOpExpr("-", IdExpr("first"), IdExpr("second"))))
+//  	ExprLangParser(src).get must_== ast
+//  }
+//
+//  "swapif statements are parsed" in {
+//    val src = "let var first = 1 var second = 2 in do swapif first, second in first - second"
+//    val ast = LetExpr(List(VarDecl("first", NumExpr(1)),
+//                           VarDecl("second", NumExpr(2))),
+//                      DoExpr(List(SwapIfStmt("first", "second")),
+//                             BinOpExpr("-", IdExpr("first"), IdExpr("second"))))
+//    ExprLangParser(src).get must_== ast
+//  }
 
   "Binary operators require two operands" in {
   	val src = "2 +"

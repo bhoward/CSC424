@@ -85,15 +85,15 @@ class ELITest extends Specification {
     eval("1+2.0*0.3e+1") must_== 7
   }
 
-  "Floating point values work" in {
-  	val src = "1.2 * 3 - 26e-1"
-  	eval(src) must be closeTo(1.0 +/- 0.0001)
-  }
-
-  "Unary functions are evaluated" in {
-  	val src = "sqrt(2) + log(1)"
-  	eval(src) must be closeTo(1.4142 +/- 0.0001)
-  }
+//  "Floating point values work" in {
+//  	val src = "1.2 * 3 - 26e-1"
+//  	eval(src) must be closeTo(1.0 +/- 0.0001)
+//  }
+//
+//  "Unary functions are evaluated" in {
+//  	val src = "sqrt(2) + log(1)"
+//  	eval(src) must be closeTo(1.4142 +/- 0.0001)
+//  }
   
   "Binary functions are evaluated" in {
   	val src = "max(79, 37) - min(79, 37)"
