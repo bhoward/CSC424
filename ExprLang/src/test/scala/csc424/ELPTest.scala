@@ -56,25 +56,25 @@ class ELPTest extends Specification {
     ExprLangParser(src).get must_== ast
   }
   
-  "Simple expressions with floats parse" in {
-  	val src = "1 + 2.0 * 0.3e+1"
-  	val ast = BinOpExpr("+", NumExpr(1), BinOpExpr("*", NumExpr(2), NumExpr(3)))
-  	ExprLangParser(src).get must_== ast
-  }
-  
-  "Unary functions are parsed" in {
-  	val src = "sqrt(2) + log(1)"
-  	val ast = BinOpExpr("+", UnOpExpr("sqrt", NumExpr(2)), UnOpExpr("log", NumExpr(1)))
-  	ExprLangParser(src).get must_== ast
-  }
-  
-  "Binary functions are parsed" in {
-  	val src = "max(79, 37) - min(79, 37)"
-  	val ast = BinOpExpr("-", BinOpExpr("max", NumExpr(79), NumExpr(37)),
-  	                         BinOpExpr("min", NumExpr(79), NumExpr(37)))
-  	ExprLangParser(src).get must_== ast
-  }
-  
+//  "Simple expressions with floats parse" in {
+//  	val src = "1 + 2.0 * 0.3e+1"
+//  	val ast = BinOpExpr("+", NumExpr(1), BinOpExpr("*", NumExpr(2), NumExpr(3)))
+//  	ExprLangParser(src).get must_== ast
+//  }
+//  
+//  "Unary functions are parsed" in {
+//  	val src = "sqrt(2) + log(1)"
+//  	val ast = BinOpExpr("+", UnOpExpr("sqrt", NumExpr(2)), UnOpExpr("log", NumExpr(1)))
+//  	ExprLangParser(src).get must_== ast
+//  }
+//  
+//  "Binary functions are parsed" in {
+//  	val src = "max(79, 37) - min(79, 37)"
+//  	val ast = BinOpExpr("-", BinOpExpr("max", NumExpr(79), NumExpr(37)),
+//  	                         BinOpExpr("min", NumExpr(79), NumExpr(37)))
+//  	ExprLangParser(src).get must_== ast
+//  }
+//  
 //  "String literals may be used in I/O statements" in {
 //  	val src = """let
 //  	            |  var x = 0
