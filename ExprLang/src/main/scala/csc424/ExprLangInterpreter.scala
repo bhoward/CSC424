@@ -6,6 +6,8 @@ object Common {
 
 import Common._
 
+//-------------------------------------------------------------------
+
 /**
  * A Cell acts as a storage place for a value. It is an abstraction
  * of a memory location.
@@ -34,6 +36,8 @@ case class ValCell(value: ValueType) extends Cell {
  * A VarCell is a modifiable storage location. The value may be changed.
  */
 case class VarCell(var value: ValueType) extends Cell
+
+//-------------------------------------------------------------------
 
 /**
  * An Environment maintains bindings between identifiers and storage cells.
@@ -80,6 +84,8 @@ class ChildEnvironment(parent: Environment) extends Environment {
     else parent(id)
   }
 }
+
+//-------------------------------------------------------------------
 
 /**
  * The ExprLangInterpreter defines the functions needed to interpret
