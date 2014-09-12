@@ -1,12 +1,9 @@
-package csc424
+package csc424.exprlang
 
 import org.specs2.mutable._
 import scala.language.reflectiveCalls 
-import csc424.exprlang.Interpreter
-import csc424.exprlang.EmptyEnvironment
-import csc424.exprlang.Parser
 
-class ELITest extends Specification {
+class InterpreterTest extends Specification {
   def withInput[T](source: String)(block: => T): T = {
     val mockIn = new java.io.StringReader(source)
     val result = Console.withIn(mockIn) {

@@ -1,19 +1,8 @@
-package csc424
+package csc424.exprlang
 
 import org.specs2.mutable._
-import csc424.exprlang.Parser
-import csc424.exprlang.WriteStmt
-import csc424.exprlang.VarDecl
-import csc424.exprlang.ValDecl
-import csc424.exprlang.ReadStmt
-import csc424.exprlang.NumExpr
-import csc424.exprlang.LetExpr
-import csc424.exprlang.IdExpr
-import csc424.exprlang.DoExpr
-import csc424.exprlang.BinOpExpr
-import csc424.exprlang.AssignStmt
 
-class ELPTest extends Specification {
+class ParserTest extends Specification {
   "Simple expressions parse" in {
   	val src = "1 + 2 * 3"
   	val ast = BinOpExpr("+", NumExpr(1), BinOpExpr("*", NumExpr(2), NumExpr(3)))
