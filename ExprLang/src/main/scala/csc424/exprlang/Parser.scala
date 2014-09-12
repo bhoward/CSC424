@@ -1,4 +1,4 @@
-package csc424
+package csc424.exprlang
 
 import scala.util.parsing.combinator._
 

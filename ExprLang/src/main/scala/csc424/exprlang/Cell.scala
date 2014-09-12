@@ -1,6 +1,4 @@
-package csc424
-
-import Common._
+package csc424.exprlang
 
 /**
  * A Cell acts as a storage place for a value. It is an abstraction

@@ -1,6 +1,10 @@
 package csc424
 
 import org.specs2.mutable._
+import scala.language.reflectiveCalls 
+import csc424.exprlang.Interpreter
+import csc424.exprlang.EmptyEnvironment
+import csc424.exprlang.Parser
 
 class ELITest extends Specification {
   def withInput[T](source: String)(block: => T): T = {

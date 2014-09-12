@@ -1,6 +1,4 @@
-package csc424
-
-import Common._
+package csc424.exprlang
 
 /**
  * An Environment maintains bindings between identifiers and storage cells.

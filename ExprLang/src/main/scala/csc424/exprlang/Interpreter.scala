@@ -1,6 +1,4 @@
-package csc424
-
-import Common._
+package csc424.exprlang
 
 /**
  * The Interpreter defines the functions needed to interpret
