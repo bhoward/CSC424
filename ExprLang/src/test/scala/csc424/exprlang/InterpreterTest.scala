@@ -9,7 +9,7 @@ class InterpreterTest extends Specification {
     val result = Console.withIn(mockIn) {
       block
     }
-    // TODO find a way to check that all the input was used
+    mockIn.read must_== -1 // all input was consumed
     result
   }
   
