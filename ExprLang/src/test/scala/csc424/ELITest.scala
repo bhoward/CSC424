@@ -25,8 +25,8 @@ class ELITest extends Specification {
   }
   
   def eval(src: String) = {
-    val ast = ExprLangParser(src).get
-    ExprLangInterpreter.eval(ast, EmptyEnvironment)
+    val ast = Parser(src).get
+    Interpreter.eval(ast, EmptyEnvironment)
   }
 
   "Simple expressions can be evaluated" in {

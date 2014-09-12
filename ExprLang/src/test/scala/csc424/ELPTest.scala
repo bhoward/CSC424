@@ -6,14 +6,14 @@ class ELPTest extends Specification {
   "Simple expressions parse" in {
   	val src = "1 + 2 * 3"
   	val ast = BinOpExpr("+", NumExpr(1), BinOpExpr("*", NumExpr(2), NumExpr(3)))
-  	ExprLangParser(src).get must_== ast
+  	Parser(src).get must_== ast
   }
 
   "Whitespace doesn't matter" in {
   	val src = """1+		2
   	            | *     3""".stripMargin
   	val ast = BinOpExpr("+", NumExpr(1), BinOpExpr("*", NumExpr(2), NumExpr(3)))
-  	ExprLangParser(src).get must_== ast
+  	Parser(src).get must_== ast
   }
   
   "Let expressions parse" in {
@@ -23,7 +23,7 @@ class ELPTest extends Specification {
                            ValDecl("c", NumExpr(3))),
                       BinOpExpr("+", IdExpr("a"),
                                      BinOpExpr("*", IdExpr("b"), IdExpr("c"))))
-    ExprLangParser(src).get must_== ast
+    Parser(src).get must_== ast
   }
   
   "Do expressions parse" in {
@@ -53,7 +53,7 @@ class ELPTest extends Specification {
                                   WriteStmt(IdExpr("x")),
                                   WriteStmt(IdExpr("y"))),
                              BinOpExpr("*", IdExpr("x"), IdExpr("y"))))
-    ExprLangParser(src).get must_== ast
+    Parser(src).get must_== ast
   }
   
 //  "Simple expressions with floats parse" in {
@@ -113,16 +113,16 @@ class ELPTest extends Specification {
 
   "Binary operators require two operands" in {
   	val src = "2 +"
-  	ExprLangParser(src).successful must_== false
+  	Parser(src).successful must_== false
   }
   
   "Let expressions must have at least one binding" in {
   	val src = "let in 1"
-  	ExprLangParser(src).successful must_== false
+  	Parser(src).successful must_== false
   }
   
   "Let expressions require val or var binding keywords" in {
   	val src = "let x = 1 in x"
-  	ExprLangParser(src).successful must_== false
+  	Parser(src).successful must_== false
   }
 }
