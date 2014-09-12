@@ -10,8 +10,9 @@ class ParserTest extends Specification {
   }
 
   "Whitespace doesn't matter" in {
-  	val src = """1+		2
-  	            | *     3""".stripMargin
+  	val src = """1+		2 // ignore me
+  	            | *   /* and
+                | me */  3""".stripMargin
   	val ast = BinOpExpr("+", NumExpr(1), BinOpExpr("*", NumExpr(2), NumExpr(3)))
   	Parser(src).get must_== ast
   }

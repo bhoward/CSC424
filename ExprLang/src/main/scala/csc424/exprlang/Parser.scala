@@ -46,7 +46,7 @@ object Parser extends RegexParsers with PackratParsers {
      
   val wholeNumber: Parser[String] = """[1-9][0-9]*|0""".r
   
-  override val whiteSpace = """(\s|(//.*\n)|(/\*(?s:.)*?\*/))+""".r
+  override val whiteSpace = """(\s|//.*|/\*(\*(?!/)|[^*])*\*/)+""".r
 
   def apply(in: String) = parseAll(expr, in)
 }
