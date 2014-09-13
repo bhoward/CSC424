@@ -1,4 +1,6 @@
-scalaVersion := "2.11.2"
+scalaVersion := "2.10.1"
+
+EclipseKeys.withBundledScalaContainers:=false
 
 resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
 
