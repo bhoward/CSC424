@@ -1,10 +1,14 @@
 package csc424.exprlang
 
+import csc424.simplide.ExecutionContext
+
 /**
  * The Interpreter defines the functions needed to interpret
  * an abstract syntax tree (Expr, Stmt, Decl) in the Expression Language.
+ * 
+ * @param context the ExecutionContext to use for input/output
  */
-object Interpreter {
+class Interpreter(context: ExecutionContext) {
   /**
    * Evaluate an Expr in the given Environment.
    *
@@ -36,12 +40,12 @@ object Interpreter {
   def exec(ss: List[Stmt], env: Environment): Unit = ss map {
     case ReadStmt(id) =>
       // Ask for user input. Use the variable name as the prompt
-      print(id + "? ")
-      env(id).value = readInt
+      context.output.print(id + "? ")
+      env(id).value = context.input.nextInt
 
     case WriteStmt(e) =>
       // Print the result of evaluating an expression
-      println(eval(e, env))
+      context.output.println(eval(e, env))
 
     case AssignStmt(id, e) =>
       // Modify the value stored in the cell bound to a variable

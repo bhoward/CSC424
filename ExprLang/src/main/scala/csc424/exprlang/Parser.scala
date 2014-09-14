@@ -1,6 +1,8 @@
 package csc424.exprlang
 
 import scala.util.parsing.combinator._
+import java.io.Reader
+import csc424.simplide.InterpreterException
 
 /**
  * Combinator parser for the Expression Language.
@@ -49,4 +51,9 @@ object Parser extends RegexParsers with PackratParsers {
   override val whiteSpace = """(\s|//.*|/\*(\*(?!/)|[^*])*\*/)+""".r
 
   def apply(in: String) = parseAll(expr, in)
+  
+  def parse(in: Reader): Expr = parseAll(expr, in) match {
+    case Success(result, _) => result
+    case ns: NoSuccess => throw new InterpreterException(ns.msg)
+  }
 }

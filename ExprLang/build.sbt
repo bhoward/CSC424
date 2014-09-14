@@ -1,4 +1,4 @@
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.4"
 
 EclipseKeys.withBundledScalaContainers:=false
 
@@ -12,10 +12,11 @@ libraryDependencies := {
     // if scala 2.11+ is used, add dependency on scala-xml module
     case Some((2, scalaMajor)) if scalaMajor >= 11 =>
       libraryDependencies.value ++ Seq(
-        "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1"
+        "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1",
+        "org.scala-lang.modules" %% "scala-swing" % "1.0.1"
       )
     case _ =>
-      libraryDependencies.value
+      libraryDependencies.value :+ "org.scala-lang" % "scala-swing" % scalaVersion.value
   }
 }
 

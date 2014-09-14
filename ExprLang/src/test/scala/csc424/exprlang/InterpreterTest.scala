@@ -26,8 +26,9 @@ class InterpreterTest extends Specification {
   }
   
   def eval(src: String) = {
-    val ast = Parser(src).get
-    Interpreter.eval(ast, EmptyEnvironment)
+//    val ast = Parser(src).get
+//    Interpreter.eval(ast, EmptyEnvironment)
+    Language(src)
   }
 
   "Simple expressions can be evaluated" in {
