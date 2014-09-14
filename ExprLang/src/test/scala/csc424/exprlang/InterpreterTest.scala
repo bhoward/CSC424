@@ -84,13 +84,12 @@ class InterpreterTest extends Specification {
                 |  read x
                 |  read y
                 |in x * y""".stripMargin
-    withInput("6\n7") {
+    withInput("6 7") {
       withOutput("x? y? ") {
         eval(src)
       }
     } must_== 42
   }
-// TODO switch to using a Scanner to read multiple values from each line
   
 //  "String write statements produce output" in {
 //    val src = """do write "Hello World!" in 0"""
