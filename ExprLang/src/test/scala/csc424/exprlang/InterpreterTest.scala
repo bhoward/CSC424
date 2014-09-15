@@ -1,8 +1,12 @@
 package csc424.exprlang
 
 import org.specs2.mutable._
+import org.junit.runner.RunWith
+import org.specs2.runner.JUnitRunner
+
 import scala.language.reflectiveCalls 
 
+@RunWith(classOf[JUnitRunner])
 class InterpreterTest extends Specification {
   def withInput[T](source: String)(block: => T): T = {
     val mockIn = new java.io.StringReader(source)
