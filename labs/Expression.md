@@ -77,16 +77,19 @@ The sources are in the subdirectories `src/main/scala/csc424` and
     `console`, SBT will start up a Scala command line with the classes available.
     Try the following:
 
-        import csc424._
+        import csc424.exprlang._
+        import csc424.simplide._
         val src = "1 + 2 * 3"
-        val ast = ExprLangParser(src).get
-        ExprLangInterpreter.eval(ast, EmptyEnvironment)
+        val ast = Language.parse(src)
+        val init = Language.init(ast, new ConsoleExecutionContext)
+        Language.run(init)
 
     For convenience, you might want to define a function such as
 
         def eval(src: String) = {
-          val ast = ExprLangParser(src).get
-          ExprLangInterpreter.eval(ast, EmptyEnvironment)
+          val ast = Language.parse(src)
+          val init = Language.init(ast, new ConsoleExecutionContext)
+          Language.run(init)
         }
 
     Then you can test Expression Language programs by simply calling `eval`
