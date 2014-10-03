@@ -1,7 +1,7 @@
 let
   var i = 0
 in do
-  while 10 - i begin
+  while i < 10 begin
     write i
     i = i + 1
   end
