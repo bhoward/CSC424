@@ -1,0 +1,8 @@
+let
+  var i = 0
+in do
+  while 10 - i begin
+    write i
+    i = i + 1
+  end
+in i

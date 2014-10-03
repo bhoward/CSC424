@@ -1,4 +1,4 @@
-package csc424.exprlang
+package csc424.ctrllang
 
 import csc424.simplide.SimpleLanguage
 import java.io.Reader

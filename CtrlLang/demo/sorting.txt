@@ -1,0 +1,17 @@
+let
+  var x = 0
+  var y = 0
+  var z = 0
+in do
+  read "Enter first number: ", x
+  read "Enter second number: ", y
+  read "Enter third number: ", z
+  swapif x, y
+  swapif y, z
+  swapif x, y
+  write "Here are your numbers in order"
+  write x
+  write y
+  write z
+in
+  0

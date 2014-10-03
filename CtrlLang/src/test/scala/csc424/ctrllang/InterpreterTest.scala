@@ -1,4 +1,4 @@
-package csc424.exprlang
+package csc424.ctrllang
 
 import org.specs2.mutable._
 import org.junit.runner.RunWith
@@ -30,8 +30,6 @@ class InterpreterTest extends Specification {
   }
   
   def eval(src: String) = {
-//    val ast = Parser(src).get
-//    Interpreter.eval(ast, EmptyEnvironment)
     Language(src)
   }
 
@@ -75,7 +73,7 @@ class InterpreterTest extends Specification {
 
   "Write statements produce output" in {
     val src = "do write 42 in 0"
-    withOutput("42", "") {
+    withOutput("42.0", "") {
       eval(src)
     } must_== 0
   }
@@ -95,63 +93,101 @@ class InterpreterTest extends Specification {
     } must_== 42
   }
   
-//  "String write statements produce output" in {
-//    val src = """do write "Hello World!" in 0"""
-//    withOutput("Hello World!", "") {
-//      eval(src)
-//    } must_== 0
-//  }
-//
-//  "Simple expressions with floats can be evaluated" in {
-//    eval("1+2.0*0.3e+1") must_== 7
-//  }
-//
-//  "Floating point values work" in {
-//  	val src = "1.2 * 3 - 26e-1"
-//  	eval(src) must be closeTo(1.0 +/- 0.0001)
-//  }
-//
-//  "Unary functions are evaluated" in {
-//  	val src = "sqrt(2) + log(1)"
-//  	eval(src) must be closeTo(1.4142 +/- 0.0001)
-//  }
-//  
-//  "Binary functions are evaluated" in {
-//  	val src = "max(79, 37) - min(79, 37)"
-//  	eval(src) must_== 42
-//  }
-//  
-//  "String literals may be used in I/O statements" in {
-//  	val src = """let
-//  	            |  var x = 0
-//  	            |in do
-//  	            |  read "Enter a number: ", x
-//  	            |  x = x * 2
-//  	            |  write "Your number doubled is"
-//  	            |  write x
-//  	            |in x""".stripMargin
-//    withInput("3.14") {
-//      withOutput("Enter a number: Your number doubled is", "6.28", "") {
-//        eval(src)
-//      }
-//    } must_== 6.28
-//  }
-//
-//  "swap statements are executed" in {
-//  	val src = "let var first = 1 var second = 2 in do swap first, second in first - second"
-//  	eval(src) must_== 1
-//  }
-//  
-//  "swapif statements are executed, I" in {
-//    val src = "let var first = 1 var second = 2 in do swapif first, second in first - second"
-//    eval(src) must_== -1
-//  }
-//  
-//  "swapif statements are executed, II" in {
-//    val src = "let var first = 2 var second = 1 in do swapif first, second in first - second"
-//    eval(src) must_== -1
-//  }
+  "String write statements produce output" in {
+    val src = """do write "Hello World!" in 0"""
+    withOutput("Hello World!", "") {
+      eval(src)
+    } must_== 0
+  }
+
+  "Simple expressions with floats can be evaluated" in {
+    eval("1+2.0*0.3e+1") must_== 7
+  }
+
+  "Floating point values work" in {
+  	val src = "1.2 * 3 - 26e-1"
+  	eval(src) must be closeTo(1.0 +/- 0.0001)
+  }
+
+  "Unary functions are evaluated" in {
+  	val src = "sqrt(2) + log(1)"
+  	eval(src) must be closeTo(1.4142 +/- 0.0001)
+  }
   
+  "Binary functions are evaluated" in {
+  	val src = "max(79, 37) - min(79, 37)"
+  	eval(src) must_== 42
+  }
+  
+  "String literals may be used in I/O statements" in {
+  	val src = """let
+  	            |  var x = 0
+  	            |in do
+  	            |  read "Enter a number: ", x
+  	            |  x = x * 2
+  	            |  write "Your number doubled is"
+  	            |  write x
+  	            |in x""".stripMargin
+    withInput("3.14") {
+      withOutput("Enter a number: Your number doubled is", "6.28", "") {
+        eval(src)
+      }
+    } must_== 6.28
+  }
+
+  "swap statements are executed" in {
+  	val src = "let var first = 1 var second = 2 in do swap first, second in first - second"
+  	eval(src) must_== 1
+  }
+  
+  "swapif statements are executed, I" in {
+    val src = "let var first = 1 var second = 2 in do swapif first, second in first - second"
+    eval(src) must_== -1
+  }
+  
+  "swapif statements are executed, II" in {
+    val src = "let var first = 2 var second = 1 in do swapif first, second in first - second"
+    eval(src) must_== -1
+  }
+  
+  "If statements are executed, I" in {
+    val src = """do
+                |  if true
+                |  then write "OK"
+                |  else write "No"
+                |  endif
+                |in 0""".stripMargin
+    withOutput("OK", "") {
+      eval(src)
+    } must_== 0
+  }
+
+  "If statements are executed, II" in {
+    val src = """do
+                |  if true
+                |  then write "OK"
+                |    write "No"
+                |  endif
+                |in 0""".stripMargin
+    withOutput("OK", "No", "") {
+      eval(src)
+    } must_== 0
+  }
+
+  "While statements are executed" in {
+    val src = """let
+                |  var x = 3
+                |in do
+                |  while x > 0 begin
+                |    write x
+                |    x = x - 1
+                |  end
+                |in x""".stripMargin
+    withOutput("3.0", "2.0", "1.0", "") {
+      eval(src)
+    } must_== 0
+  }
+
   "Undeclared identifiers are caught" in {
   	val src = "a + b * c"
   	eval(src) must throwA(new RuntimeException("Identifier not found: a"))
