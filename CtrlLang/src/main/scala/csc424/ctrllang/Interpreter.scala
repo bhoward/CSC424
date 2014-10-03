@@ -16,23 +16,26 @@ class Interpreter(context: ExecutionContext) {
    * @param env the Environment binding ids to cells
    * @return the value of the expression
    */
-  def eval(expr: Expr, env: Environment): ValueType = expr match {
-    case NumExpr(n) => n
-    case IdExpr(id) => env(id).value
-    case UnOpExpr("-", e) => -eval(e, env)
-    case UnOpExpr("sqrt", e) => math.sqrt(eval(e, env))
-    case UnOpExpr("log", e) => math.log(eval(e, env))
-    case UnOpExpr("abs", e) => math.abs(eval(e, env))
-    case BinOpExpr("+", e1, e2) => eval(e1, env) + eval(e2, env)
-    case BinOpExpr("-", e1, e2) => eval(e1, env) - eval(e2, env)
-    case BinOpExpr("*", e1, e2) => eval(e1, env) * eval(e2, env)
-    case BinOpExpr("/", e1, e2) => eval(e1, env) / eval(e2, env)
-    case BinOpExpr("%", e1, e2) => eval(e1, env) % eval(e2, env)
-    case BinOpExpr("min", e1, e2) => math.min(eval(e1, env), eval(e2, env))
-    case BinOpExpr("max", e1, e2) => math.max(eval(e1, env), eval(e2, env))
-    case LetExpr(ds, e) => eval(e, elaborate(ds, env))
-    case DoExpr(ss, e) => exec(ss, env); eval(e, env)
-    case _ => sys.error("Unrecognized expression: " + expr)
+  def eval(expr: Expr, env: Environment): ValueType = {
+    context.performStep("Eval: " + expr)
+    expr match {
+      case NumExpr(n) => n
+      case IdExpr(id) => env(id).value
+      case UnOpExpr("-", e) => -eval(e, env)
+      case UnOpExpr("sqrt", e) => math.sqrt(eval(e, env))
+      case UnOpExpr("log", e) => math.log(eval(e, env))
+      case UnOpExpr("abs", e) => math.abs(eval(e, env))
+      case BinOpExpr("+", e1, e2) => eval(e1, env) + eval(e2, env)
+      case BinOpExpr("-", e1, e2) => eval(e1, env) - eval(e2, env)
+      case BinOpExpr("*", e1, e2) => eval(e1, env) * eval(e2, env)
+      case BinOpExpr("/", e1, e2) => eval(e1, env) / eval(e2, env)
+      case BinOpExpr("%", e1, e2) => eval(e1, env) % eval(e2, env)
+      case BinOpExpr("min", e1, e2) => math.min(eval(e1, env), eval(e2, env))
+      case BinOpExpr("max", e1, e2) => math.max(eval(e1, env), eval(e2, env))
+      case LetExpr(ds, e) => eval(e, elaborate(ds, env))
+      case DoExpr(ss, e) => exec(ss, env); eval(e, env)
+      case _ => sys.error("Unrecognized expression: " + expr)
+    }
   }
   
   /**
@@ -42,18 +45,21 @@ class Interpreter(context: ExecutionContext) {
    * @param env the Environment binding ids to cells
    * @return the value of the expression
    */
-  def beval(bexpr: BoolExpr, env: Environment): Boolean = bexpr match {
-    case RelBExpr("==", left, right) => eval(left, env) == eval(right, env)
-    case RelBExpr("!=", left, right) => eval(left, env) != eval(right, env)
-    case RelBExpr("<", left, right) => eval(left, env) < eval(right, env)
-    case RelBExpr(">", left, right) => eval(left, env) > eval(right, env)
-    case RelBExpr("<=", left, right) => eval(left, env) <= eval(right, env)
-    case RelBExpr(">=", left, right) => eval(left, env) >= eval(right, env)
-    case ConstBExpr(const) => const
-    case AndBExpr(left, right) => beval(left, env) && beval(right, env)
-    case OrBExpr(left, right) => beval(left, env) || beval(right, env)
-    case NotBExpr(e) => !beval(e, env)
-    case _ => sys.error("Unrecognized boolean operation: " + bexpr)
+  def beval(bexpr: BoolExpr, env: Environment): Boolean = {
+    context.performStep("BEval: " + bexpr)
+    bexpr match {
+      case RelBExpr("==", left, right) => eval(left, env) == eval(right, env)
+      case RelBExpr("!=", left, right) => eval(left, env) != eval(right, env)
+      case RelBExpr("<", left, right) => eval(left, env) < eval(right, env)
+      case RelBExpr(">", left, right) => eval(left, env) > eval(right, env)
+      case RelBExpr("<=", left, right) => eval(left, env) <= eval(right, env)
+      case RelBExpr(">=", left, right) => eval(left, env) >= eval(right, env)
+      case ConstBExpr(const) => const
+      case AndBExpr(left, right) => beval(left, env) && beval(right, env)
+      case OrBExpr(left, right) => beval(left, env) || beval(right, env)
+      case NotBExpr(e) => !beval(e, env)
+      case _ => sys.error("Unrecognized boolean operation: " + bexpr)
+    }
   }
 
   /**
@@ -63,63 +69,66 @@ class Interpreter(context: ExecutionContext) {
    * @param ss the abstract syntax trees of the statements
    * @param env the Environment binding ids to cells
    */
-  def exec(ss: List[Stmt], env: Environment): Unit = ss map {
-    case AssignStmt(id, e) =>
-      // Modify the value stored in the cell bound to a variable
-      env(id).value = eval(e, env)
-      
-    case ReadStmt(id) =>
-      // Ask for user input. Use the variable name as the prompt
-      context.output.print(id + "? ")
-      env(id).value = context.input.nextDouble
-
-    case WriteStmt(e) =>
-      // Print the result of evaluating an expression
-      context.output.println(eval(e, env))
-
-    case PromptReadStmt(prompt, id) =>
-      // Ask for user input. Use the given prompt
-      context.output.print(prompt)
-      env(id).value = context.input.nextDouble
+  def exec(ss: List[Stmt], env: Environment): Unit = ss map {stmt =>
+    context.performStep("Exec: " + stmt)
+    stmt match {
+      case AssignStmt(id, e) =>
+        // Modify the value stored in the cell bound to a variable
+        env(id).value = eval(e, env)
         
-    case StringWriteStmt(msg) =>
-      // Print a literal string
-      context.output.println(msg)
-        
-    case SwapStmt(id1, id2) =>
-      // Swap the values of two variables
-      var temp = env(id1).value
-      env(id1).value = env(id2).value
-      env(id2).value = temp
-        
-    case SwapIfStmt(id1, id2) =>
-      // Swap the values of two variables if the first is larger than the second
-      if (env(id1).value > env(id2).value) {
+      case ReadStmt(id) =>
+        // Ask for user input. Use the variable name as the prompt
+        context.output.print(id + "? ")
+        env(id).value = context.input.nextDouble
+  
+      case WriteStmt(e) =>
+        // Print the result of evaluating an expression
+        context.output.println(eval(e, env))
+  
+      case PromptReadStmt(prompt, id) =>
+        // Ask for user input. Use the given prompt
+        context.output.print(prompt)
+        env(id).value = context.input.nextDouble
+          
+      case StringWriteStmt(msg) =>
+        // Print a literal string
+        context.output.println(msg)
+          
+      case SwapStmt(id1, id2) =>
+        // Swap the values of two variables
         var temp = env(id1).value
         env(id1).value = env(id2).value
         env(id2).value = temp
-      }
-
-    case IfThenElseStmt(test, trueClause, falseClause) =>
-      // Execute the trueClause or falseClause depending on a boolean test
-      if (beval(test, env)) {
-        exec(trueClause, env)
-      } else {
-        exec(falseClause, env)
-      }
-
-    case IfThenStmt(test, trueClause) =>
-      // Execute the trueClause if the boolean test is true
-      if (beval(test, env)) {
-        exec(trueClause, env)
-      }
-
-    case WhileStmt(test, body) =>
-      // Repeatedly execute the body as long as the test is true.
-      // The test is checked before each execution of the body
-      while (beval(test, env)) {
-        exec(body, env)
-      }
+          
+      case SwapIfStmt(id1, id2) =>
+        // Swap the values of two variables if the first is larger than the second
+        if (env(id1).value > env(id2).value) {
+          var temp = env(id1).value
+          env(id1).value = env(id2).value
+          env(id2).value = temp
+        }
+  
+      case IfThenElseStmt(test, trueClause, falseClause) =>
+        // Execute the trueClause or falseClause depending on a boolean test
+        if (beval(test, env)) {
+          exec(trueClause, env)
+        } else {
+          exec(falseClause, env)
+        }
+  
+      case IfThenStmt(test, trueClause) =>
+        // Execute the trueClause if the boolean test is true
+        if (beval(test, env)) {
+          exec(trueClause, env)
+        }
+  
+      case WhileStmt(test, body) =>
+        // Repeatedly execute the body as long as the test is true.
+        // The test is checked before each execution of the body
+        while (beval(test, env)) {
+          exec(body, env)
+        }
+    }
   }
 
   /**
@@ -133,7 +142,8 @@ class Interpreter(context: ExecutionContext) {
   def elaborate(ds: List[Decl], env: Environment): Environment = {
     val child = new ChildEnvironment(env)
     
-    for (decl <- ds) {
+    ds map {decl =>
+      context.performStep("Elab: " + decl)
       decl match {
         // Evaluate each initial value in the parent Environment, and
         // bind a new storage cell containing that value in the child

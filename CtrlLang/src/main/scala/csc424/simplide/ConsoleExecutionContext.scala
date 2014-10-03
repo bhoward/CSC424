@@ -9,8 +9,8 @@ class ConsoleExecutionContext(val input: Scanner = new Scanner(Console.in),
   var step = 0
   
   def performStep(description: String) {
+    step += 1
     if (debugFlag) {
-      step += 1
       println("Step: " + step)
       println(description)
     }
