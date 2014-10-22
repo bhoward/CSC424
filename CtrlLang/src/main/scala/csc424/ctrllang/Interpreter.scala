@@ -79,16 +79,16 @@ class Interpreter(context: ExecutionContext) {
       case ReadStmt(id) =>
         // Ask for user input. Use the variable name as the prompt
         context.output.print(id + "? ")
-        env(id).value = context.input.nextDouble
+        env(id).value = read(context.input)
   
       case WriteStmt(e) =>
         // Print the result of evaluating an expression
-        context.output.println(eval(e, env))
+        context.output.println(show(eval(e, env)))
   
       case PromptReadStmt(prompt, id) =>
         // Ask for user input. Use the given prompt
         context.output.print(prompt)
-        env(id).value = context.input.nextDouble
+        env(id).value = read(context.input)
           
       case StringWriteStmt(msg) =>
         // Print a literal string

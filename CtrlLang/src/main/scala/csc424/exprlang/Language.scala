@@ -6,16 +6,18 @@ import csc424.simplide.ExecutionContext
 
 object Language extends SimpleLanguage {
   type AST = Expr
-  type State = (AST, Interpreter)
+  type State = (AST, Environment)
   type Result = ValueType
   
   def parse(in: Reader): AST = Parser.parse(in)
   
-  def init(ast: AST, context: ExecutionContext): State =
-    (ast, new Interpreter(context))
+  def init(ast: AST): State = (ast, EmptyEnvironment)
 
-  def run(state: State): Result = {
-    val (ast, interpreter) = state
-    interpreter.eval(ast, EmptyEnvironment)
+  def run(state: State, context: ExecutionContext): Result = {
+    val interpreter = new Interpreter(context)
+    val (ast, env) = state
+    interpreter.eval(ast, env)
   }
+  
+  def showResult(result: Result): String = show(result)
 }

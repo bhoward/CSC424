@@ -41,11 +41,11 @@ class Interpreter(context: ExecutionContext) {
     case ReadStmt(id) =>
       // Ask for user input. Use the variable name as the prompt
       context.output.print(id + "? ")
-      env(id).value = context.input.nextInt
+      env(id).value = read(context.input)
 
     case WriteStmt(e) =>
       // Print the result of evaluating an expression
-      context.output.println(eval(e, env))
+      context.output.println(show(eval(e, env)))
 
     case AssignStmt(id, e) =>
       // Modify the value stored in the cell bound to a variable

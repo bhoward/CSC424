@@ -11,7 +11,7 @@ import scala.swing.Swing.Runnable
 
 import acm.io.IOConsole
 
-class GUI(interpreter: SimpleLanguage) { gui =>
+class GUI(language: SimpleLanguage) { gui =>
   val source = new JTextArea
   val chooser = new JFileChooser
   val status = new JLabel
@@ -82,7 +82,7 @@ class GUI(interpreter: SimpleLanguage) { gui =>
       context synchronized {
         thread = new Thread(Runnable {
           try {
-            val ast = interpreter.parse(new StringReader(source.getText))
+            val ast = language.parse(new StringReader(source.getText))
 
             if (showASTModel.isSelected) {
               val frame = new javax.swing.JFrame("AST")
@@ -93,11 +93,11 @@ class GUI(interpreter: SimpleLanguage) { gui =>
               frame.setVisible(true)
             }
 
-            val state = interpreter.init(ast, context)
+            val state = language.init(ast)
 
-            val result = interpreter.run(state)
+            val result = language.run(state, context)
 
-            console.println("DONE: " + result)
+            console.println("DONE: " + language.showResult(result))
             stopAction.setEnabled(false)
           } catch {
             case e: Exception => console.showErrorMessage(e.getMessage)

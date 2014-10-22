@@ -34,24 +34,14 @@ trait SimpleLanguage {
   def parse(in: Reader): AST
 
   /**
-   * Parse a program from the given string (convenience method).
-   * May throw InterpreterException(message) on error.
-   *
-   * @param src
-   * @return an abstract syntax tree
-   */
-  def parse(src: String): AST = parse(new StringReader(src))
-
-  /**
-   * Construct an initial state from an abstract syntax tree and ExecutionContext.
+   * Construct an initial state from an abstract syntax tree.
    * This is the appropriate time to do static analysis, such as type-checks.
    * May throw InterpreterException(message) on error.
    *
    * @param ast
-   * @param context
    * @return the initial state
    */
-  def init(ast: AST, context: ExecutionContext): State
+  def init(ast: AST): State
 
   /**
    * Execute the program from the given state.
@@ -59,9 +49,27 @@ trait SimpleLanguage {
    * May throw InterpreterException(message) on error.
    *
    * @param state
+   * @param context
    * @return the result of execution
    */
-  def run(state: State): Result
+  def run(state: State, context: ExecutionContext): Result
+  
+  /**
+   * Convert a result to a string.
+   * 
+   * @param result
+   * @return a String representation of the result
+   */
+  def showResult(result: Result): String
+
+  /**
+   * Convenience method to parse a program from the given string.
+   * May throw InterpreterException(message) on error.
+   *
+   * @param src
+   * @return an abstract syntax tree
+   */
+  def parse(src: String): AST = parse(new StringReader(src))
 
   /**
    * Convenience method to run the interpreter on a program, with console I/O.
@@ -73,8 +81,8 @@ trait SimpleLanguage {
     val out = new PrintWriter(scala.Console.out)
     val context = new ConsoleExecutionContext(new Scanner(scala.Console.in), out)
     val ast = parse(src)
-    val state = init(ast, context)
-    val result = run(state)
+    val state = init(ast)
+    val result = run(state, context)
     out.flush()
     result
   }
