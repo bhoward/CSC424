@@ -11,8 +11,7 @@ object Parser extends RegexParsers with PackratParsers {
   type P[T] = PackratParser[T]
   
   lazy val expr: P[Expr] =
-  ( "do" ~ rep1(stmt) ~ "in" ~ expr  ^^ {case _ ~ ss ~ _ ~ e => DoExpr(ss, e)}
-  | "let" ~ rep1(decl) ~ "in" ~ expr ^^ {case _ ~ ds ~ _ ~ e => LetExpr(ds, e)}
+  ( "let" ~ rep1(decl) ~ "in" ~ expr ^^ {case _ ~ ds ~ _ ~ e => LetExpr(ds, e)}
   | expr ~ addop ~ term              ^^ {case e ~ op ~ t => BinOpExpr(op, e, t)}
   | term
   )
@@ -29,15 +28,8 @@ object Parser extends RegexParsers with PackratParsers {
   | wholeNumber      ^^ {case numLit => NumExpr(numLit.toInt)}
   )
   
-  lazy val stmt: P[Stmt] =
-  ( ident ~ "=" ~ expr ^^ {case id ~ _ ~ e => AssignStmt(id, e)}
-  | "read" ~ ident     ^^ {case _ ~ id => ReadStmt(id)}
-  | "write" ~ expr     ^^ {case _ ~ e => WriteStmt(e)}
-  )
-  
   lazy val decl: P[Decl] =
   ( "val" ~ ident ~ "=" ~ expr ^^ {case _ ~ id ~ _ ~ e => ValDecl(id, e)}
-  | "var" ~ ident ~ "=" ~ expr ^^ {case _ ~ id ~ _ ~ e => VarDecl(id, e)}
   )
 
   val addop: Parser[String] = "+" | "-"

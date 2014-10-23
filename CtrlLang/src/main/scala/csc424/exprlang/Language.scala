@@ -1,12 +1,15 @@
 package csc424.exprlang
 
-import csc424.simplide.SimpleLanguage
+import csc424.simplide._
+
 import java.io.Reader
-import csc424.simplide.ExecutionContext
+import java.util.Scanner
 
 object Language extends SimpleLanguage {
   type AST = Expr
-  type State = (AST, Environment)
+  type ValueType = Int
+  type EnvType = Environment[ValueType]
+  type State = (AST, EnvType)
   type Result = ValueType
   
   def parse(in: Reader): AST = Parser.parse(in)
@@ -19,5 +22,7 @@ object Language extends SimpleLanguage {
     interpreter.eval(ast, env)
   }
   
-  def showResult(result: Result): String = show(result)
+  def showResult(result: Result): String = result.toString
+  
+  def read(in: Scanner): ValueType = in.nextInt
 }

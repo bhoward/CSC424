@@ -3,3 +3,4 @@
 * Environment should bind idents to values; allow more kinds of values than just Cells
 * Generalize output (make Result type "showable"? add "print" to ExecutionContext, which does "show"?)
 * Split into more language levels
+* AST viewer, and also a State viewer, in a GUI pane

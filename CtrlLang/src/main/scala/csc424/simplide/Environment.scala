@@ -1,31 +1,31 @@
 package csc424.exprlang
 
 /**
- * An Environment maintains bindings between identifiers and storage cells.
+ * An Environment maintains bindings between identifiers and values.
  */
-trait Environment {
+trait Environment[+T] {
   /**
-   * Retrieve the Cell associated with the given identifier.
+   * Retrieve the value associated with the given identifier.
    *
    * @param id the name of the identifier
-   * @return the Cell bound to id; throw an error if not found
+   * @return the value bound to id; throw an error if not found
    */
-  def apply(id: String): Cell
+  def apply(id: String): T
 }
 
 /**
  * The EmptyEnvironment has nothing bound.
  */
-object EmptyEnvironment extends Environment {
-  def apply(id: String) = sys.error("Identifier not found: " + id)
+object EmptyEnvironment extends Environment[Nothing] {
+  def apply(id: String): Nothing = sys.error("Identifier not found: " + id)
 }
 
 /**
  * A ChildEnvironment manages the bindings from one scope; if the identifier
  * is not found, it delegates the search to a parent Environment.
  */
-class ChildEnvironment(parent: Environment) extends Environment {
-  private var bindings = Map[String, Cell]()
+class ChildEnvironment[T](parent: Environment[T]) extends Environment[T] {
+  private var bindings = Map[String, T]()
 
   /**
    * Add a new binding to this Environment. Throws an error if the identifier
@@ -33,14 +33,14 @@ class ChildEnvironment(parent: Environment) extends Environment {
    * or more distant ancestor).
    *
    * @param id the name of the identifier
-   * @param c the Cell to be bound to id
+   * @param v the value to be bound to id
    */
-  def addBinding(id: String, c: Cell): Unit = {
+  def addBinding(id: String, v: T): Unit = {
     if (bindings.contains(id)) sys.error("Duplicate identifier: " + id)
-    else bindings += (id -> c)
+    else bindings += (id -> v)
   }
 
-  def apply(id: String): Cell = {
+  def apply(id: String): T = {
     if (bindings.contains(id)) bindings(id)
     else parent(id)
   }
