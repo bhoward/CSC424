@@ -1,6 +1,7 @@
 package csc424.ctrllang
 
-import csc424.simplide.ExecutionContext
+import csc424.simplide._
+import Language._
 
 /**
  * The Interpreter defines the functions needed to interpret
@@ -16,7 +17,7 @@ class Interpreter(context: ExecutionContext) {
    * @param env the Environment binding ids to cells
    * @return the value of the expression
    */
-  def eval(expr: Expr, env: Environment): ValueType = {
+  def eval(expr: Expr, env: EnvType): Result = {
     context.performStep("Eval: " + expr)
     expr match {
       case NumExpr(n) => n
@@ -45,7 +46,7 @@ class Interpreter(context: ExecutionContext) {
    * @param env the Environment binding ids to cells
    * @return the value of the expression
    */
-  def beval(bexpr: BoolExpr, env: Environment): Boolean = {
+  def beval(bexpr: BoolExpr, env: EnvType): Boolean = {
     context.performStep("BEval: " + bexpr)
     bexpr match {
       case RelBExpr("==", left, right) => eval(left, env) == eval(right, env)
@@ -69,7 +70,7 @@ class Interpreter(context: ExecutionContext) {
    * @param ss the abstract syntax trees of the statements
    * @param env the Environment binding ids to cells
    */
-  def exec(ss: List[Stmt], env: Environment): Unit = ss map {stmt =>
+  def exec(ss: List[Stmt], env: EnvType): Unit = ss map {stmt =>
     context.performStep("Exec: " + stmt)
     stmt match {
       case AssignStmt(id, e) =>
@@ -139,7 +140,7 @@ class Interpreter(context: ExecutionContext) {
    * @param env the (parent) Environment binding ids to cells
    * @return the new elaborated Environment
    */
-  def elaborate(ds: List[Decl], env: Environment): Environment = {
+  def elaborate(ds: List[Decl], env: EnvType): EnvType = {
     val child = new ChildEnvironment(env)
     
     ds map {decl =>

@@ -1,13 +1,15 @@
 package csc424.ctrllang
 
-import csc424.simplide.SimpleLanguage
+import csc424.simplide._
 import java.io.Reader
-import csc424.simplide.ExecutionContext
+import java.util.Scanner
 
 object Language extends SimpleLanguage {
   type AST = Expr
-  type State = (AST, Environment)
-  type Result = ValueType
+  type ValueType = Cell
+  type EnvType = Environment[Cell]
+  type State = (AST, EnvType)
+  type Result = Double
   
   def parse(in: Reader): AST = Parser.parse(in)
   
@@ -19,5 +21,8 @@ object Language extends SimpleLanguage {
     interpreter.eval(ast, env)
   }
   
-  def showResult(result: Result): String = show(result)
+  private val decimalFormat = new java.text.DecimalFormat("0.##########")
+  def showResult(result: Result): String = decimalFormat.format(result)
+  
+  def read(in: Scanner): Result = in.nextDouble
 }

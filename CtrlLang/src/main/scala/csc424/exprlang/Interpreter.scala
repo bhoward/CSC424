@@ -44,7 +44,7 @@ class Interpreter(context: ExecutionContext) {
     for (decl <- ds) {
       decl match {
         // Evaluate each initial value in the parent Environment, and
-        // bind a new storage cell containing that value in the child
+        // bind the id to that value in the child
         case ValDecl(id, e) => child.addBinding(id, eval(e, env))
       }
     }

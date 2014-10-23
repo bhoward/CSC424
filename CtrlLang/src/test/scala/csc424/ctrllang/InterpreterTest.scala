@@ -73,7 +73,7 @@ class InterpreterTest extends Specification {
 
   "Write statements produce output" in {
     val src = "do write 42 in 0"
-    withOutput("42.0", "") {
+    withOutput("42", "") {
       eval(src)
     } must_== 0
   }
@@ -183,7 +183,7 @@ class InterpreterTest extends Specification {
                 |    x = x - 1
                 |  end
                 |in x""".stripMargin
-    withOutput("3.0", "2.0", "1.0", "") {
+    withOutput("3", "2", "1", "") {
       eval(src)
     } must_== 0
   }

@@ -3,7 +3,6 @@ package csc424.exprlang
 import csc424.simplide._
 
 import java.io.Reader
-import java.util.Scanner
 
 object Language extends SimpleLanguage {
   type AST = Expr
@@ -23,6 +22,4 @@ object Language extends SimpleLanguage {
   }
   
   def showResult(result: Result): String = result.toString
-  
-  def read(in: Scanner): ValueType = in.nextInt
 }
