@@ -75,12 +75,14 @@ class Interpreter(context: ExecutionContext) {
     stmt match {
       case AssignStmt(id, e) =>
         // Modify the value stored in the cell bound to a variable
-        env(id).value = eval(e, env)
+        val cell = env(id).cell
+        cell.contents = eval(e, env)
         
       case ReadStmt(id) =>
         // Ask for user input. Use the variable name as the prompt
         context.output.print(id + "? ")
-        env(id).value = read(context.input)
+        val cell = env(id).cell
+        cell.contents = read(context.input)
   
       case WriteStmt(e) =>
         // Print the result of evaluating an expression
@@ -89,7 +91,8 @@ class Interpreter(context: ExecutionContext) {
       case PromptReadStmt(prompt, id) =>
         // Ask for user input. Use the given prompt
         context.output.print(prompt)
-        env(id).value = read(context.input)
+        val cell = env(id).cell
+        cell.contents = read(context.input)
           
       case StringWriteStmt(msg) =>
         // Print a literal string
@@ -97,16 +100,20 @@ class Interpreter(context: ExecutionContext) {
           
       case SwapStmt(id1, id2) =>
         // Swap the values of two variables
-        var temp = env(id1).value
-        env(id1).value = env(id2).value
-        env(id2).value = temp
+        val cell1 = env(id1).cell
+        val cell2 = env(id2).cell
+        var temp = cell1.contents
+        cell1.contents = cell2.contents
+        cell2.contents = temp
           
       case SwapIfStmt(id1, id2) =>
         // Swap the values of two variables if the first is larger than the second
         if (env(id1).value > env(id2).value) {
-          var temp = env(id1).value
-          env(id1).value = env(id2).value
-          env(id2).value = temp
+          val cell1 = env(id1).cell
+          val cell2 = env(id2).cell
+          var temp = cell1.contents
+          cell1.contents = cell2.contents
+          cell2.contents = temp
         }
   
       case IfThenElseStmt(test, trueClause, falseClause) =>
@@ -147,9 +154,9 @@ class Interpreter(context: ExecutionContext) {
       context.performStep("Elab: " + decl)
       decl match {
         // Evaluate each initial value in the parent Environment, and
-        // bind a new storage cell containing that value in the child
-        case ValDecl(id, e) => child.addBinding(id, ValCell(eval(e, env)))
-        case VarDecl(id, e) => child.addBinding(id, VarCell(eval(e, env)))
+        // bind a new entry containing that value in the child
+        case ValDecl(id, e) => child.addBinding(id, ConstValue(eval(e, env)))
+        case VarDecl(id, e) => child.addBinding(id, CellValue(new Cell(eval(e, env))))
       }
     }
     

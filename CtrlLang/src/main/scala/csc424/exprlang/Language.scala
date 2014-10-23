@@ -6,10 +6,12 @@ import java.io.Reader
 
 object Language extends SimpleLanguage {
   type AST = Expr
-  type ValueType = Int
-  type EnvType = Environment[ValueType]
   type State = (AST, EnvType)
-  type Result = ValueType
+  type Result = Int
+  
+  type EnvType = Environment[ValueType]
+  
+  type ValueType = Result
   
   def parse(in: Reader): AST = Parser.parse(in)
   
