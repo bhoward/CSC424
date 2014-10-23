@@ -6,8 +6,8 @@ import java.util.Scanner
 
 object Language extends SimpleLanguage {
   type AST = Expr
-  type ValueType = Cell
-  type EnvType = Environment[Cell]
+  type ValueType = Cell[Result]
+  type EnvType = Environment[ValueType]
   type State = (AST, EnvType)
   type Result = Double
   

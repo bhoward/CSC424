@@ -84,7 +84,7 @@ class Interpreter(context: ExecutionContext) {
   
       case WriteStmt(e) =>
         // Print the result of evaluating an expression
-        context.output.println(show(eval(e, env)))
+        context.output.println(showResult(eval(e, env)))
   
       case PromptReadStmt(prompt, id) =>
         // Ask for user input. Use the given prompt
