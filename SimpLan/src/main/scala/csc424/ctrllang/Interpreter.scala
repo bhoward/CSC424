@@ -34,6 +34,7 @@ class Interpreter(context: ExecutionContext) {
       case BinOpExpr("min", e1, e2) => math.min(eval(e1, env), eval(e2, env))
       case BinOpExpr("max", e1, e2) => math.max(eval(e1, env), eval(e2, env))
       case LetExpr(ds, e) => eval(e, elaborate(ds, env))
+      case CondExpr(be, e1, e2) => if (beval(be, env)) eval(e1, env) else eval(e2, env)
       case DoExpr(ss, e) => exec(ss, env); eval(e, env)
       case _ => sys.error("Unrecognized expression: " + expr)
     }

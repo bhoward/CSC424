@@ -13,6 +13,8 @@ object Parser extends RegexParsers with PackratParsers {
   lazy val expr: P[Expr] =
   ( "do" ~ rep1(stmt) ~ "in" ~ expr  ^^ {case _ ~ ss ~ _ ~ e => DoExpr(ss, e)}
   | "let" ~ rep1(decl) ~ "in" ~ expr ^^ {case _ ~ ds ~ _ ~ e => LetExpr(ds, e)}
+  | "if" ~ bexpr ~
+    "then" ~ expr ~ "else" ~ expr    ^^ {case _ ~ be ~ _ ~ e1 ~ _ ~ e2 => CondExpr(be, e1, e2)}
   | expr ~ addop ~ term              ^^ {case e ~ op ~ t => BinOpExpr(op, e, t)}
   | term
   )

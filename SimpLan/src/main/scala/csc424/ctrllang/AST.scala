@@ -6,6 +6,7 @@ package csc424.ctrllang
 sealed trait Expr
 case class DoExpr(stmts: List[Stmt], expr: Expr) extends Expr
 case class LetExpr(decls: List[Decl], expr: Expr) extends Expr
+case class CondExpr(test: BoolExpr, trueExpr: Expr, falseExpr: Expr) extends Expr
 case class BinOpExpr(op: String, left: Expr, right: Expr) extends Expr
 case class UnOpExpr(op: String, expr: Expr) extends Expr
 case class IdExpr(id: String) extends Expr

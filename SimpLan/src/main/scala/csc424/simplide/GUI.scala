@@ -36,6 +36,7 @@ class GUI(languages: (String, SimpleLanguage)*) { gui =>
   var thread: Thread = null
   var context: ExecutionContext = null
   
+  val languageGroup = new ButtonGroup
   var chosenLanguage: SimpleLanguage = languages.head._2
 
   val frame = new JFrame("SimplIDE")
@@ -239,9 +240,12 @@ class GUI(languages: (String, SimpleLanguage)*) { gui =>
   optionsMenu.addSeparator
   
   for ((label, language) <- languages) {
-    optionsMenu.add(new JMenuItem(new AbstractAction(label) {
+    val item = new JRadioButtonMenuItem(new AbstractAction(label) {
       def actionPerformed(ae: ActionEvent): Unit = chosenLanguage = language
-    }))
+    })
+    languageGroup.add(item)
+    if (language == chosenLanguage) item.setSelected(true)
+    optionsMenu.add(item)
   }
 
   menuBar.add(optionsMenu)
