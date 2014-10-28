@@ -1,4 +1,2 @@
-* Give ConsoleDriver/GUIDriver a list of languages; allow language to be chosen (by flag or menu)
-* Base class for Drivers?
 * Split into more language levels
 * AST viewer, and also a State viewer (for little-step semantics?), in a GUI pane

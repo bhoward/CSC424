@@ -11,7 +11,7 @@ import scala.swing.Swing.Runnable
 
 import acm.io.IOConsole
 
-class GUI(language: SimpleLanguage) { gui =>
+class GUI(languages: (String, SimpleLanguage)*) { gui =>
   val source = new JTextArea
   val chooser = new JFileChooser
   val status = new JLabel
@@ -35,6 +35,8 @@ class GUI(language: SimpleLanguage) { gui =>
 
   var thread: Thread = null
   var context: ExecutionContext = null
+  
+  var chosenLanguage: SimpleLanguage = languages.head._2
 
   val frame = new JFrame("SimplIDE")
   frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
@@ -82,6 +84,7 @@ class GUI(language: SimpleLanguage) { gui =>
       context synchronized {
         thread = new Thread(Runnable {
           try {
+            val language = chosenLanguage
             val ast = language.parse(new StringReader(source.getText))
 
             if (showASTModel.isSelected) {
@@ -232,6 +235,14 @@ class GUI(language: SimpleLanguage) { gui =>
   val showASTItem = new JCheckBoxMenuItem("Show AST")
   showASTItem.setModel(showASTModel)
   optionsMenu.add(showASTItem)
+  
+  optionsMenu.addSeparator
+  
+  for ((label, language) <- languages) {
+    optionsMenu.add(new JMenuItem(new AbstractAction(label) {
+      def actionPerformed(ae: ActionEvent): Unit = chosenLanguage = language
+    }))
+  }
 
   menuBar.add(optionsMenu)
 

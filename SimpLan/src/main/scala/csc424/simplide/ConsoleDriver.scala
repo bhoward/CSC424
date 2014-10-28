@@ -3,11 +3,16 @@ package csc424.simplide
 import java.io.{ PrintWriter, FileReader }
 import java.util.Scanner
 
-class ConsoleDriver(language: SimpleLanguage) {
+class ConsoleDriver(languages: (String, SimpleLanguage)*) {
   private def findSourceFileName(args: Array[String]): Option[String] =
     args find { arg => !(arg startsWith "--") }
 
   private def findDebugFlag(args: Array[String]): Boolean = args contains "--debug"
+  
+  private def chooseLanguage(args: Array[String]): SimpleLanguage = {
+    val choice = for ((flag, language) <- languages if args contains flag) yield language
+    (choice :+ languages.head._2).head
+  }
 
   def start(args: Array[String]) {
     val sourceFileName = findSourceFileName(args) getOrElse {
@@ -17,6 +22,8 @@ class ConsoleDriver(language: SimpleLanguage) {
     }
 
     val debugFlag = findDebugFlag(args)
+    
+    val language = chooseLanguage(args)
 
     try {
       val in = new Scanner(Console.in)

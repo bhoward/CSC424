@@ -3,7 +3,7 @@ package csc424.simplide
 import javax.swing.SwingUtilities
 import scala.swing.Swing.Runnable
 
-class GUIDriver(interpreter: SimpleLanguage) {
+class GUIDriver(languages: (String, SimpleLanguage)*) {
   def start(args: Array[String]) {
     // TODO use the args?  Handle drag/drop??
     
@@ -14,7 +14,7 @@ class GUIDriver(interpreter: SimpleLanguage) {
     }
     
     scala.swing.Swing.onEDT {
-      val gui = new GUI(interpreter)
+      val gui = new GUI(languages: _*)
       gui.start
     }
   }

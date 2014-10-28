@@ -1,8 +1,10 @@
 package csc424
 
-import csc424.ctrllang.Language
+import csc424.ctrllang.{Language => CtrlLang}
+import csc424.exprlang.{Language => ExprLang}
 import csc424.simplide.ConsoleDriver
 
 object ConsoleMain extends App {
-  new ConsoleDriver(Language).start(args)
+  val driver = new ConsoleDriver("--ctrl" -> CtrlLang, "--expr" -> ExprLang)
+  driver.start(args)
 }
