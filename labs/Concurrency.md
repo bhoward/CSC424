@@ -35,24 +35,34 @@ Now modify it further so that `parfib(n)` hands off calculation to `fib(n)` when
 going on, and think of a situation where this version might be better than the others we have seen.
 
 ### Streams
-One generalization of futures which is possible in dataflow concurrency is the stream.  Think of the typical implementation of a singly-linked list, except instead of a null pointer at the end of the list you find a single-assignment variable.  One task, the "producer", is responsible for computing new values to attach to the stream.  When it has a new value, it assigns to the current end-of-list variable a reference to a new list node containing that value.  The "next pointer" out of that node is another single-assignment variable, and the task continues.  Now other, "consumer", tasks may read from the stream; when they reach the current end of the list, they will block until the next value is available.  A nice companion to this behavior is some notion of laziness, so that the producer waits until a consumer has reached the last value before starting to compute the next value; this prevents the producer from getting too far ahead.
+One generalization of futures which is possible in dataflow concurrency is the stream.  Think of the typical implementation of a singly-linked list, except instead of a null
+pointer at the end of the list you find a single-assignment variable.  One task, the "producer", is responsible for computing new values to attach to the stream.  When it has
+a new value, it assigns to the current end-of-list variable a reference to a new list node containing that value.  The "next pointer" out of that node is another single-assignment
+variable, and the task continues.  Now other, "consumer", tasks may read from the stream; when they reach the current end of the list, they will block until the next value is
+available.  A nice companion to this behavior is some notion of laziness, so that the producer waits until a consumer has reached the last value before starting to compute the
+next value; this prevents the producer from getting too far ahead.
 
-Here is a rather inefficient implementation of this idea (NOTE: when akka implements dataflow, replace this with using their dataflow variables and streams):
-<script src="http://gist.github.com/393892.js?file=FStream.scala">
-</script>
-The idea here is that a `LazyFStream` will only start evaluating the rest of the stream when the tail is requested.  At that point, it returns a `FutureFStream` containing a future that refers to the computation in progress.  A `FutureFStream` is merely a proxy which delegates requests for the head or tail to the future, blocking until they are available.  For this toy example, our stream only implements the `filter` and `take` methods, which are needed below; a complete version would support all of the usual collection operations.
+Here is a rather inefficient implementation of this idea (NOTE: eventually replace this with Akka's dataflow variables and streams):
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/FStream.scala"></script>
+The idea here is that a `LazyFStream` will only start evaluating the rest of the stream when the tail is requested.  At that point, it returns a `FutureFStream` containing a
+future that refers to the computation in progress.  A `FutureFStream` is merely a proxy which delegates requests for the head or tail to the future, blocking until they are
+available.  For this toy example, our stream only implements the `filter` and `take` methods, which are needed below; a complete version would support all of the usual collection operations.
 
-Given this datatype, we may write a prime sieve as follows (although this will serve our purposes here, this is not technically the Sieve of Eratosthenes; see [this paper](http://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf) where it is referred to as the "unfaithful" sieve):
-<script src="http://gist.github.com/393897.js?file=Sieve.scala">
-</script>
+Given this datatype, we may write a prime sieve as follows (although this will serve our purposes here, this is not technically the Sieve of Eratosthenes; see
+[this paper](http://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf) where it is referred to as the "unfaithful" sieve):
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/Sieve.scala"></script>
 Although `primes` represents an infinite stream of prime numbers, no real work has been done yet.  To start the computation going, we need to request values from the stream:
 
     scala> primes take 10
     res0: List[Int] = List(2, 3, 5, 7, 11, 13, 17, 19, 23, 29)
 
-**Exercise:** As mentioned, this implementation of streams is not very efficient.  Perform timing comparisons with a prime sieve built using the `Stream[Int]` class from the Scala library.  The functions `from` and `sieve` will need to be changed by replacing `FStream` with `Stream` everywhere; furthermore, the `take` method on `Stream[Int]` returns another stream, so you will have to force it into a list to actually perform the computation: *e.g.*. `primes take 10 toList`.
+**Exercise:** As mentioned, this implementation of streams is not very efficient.  Perform timing comparisons with a prime sieve built using the `Stream[Int]` class from the
+Scala library.  The functions `from` and `sieve` will need to be changed by replacing `FStream` with `Stream` everywhere; furthermore, the `take` method on `Stream[Int]` returns
+another stream, so you will have to force it into a list to actually perform the computation: *e.g.*. `primes take 10 toList`.
 
-**Exercise:** The real problem with the sieve example is that it doesn't do enough work per future.  Come up with an example (it may be very artificial -- for example, you could simply insert a delay loop such as `for (_ <- 1 to 1000000) {}` at an appropriate place in the sieve code) where the `FStream` implementation is faster than the Scala library `Stream` when run on multiple processors.
+**Exercise:** The real problem with the sieve example is that it doesn't do enough work per future.  Come up with an example (it may be very artificial -- for example, you could
+simply insert a delay loop such as `for (_ <- 1 to 1000000) {}` at an appropriate place in the sieve code) where the `FStream` implementation is faster than the Scala library
+`Stream` when run on multiple processors.
 
 ## Actors
 While dataflow concurrency is a useful abstraction, it is limited in what it can express.  In particular, there can be no non-deterministic behavior -- that is, every execution must produce the same result by following the same evaluation course.  The only difference between executing a program with futures or dataflow streams and executing the equivalent purely functional program is that some of the computation may be sped up by proceeding in parallel.  It is possible to extend the dataflow model slightly to move beyond this restriction, by allowing a consumer of a future (or other dataflow variable) to query whether a request for its value would block; this could allow the consumer to choose to do something else while waiting.  Since this exposes the timing details, it allows them to affect the progress of the computation.  This destroys the guarantees of the dataflow model, but opens up the much more expressive model of actors exchanging messages.
