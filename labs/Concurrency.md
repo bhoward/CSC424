@@ -10,8 +10,6 @@ One of the simplest models is known as dataflow or declarative concurrency, wher
 Semantically, getting a value from a future is no different from lazily evaluating an expression, except that the evaluation of the expression might have been started before it was requested.  Therefore, programming with futures can be seen as merely an optimization of common functional programming style. With multiple processors (or multiple cores), this helps the system to optimistically schedule some of the upcoming work in parallel, before it is needed, in the hope of improving the overall throughput.
 
 Consider the following Scala functions:
-<script src="http://gist.github.com/393863.js?file=Fibonacci.scala">
-</script>
 <script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/Fibonacci.scala"></script>
 (Note: the point here is *not* to compute Fibonacci numbers efficiently -- the exponential-time Fibonacci algorithm is deliberately chosen to be something simple that can take a long time to compute for relatively small arguments.)
 
