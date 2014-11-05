@@ -12,6 +12,7 @@ Semantically, getting a value from a future is no different from lazily evaluati
 Consider the following Scala functions:
 <script src="http://gist.github.com/393863.js?file=Fibonacci.scala">
 </script>
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/Fibonacci.scala"></script>
 (Note: the point here is *not* to compute Fibonacci numbers efficiently -- the exponential-time Fibonacci algorithm is deliberately chosen to be something simple that can take a long time to compute for relatively small arguments.)
 
 **Exercise:** Investigate the running time of these two versions of the Fibonacci function (and make sure that they compute the same answers).  These functions will only work up to `n=45`; beyond that, the result overflows an `Int` (and it will take too long, parallel or not).  Here is a framework which you might find useful:
