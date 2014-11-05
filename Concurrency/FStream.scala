@@ -1,5 +1,6 @@
-import scala.actors.Future
-import scala.actors.Futures._
+import scala.concurrent._
+import scala.concurrent.duration._
+import ExecutionContext.Implicits.global
 
 /**
  * A stream which lazily creates future objects to compute the rest of the stream.
@@ -29,7 +30,7 @@ trait FStream[+T] {
    */
   def filter(test: T => Boolean): FStream[T] =
     if (test(head)) new LazyFStream(head, tail.filter(test))
-    else new FutureFStream(future { tail.filter(test) })
+    else new FutureFStream(Future { tail.filter(test) })
 
   /**
    * Extract an initial list of n elements from this stream.  Forces their
@@ -54,7 +55,7 @@ object FStream {
  * Wraps up a head element and a block that will compute the tail, lazily.
  */
 class LazyFStream[T](val head: T, rest: => FStream[T]) extends FStream[T] {
-  lazy val tail = new FutureFStream(future { rest })
+  lazy val tail = new FutureFStream(Future { rest })
 }
 
 /**
@@ -62,6 +63,6 @@ class LazyFStream[T](val head: T, rest: => FStream[T]) extends FStream[T] {
  * block until the future has arrived.
  */
 class FutureFStream[T](futch: Future[FStream[T]]) extends FStream[T] {
-  def head = futch().head
-  def tail = futch().tail
+  def head = Await.result(futch, Duration.Inf).head
+  def tail = Await.result(futch, Duration.Inf).tail
 }

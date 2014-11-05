@@ -15,4 +15,8 @@ object Sieve {
    * Infinite stream of prime numbers.
    */
   val primes = sieve(from(2))
+  
+  def main(args: Array[String]): Unit = {
+    println(primes take 10)
+  }
 }
