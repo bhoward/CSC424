@@ -14,8 +14,7 @@ Consider the following Scala functions:
 (Note: the point here is *not* to compute Fibonacci numbers efficiently -- the exponential-time Fibonacci algorithm is deliberately chosen to be something simple that can take a long time to compute for relatively small arguments.)
 
 **Exercise:** Investigate the running time of these two versions of the Fibonacci function (and make sure that they compute the same answers).  These functions will only work up to `n=45`; beyond that, the result overflows an `Int` (and it will take too long, parallel or not).  Here is a framework which you might find useful:
-<script src="http://gist.github.com/393878.js?file=TimedTest.scala">
-</script>
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/TimedTest.scala?slice=1:10"></script>
 
 On a computer with at least two processors or cores, you should see a significant difference in the time taken for `parfib`.  The `Future` function spawns a new task to compute its argument, and returns the result as a future, `f1`.  Later, when that result is requested by the `Await.result` function (`Await.result(f1, Duration.Inf)` -- the second argument gives a maximum time to wait, in this case forever), the hope is that it will have already been computed in parallel, or at least that it will have made significant progress.  Since the two calls to `fib` should each take a long time (when `parfib` is called with a large argument, say around 40), being able to compute both at the same time is a big win.
 
