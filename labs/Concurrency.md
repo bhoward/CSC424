@@ -5,30 +5,60 @@ title: Approaches to Concurrency Lab
 # Approaches to Concurrency
 
 ## Futures
-One of the simplest models is known as dataflow or declarative concurrency, where the only way to exchange information between two tasks is through single-assignment variables.
-A *future* is the common case where the variable is assigned a result when its task terminates.  The idea is that a future represents a value which might not be ready yet;
-users of the value will block (wait) until it is available.  Suppose task A is responsible for computing some value x.  Another task, B, can take x as a future value; you
-can think of x as a variable that initially contains some value, such as a null pointer, which indicates that x has not been assigned yet.  Tasks A and B are then free to
-execute in parallel.  If task B tries to extract a value from x before it has been assigned, then B will be blocked.  When task A assigns a value to x, any blocked tasks
-waiting for x will be enabled to continue.  Since x is only a single-assignment variable, there will be no race conditions where another task might see different values of x at different times.
+One of the simplest models is known as dataflow or declarative concurrency,
+where the only way to exchange information between two tasks is through
+single-assignment variables. A *future* is the common case where the variable
+is assigned a result when its task terminates.  The idea is that a future
+represents a value which might not be ready yet; users of the value will block
+(wait) until it is available.  Suppose task A is responsible for computing some
+value x.  Another task, B, can take x as a future value; you can think of x as
+a variable that initially contains some value, such as a null pointer, which
+indicates that x has not been assigned yet.  Tasks A and B are then free to
+execute in parallel.  If task B tries to extract a value from x before it has
+been assigned, then B will be blocked.  When task A assigns a value to x, any
+blocked tasks waiting for x will be enabled to continue.  Since x is only a
+single-assignment variable, there will be no race conditions where another task
+might see different values of x at different times.
 
-Semantically, getting a value from a future is no different from lazily evaluating an expression, except that the evaluation of the expression might have been started before
-it was requested.  Therefore, programming with futures can be seen as merely an optimization of common functional programming style. With multiple processors (or multiple cores),
-this helps the system to optimistically schedule some of the upcoming work in parallel, before it is needed, in the hope of improving the overall throughput.
+Semantically, getting a value from a future is no different from lazily
+evaluating an expression, except that the evaluation of the expression might
+have been started before it was requested.  Therefore, programming with futures
+can be seen as merely an optimization of common functional programming style.
+With multiple processors (or multiple cores), this helps the system to
+optimistically schedule some of the upcoming work in parallel, before it is
+needed, in the hope of improving the overall throughput.
 
 Consider the following Scala functions:
 <script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/Fibonacci.scala?slice=5:29"></script>
-(Note: the point here is *not* to compute Fibonacci numbers efficiently -- the exponential-time Fibonacci algorithm is deliberately chosen to be something simple that can
-take a long time to compute for relatively small arguments.)
+(Note: the point here is *not* to compute Fibonacci numbers efficiently -- the
+exponential-time Fibonacci algorithm is deliberately chosen to be something
+simple that can take a long time to compute for relatively small arguments.)
 
-**Exercise:** Investigate the running time of these two versions of the Fibonacci function (and make sure that they compute the same answers).  These functions will only work
-up to `n=45`; beyond that, the result overflows an `Int` (and it will take too long, parallel or not).  Here is a timing framework that you might find useful:
+**Exercise:** Investigate the running time of these versions of the Fibonacci
+function (and make sure that they compute the same answers). Compare the times
+for `fib(43)` and `fib(44)` with the times for `fib(45)` and `parfib(45)`.
+These functions will only work up to `n=45`; beyond that, the result overflows
+an `Int` (and it will take too long, parallel or not).  Here is a timing
+framework that you might find useful:
 <script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/TimedTest.scala?slice=1:10"></script>
 
-On a computer with at least two processors or cores, you should see a significant difference in the time taken for `parfib`.  The `Future` function spawns a new task to compute
-its argument, and returns the result as a future, `f1`.  Later, when that result is requested by the `Await.result` function (`Await.result(f1, Duration.Inf)` -- the second
-argument gives a maximum time to wait, in this case forever), the hope is that it will have already been computed in parallel, or at least that it will have made significant
-progress.  Since the two calls to `fib` should each take a long time (when `parfib` is called with a large argument, say around 40), being able to compute both at the same time is a big win.
+On a computer with at least two processors or cores, you should see a
+significant difference in the time taken for `parfib`.  The `Future` function
+spawns a new task to compute its argument, and returns the result as a future,
+`f1`.  Later, when that result is requested by the `Await.result` function
+(`Await.result(f1, Duration.Inf)` -- the second argument gives a maximum time to
+wait, in this case forever), the hope is that it will have already been computed
+in parallel, or at least that it will have made significant progress.  Since the
+two calls to `fib` should each take a long time (when `parfib` is called with a
+large argument, say around 40), being able to compute both at the same time is a
+big win.
+
+The second parallel version, `parfib2`, is a refinement where the
+`for`-statement is used to create a further future that will add the results of
+`f1` and `f2` when they are available, without blocking right away. Only at the
+end is `Await.result` used to wait for the final answer. It is more-or-less equivalent to the following, which provides explicit continuations to be called when each future succeeds; it also uses a `Promise`, which is just a single-assignment variable, to feed the result back to the waiting function:
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/Fibonacci.scala?slice=31:45"></script>
+
 
 **Exercise:** Explore what happens when you modify the above definition of `parfib` so that it calls itself recursively, instead of `fib`.  What is going wrong?
 Now modify it further so that `parfib(n)` hands off calculation to `fib(n)` whenever `n` is below some cutoff value (try various cutoffs between 30 and 40).  Explain what is
