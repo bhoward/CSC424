@@ -4,8 +4,8 @@ import ExecutionContext.Implicits.global
 
 /**
  * A stream which lazily creates future objects to compute the rest of the stream.
- * Only implements head, tail, filter, and take methods, because those are enough
- * for the toy sieve example.
+ * Only implements head, tail, map, filter, and take methods, because those are enough
+ * for the toy examples.
  *
  * @author bhoward
  */
@@ -22,6 +22,15 @@ trait FStream[+T] {
    */
   def tail: FStream[T]
 
+  /**
+   * Create a new stream by applying a given function to each element.
+   * 
+   * @param f a function on stream elements
+   * @return the mapped stream
+   */
+  def map[U](f: T => U): FStream[U] =
+    new FutureFStream(Future { FStream.cons(f(head), tail.map(f)) })
+  
   /**
    * Create a new stream of only those elements satisfying a given test.
    *
@@ -49,6 +58,12 @@ trait FStream[+T] {
  */
 object FStream {
   def cons[T](head: T, tail: => FStream[T]) = new LazyFStream(head, tail)
+  
+  /**
+   * @return the stream n, n+1, n+2, ...
+   */
+  def from(n: Int): FStream[Int] = cons(n, from(n + 1))
+
 }
 
 /**
