@@ -157,8 +157,7 @@ the documentation if you want to explore some of the design considerations we
 will be skipping over here.
 
 Consider this simple actor which serves as a bank account:
-<script src="http://gist.github.com/396811.js?file=Account.scala">
-</script>
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/Account.scala"></script>
 You can set an `Account` instance in motion by creating an `ActorRef` (some
 details are omitted):
 {% highlight scala %}
@@ -200,29 +199,24 @@ goes to sleep.  The Scala code here is adapted from a [solution in
 Groovy](http://code.google.com/p/gparallelizer/wiki/ActorsExamples).
 
 First, here are the imports and the definitions of the message objects:
-<script src="http://gist.github.com/396819.js?file=Messages.scala">
-</script>
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/Messages.scala"></script>
 
 Customer actors know their name, and respond to various messages by printing
 their state to the console:
-<script src="http://gist.github.com/396821.js?file=Customer.scala">
-</script>
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/Customer.scala"></script>
 
 The barber responds to the `Enter` and `Wait` messages from the waiting room,
 and knows how to cut hair:
-<script src="http://gist.github.com/396822.js?file=Barber.scala">
-</script>
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/Barber.scala"></script>
 
 The waiting room keeps track of the customers waiting in chairs and whether the
 barber is sleeping. It reacts to a customer entering (sent from an external
 source) and the barber calling "next!":
-<script src="http://gist.github.com/396824.js?file=WaitingRoom.scala">
-</script>
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/WaitingRoom.scala"></script>
 
 Finally, here is a simple test program which randomly sends 10 customers into
 the barbershop:
-<script src="http://gist.github.com/396827.js?file=BarberTest.scala">
-</script>
+<script src="http://gist-it.appspot.com/github/bhoward/CSC424/blob/master/Concurrency/BarberTest.scala"></script>
 
 **Exercise:** Adjust the customer arrival and service times, and waiting room
 capacity, to try to explore all the possible behaviors of this simulation.  As a
