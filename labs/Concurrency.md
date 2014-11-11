@@ -303,9 +303,9 @@ accessed data are made permanent.  On the other hand, if interference was
 detected, then the transaction fails and any changes it made are "rolled back";
 at this point, the transaction starts over again.
 
-**Exercise:** Download the akka library from
-[http://akkasource.org/](http://akkasource.org/), play with the STM examples,
-then implement and test the bank account simulation.
+**Exercise:** Download the ScalaSTM library from
+[http://nbronson.github.io/scala-stm/](http://nbronson.github.io/scala-stm/),
+play with the STM examples, then implement and test the bank account simulation.
 
 ## Further Reading
 * Jonas Bon&eacute;r, [State: You're Doing It Wrong - Alternative Concurrency
