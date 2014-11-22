@@ -40,9 +40,11 @@ object Parser extends RegexParsers with PackratParsers {
     if (n == 0) a
     else iterate(n - 1, f, f(a))
 
-  def apply(in: String) = parseAll(expr, in)
+  override val whiteSpace = """(\s|//.*|/\*(\*(?!/)|[^*])*\*/)+""".r
+
+  def apply(in: String) = parseAll(prog, in)
   
-  def parse(in: Reader): Expr = parseAll(expr, in) match {
+  def parse(in: Reader): Expr = parseAll(prog, in) match {
     case Success(result, _) => result
     case ns: NoSuccess => throw new InterpreterException(ns.msg)
   }

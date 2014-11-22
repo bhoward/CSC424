@@ -20,22 +20,27 @@ class Interpreter(context: ExecutionContext) {
   }
 
   def subst(expr: Expr, param: String, arg: Expr): Expr = expr match {
-    case IdExpr(id) => if (id == param) arg
-    else expr
-    case AppExpr(e1, e2) => AppExpr(subst(e1, param, arg),
-      subst(e2, param, arg))
-    case FunExpr(id, body) => if (id == param) expr
-    else {
-      // Avoid variable capture by finding a new local name
-      var newId = id
-      var n = 0
-      while (contains(arg, newId)) {
-        n += 1
-        newId = id + n
+    case IdExpr(id) =>
+      if (id == param)
+        arg
+      else
+        expr
+    case AppExpr(e1, e2) =>
+      AppExpr(subst(e1, param, arg), subst(e2, param, arg))
+    case FunExpr(id, body) =>
+      if (id == param)
+        expr
+      else {
+        // Avoid variable capture by finding a new local name
+        var newId = id
+        var n = 0
+        while (contains(arg, newId)) {
+          n += 1
+          newId = id + n
+        }
+        val newBody = if (id == newId) body else subst(body, id, IdExpr(newId))
+        FunExpr(newId, subst(newBody, param, arg))
       }
-      val newBody = subst(body, id, IdExpr(newId))
-      FunExpr(newId, subst(newBody, param, arg))
-    }
   }
 
   def contains(expr: Expr, name: String): Boolean = expr match {
