@@ -1,0 +1,49 @@
+// Church Encodings -- see http://en.wikipedia.org/wiki/Church_encoding
+
+// Booleans
+true = t => f => t; false = t => f => f;
+if = p => t => f => p t f;
+and = p => q => p q p;
+or = p => q => p p q;
+not = p => p false true;
+xor = p => q => p (not q) q;
+
+// Arithmetic: n = s => z => s^n z
+plus = a => b => s => z => a s (b s z);
+times = a => b => s => z => a (b s) z;
+pow = a => b => s => z => b a s z;
+succ = n => s => z => s (n s z);
+pred = n => s => z => n (g => h => h (g s)) (u => z) (u => u);
+minus = a => b => s => z => b pred a s z;
+eq0 = n => n (x => false) true;
+leq = a => b => eq0 (minus a b);
+eq = a => b => and (leq a b) (leq b a);
+fix = f => (x => x x) (x => f (x x));
+div = n => (fix (c => n => m => s => z =>
+  (d => eq0 d (0 s z) (s (c d m s z))) (minus n m))) (succ n);
+fact = fix (f => n => if (eq0 n) 1 (times n (f (pred n))));
+
+// Pairs
+pair = x => y => z => z x y;
+first = p => p true;
+second = p => p false;
+
+// Lists
+nil = c => n => n;
+cons = h => t => c => n => c h (t c n);
+null = l => l (h => t => false) true;
+head = l => l (h => t => h) false;
+tail = l => c => n => l (h => t => g => g h (t c)) (t => n) (h => t => t);
+foldr = f => z => l => l f z;
+
+// Examples -- uncomment one and run
+plus 3 2 S Z
+// times 3 2 S Z
+// pow 3 2 S Z
+// succ 3 S Z
+// pred 3 S Z
+// minus 3 2 S Z
+// div 3 2 S Z
+// true T F
+// foldr (h => t => succ t) 0 (cons A (cons B (cons C nil))) S Z
+// fact 3 S Z
