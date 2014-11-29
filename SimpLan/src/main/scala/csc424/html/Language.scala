@@ -18,9 +18,7 @@ object Language extends SimpleLanguage {
 
   def init(ast: AST) = ast
 
-  def run(state: State, context: ExecutionContext) = {
-    state.render()
-  }
+  def run(state: State, context: ExecutionContext) = state.render
 
   def showResult(result: Result): String = "\n" + result.mkString("\n")
 }

@@ -16,9 +16,9 @@ object Parser extends RegexParsers with PackratParsers {
     ("<TR>" ~ rep(cell) ~ "</TR>" ^^ { case _ ~ cells ~ _ => Row(cells) })
 
   lazy val cell: P[Cell] =
-    ("<TD>" ~ item ~ "</TD>" ^^ { case _ ~ it ~ _ => Cell(it) })
+    ("<TD>" ~ item ~ "</TD>" ^^ { case _ ~ it ~ _ => it })
 
-  lazy val item: P[Item] =
+  lazy val item: P[Cell] =
     (table
       | text ^^ { case t => Text(t) })
 
