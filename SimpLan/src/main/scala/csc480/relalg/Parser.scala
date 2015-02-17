@@ -13,9 +13,9 @@ object Parser extends RegexParsers with PackratParsers {
   lazy val cmds: P[List[Command]] = rep(cmd)
   
   lazy val cmd: P[Command] =
-  ( "create" ~ ident ~ "(" ~ rep1sep(col, ",") ~ ")" ~ "(" ~ rep1sep(row, ",") ~ ")" ^^
+  ( "create" ~ IDENT ~ "(" ~ rep1sep(col, ",") ~ ")" ~ "(" ~ rep1sep(row, ",") ~ ")" ^^
       {case _ ~ id ~ _ ~ schema ~ _ ~ _ ~ data ~ _ => CreateCommand(id, schema, data)}
-  | ident ~ "=" ~ texpr ^^
+  | IDENT ~ "=" ~ texpr ^^
       {case id ~ _ ~ te => QueryCommand(id, te)}
   )
   
@@ -58,7 +58,7 @@ object Parser extends RegexParsers with PackratParsers {
       {case _ ~ _ ~ te1 ~ _ ~ te2 ~ _ ~ c ~ _ => OuterJoinTExpr(te1, te2, c)}
   | "union" ~ "(" ~ texpr ~ "," ~ texpr ~ ")" ^^
       {case _ ~ _ ~ te1 ~ _ ~ te2 ~ _ => UnionTExpr(te1, te2)}
-  | ident ^^
+  | IDENT ^^
       {case id => IdTExpr(id)}
   )
   
@@ -157,7 +157,9 @@ object Parser extends RegexParsers with PackratParsers {
     buf.toString
   }
   
-  val ident: Parser[String] = """[A-Za-z][A-Za-z0-9]*""".r
+  val ident: Parser[String] = """[A-Za-z][A-Za-z0-9]*""".r ^^ {case id => id.toLowerCase}
+  
+  val IDENT: Parser[String] = """[A-Za-z][A-Za-z0-9]*""".r ^^ {case id => id.toUpperCase}
   
   override val whiteSpace = """(\s|--.*|/\*(\*(?!/)|[^*])*\*/)+""".r
 
