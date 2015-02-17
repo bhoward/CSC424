@@ -2,6 +2,14 @@ scalaVersion := "2.11.5"
 
 EclipseKeys.withBundledScalaContainers:=false
 
+unmanagedSourceDirectories in Compile := (scalaSource in Compile).value :: Nil
+
+unmanagedSourceDirectories in Test := (scalaSource in Test).value :: Nil
+
+unmanagedResourceDirectories in Compile := Nil
+
+unmanagedResourceDirectories in Test := Nil
+
 resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
 
 // add scala-parser-combinators dependency when needed (for Scala 2.11 and newer) in a robust way
