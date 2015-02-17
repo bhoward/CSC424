@@ -29,8 +29,9 @@ object Parser extends RegexParsers with PackratParsers {
   )
   
   lazy val value: P[Value] =
-  ( number           ^^ {case n => IntValue(n.toInt)}
-  | stringLiteral    ^^ {case s => StringValue(unquote(s))}
+  ( number        ^^ {case n => IntValue(n.toInt)}
+  | stringLiteral ^^ {case s => StringValue(unquote(s))}
+  | "NULL"        ^^ {case _ => NullValue}
   )
   
   lazy val texpr: P[TExpr] =
