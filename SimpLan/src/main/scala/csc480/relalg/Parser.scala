@@ -159,9 +159,9 @@ object Parser extends RegexParsers with PackratParsers {
     buf.toString
   }
   
-  val ident: Parser[String] = """[A-Za-z][A-Za-z0-9]*""".r ^^ {case id => id.toLowerCase}
+  val ident: Parser[String] = """[A-Za-z][A-Za-z0-9.]*""".r ^^ {case id => id.toLowerCase}
   
-  val IDENT: Parser[String] = """[A-Za-z][A-Za-z0-9]*""".r ^^ {case id => id.toUpperCase}
+  val IDENT: Parser[String] = """[A-Za-z][A-Za-z0-9.]*""".r ^^ {case id => id.toUpperCase}
   
   override val whiteSpace = """(\s|--.*|/\*(\*(?!/)|[^*])*\*/)+""".r
 
