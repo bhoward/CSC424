@@ -1,4 +1,4 @@
-package csc424.relalg
+package csc480.relalg
 
 import scala.util.parsing.combinator._
 import java.io.Reader

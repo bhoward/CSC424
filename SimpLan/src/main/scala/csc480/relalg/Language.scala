@@ -1,4 +1,4 @@
-package csc424.relalg
+package csc480.relalg
 
 import csc424.simplide._
 import java.io.Reader

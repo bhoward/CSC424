@@ -1,4 +1,4 @@
-package csc424.relalg
+package csc480.relalg
 
 trait Type {
   def matches(that: Type): Boolean

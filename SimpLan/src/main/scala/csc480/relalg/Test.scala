@@ -1,4 +1,4 @@
-package csc424.relalg
+package csc480.relalg
 
 object Test {
   def main(args: Array[String]): Unit = {
