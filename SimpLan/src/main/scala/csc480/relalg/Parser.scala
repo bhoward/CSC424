@@ -69,7 +69,8 @@ object Parser extends RegexParsers with PackratParsers {
   )
   
   lazy val opcond: P[Condition] =
-  ( expr ~ "=" ~ expr ^^ {case e1 ~ _ ~ e2 => e1 == e2}
+  ( "(" ~ cond ~ ")" ^^ {case _ ~ c ~ _ => c}
+  | expr ~ "=" ~ expr ^^ {case e1 ~ _ ~ e2 => e1 == e2}
   | expr ~ "<>" ~ expr ^^ {case e1 ~ _ ~ e2 => e1 != e2}
   | expr ~ "<" ~ expr ^^ {case e1 ~ _ ~ e2 => e1 < e2}
   | expr ~ ">" ~ expr ^^ {case e1 ~ _ ~ e2 => e1 > e2}
