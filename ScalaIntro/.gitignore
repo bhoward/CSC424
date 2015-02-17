@@ -3,6 +3,14 @@ bin/
 *.class
 *.log
 
+# latex specific
+*.aux
+*.log
+*.blg
+*.dvi
+*.pdf
+*.synctex.gz
+
 # sbt specific
 dist/*
 target/
