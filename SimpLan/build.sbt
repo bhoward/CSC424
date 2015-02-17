@@ -26,3 +26,7 @@ libraryDependencies ++= Seq(
 )
  
 scalacOptions in Test ++= Seq("-Yrangepos")
+
+mainClass in assembly := Some("csc424.GUIMain")
+
+assemblyJarName in assembly := "SimpLan.jar"
