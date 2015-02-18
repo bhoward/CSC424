@@ -13,15 +13,15 @@ object Parser extends RegexParsers with PackratParsers {
   lazy val cmds: P[List[Command]] = rep(cmd)
   
   lazy val cmd: P[Command] =
-  ( "create" ~ IDENT ~ "(" ~ rep1sep(col, ",") ~ ")" ~ "(" ~ rep1sep(row, ",") ~ ")" ^^
+  ( "create".ignoreCase ~ IDENT ~ "(" ~ rep1sep(col, ",") ~ ")" ~ "(" ~ rep1sep(row, ",") ~ ")" ^^
       {case _ ~ id ~ _ ~ schema ~ _ ~ _ ~ data ~ _ => CreateCommand(id, schema, data)}
   | IDENT ~ "=" ~ texpr ^^
       {case id ~ _ ~ te => QueryCommand(id, te)}
   )
   
   lazy val col: P[(String, Type)] =
-  ( ident ~ "int" ^^ {case id ~ _ => (id, IntType)}
-  | ident ~ "string" ^^ {case id ~ _ => (id, StringType)}
+  ( ident ~ "int".ignoreCase ^^ {case id ~ _ => (id, IntType)}
+  | ident ~ "string".ignoreCase ^^ {case id ~ _ => (id, StringType)}
   )
   
   lazy val row: P[List[Value]] =
@@ -31,41 +31,41 @@ object Parser extends RegexParsers with PackratParsers {
   lazy val value: P[Value] =
   ( number        ^^ {case n => IntValue(n.toInt)}
   | stringLiteral ^^ {case s => StringValue(unquote(s))}
-  | "NULL"        ^^ {case _ => NullValue}
+  | "null".ignoreCase        ^^ {case _ => NullValue}
   )
   
   lazy val texpr: P[TExpr] =
-  ( "select" ~ "(" ~ texpr ~ "," ~ cond ~ ")" ^^
+  ( "select".ignoreCase ~ "(" ~ texpr ~ "," ~ cond ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ c ~ _ => SelectTExpr(te, c)}
-  | "project" ~ "(" ~ texpr ~ "," ~ "{" ~ rep1sep(ident, ",") ~ "}" ~ ")" ^^
+  | "project".ignoreCase ~ "(" ~ texpr ~ "," ~ "{" ~ rep1sep(ident, ",") ~ "}" ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ _ ~ fs ~ _ ~ _ => ProjectTExpr(te, fs)}
-  | "sort" ~ "(" ~ texpr ~ "," ~ "[" ~ rep1sep(ident, ",") ~ "]" ~ ")" ^^
+  | "sort".ignoreCase ~ "(" ~ texpr ~ "," ~ "[" ~ rep1sep(ident, ",") ~ "]" ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ _ ~ fs ~ _ ~ _ => SortTExpr(te, fs)}
-  | "rename" ~ "(" ~ texpr ~ "," ~ ident ~ "," ~ ident ~ ")" ^^
+  | "rename".ignoreCase ~ "(" ~ texpr ~ "," ~ ident ~ "," ~ ident ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ on ~ _ ~ nn ~ _ => RenameTExpr(te, on, nn)}
-  | "extend" ~ "(" ~ texpr ~ "," ~ expr ~ "," ~ ident ~ ")" ^^
+  | "extend".ignoreCase ~ "(" ~ texpr ~ "," ~ expr ~ "," ~ ident ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ ex ~ _ ~ f ~ _ => ExtendTExpr(te, ex, f)}
-  | "groupby" ~ "(" ~ texpr ~ "," ~ "{" ~ repsep(ident, ",") ~ "}" ~ "," ~ "{" ~ repsep(agg, ",") ~ "}" ~ ")" ^^
+  | "groupby".ignoreCase ~ "(" ~ texpr ~ "," ~ "{" ~ repsep(ident, ",") ~ "}" ~ "," ~ "{" ~ repsep(agg, ",") ~ "}" ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ _ ~ fs ~ _ ~ _ ~ _ ~ aggs ~ _ ~ _ => GroupByTExpr(te, fs, aggs)}
-  | "product" ~ "(" ~ texpr ~ "," ~ texpr ~ ")" ^^
+  | "product".ignoreCase ~ "(" ~ texpr ~ "," ~ texpr ~ ")" ^^
       {case _ ~ _ ~ te1 ~ _ ~ te2 ~ _ => ProductTExpr(te1, te2)}
-  | "join" ~ "(" ~ texpr ~ "," ~ texpr ~ "," ~ cond ~ ")" ^^
+  | "join".ignoreCase ~ "(" ~ texpr ~ "," ~ texpr ~ "," ~ cond ~ ")" ^^
       {case _ ~ _ ~ te1 ~ _ ~ te2 ~ _ ~ c ~ _ => JoinTExpr(te1, te2, c)}
-  | "semijoin" ~ "(" ~ texpr ~ "," ~ texpr ~ "," ~ cond ~ ")" ^^
+  | "semijoin".ignoreCase ~ "(" ~ texpr ~ "," ~ texpr ~ "," ~ cond ~ ")" ^^
       {case _ ~ _ ~ te1 ~ _ ~ te2 ~ _ ~ c ~ _ => SemiJoinTExpr(te1, te2, c)}
-  | "antijoin" ~ "(" ~ texpr ~ "," ~ texpr ~ "," ~ cond ~ ")" ^^
+  | "antijoin".ignoreCase ~ "(" ~ texpr ~ "," ~ texpr ~ "," ~ cond ~ ")" ^^
       {case _ ~ _ ~ te1 ~ _ ~ te2 ~ _ ~ c ~ _ => AntiJoinTExpr(te1, te2, c)}
-  | "outerjoin" ~ "(" ~ texpr ~ "," ~ texpr ~ "," ~ cond ~ ")" ^^
+  | "outerjoin".ignoreCase ~ "(" ~ texpr ~ "," ~ texpr ~ "," ~ cond ~ ")" ^^
       {case _ ~ _ ~ te1 ~ _ ~ te2 ~ _ ~ c ~ _ => OuterJoinTExpr(te1, te2, c)}
-  | "union" ~ "(" ~ texpr ~ "," ~ texpr ~ ")" ^^
+  | "union".ignoreCase ~ "(" ~ texpr ~ "," ~ texpr ~ ")" ^^
       {case _ ~ _ ~ te1 ~ _ ~ te2 ~ _ => UnionTExpr(te1, te2)}
   | IDENT ^^
       {case id => IdTExpr(id)}
   )
   
   lazy val cond: P[Condition] =
-  ( cond ~ "and" ~ opcond ^^ {case c1 ~ _ ~ c2 => AndCondition(c1, c2)}
-  | cond ~ "or" ~ opcond ^^ {case c1 ~ _ ~ c2 => OrCondition(c1, c2)}
+  ( cond ~ "and".ignoreCase ~ opcond ^^ {case c1 ~ _ ~ c2 => AndCondition(c1, c2)}
+  | cond ~ "or".ignoreCase ~ opcond ^^ {case c1 ~ _ ~ c2 => OrCondition(c1, c2)}
   | opcond
   )
   
@@ -99,12 +99,12 @@ object Parser extends RegexParsers with PackratParsers {
   )
   
   lazy val agg: P[Aggregation] =
-  ( "Min" ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => MinAggregation(f)}
-  | "Max" ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => MaxAggregation(f)}
-  | "Sum" ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => SumAggregation(f)}
-  | "Avg" ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => AvgAggregation(f)}
-  | "Count" ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => CountAggregation(f)}
-  | "CountDistinct" ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => CountDistinctAggregation(f)}
+  ( "min".ignoreCase ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => MinAggregation(f)}
+  | "max".ignoreCase ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => MaxAggregation(f)}
+  | "sum".ignoreCase ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => SumAggregation(f)}
+  | "avg".ignoreCase ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => AvgAggregation(f)}
+  | "count".ignoreCase ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => CountAggregation(f)}
+  | "countdistinct".ignoreCase ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => CountDistinctAggregation(f)}
   )
   
   val number: Parser[String] = """[1-9][0-9]*|0""".r
@@ -164,6 +164,10 @@ object Parser extends RegexParsers with PackratParsers {
   val IDENT: Parser[String] = """[A-Za-z][A-Za-z0-9.]*""".r ^^ {case id => id.toUpperCase}
   
   override val whiteSpace = """(\s|--.*|/\*(\*(?!/)|[^*])*\*/)+""".r
+  
+  implicit class CIString(s: String) {
+    def ignoreCase: Parser[String] = ("""(?i)\Q""" + s + """\E""").r
+  }
 
   def apply(in: String) = parseAll(cmds, in)
   
