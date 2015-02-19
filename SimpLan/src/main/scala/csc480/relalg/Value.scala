@@ -8,8 +8,6 @@ trait Value extends Expression {
   def compareTo(that: Value): Int
   
   def asInt: Int
-  
-  def isNull: Boolean = false
 }
 
 object Value {
@@ -29,8 +27,6 @@ case object NullValue extends Value {
   def compareTo(that: Value): Int = -1  // everything follows NULL, even other NULLs
   
   def asInt: Int = 0
-  
-  override def isNull: Boolean = true
 }
 
 case class StringValue(s: String) extends Value {

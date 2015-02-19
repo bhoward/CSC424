@@ -23,3 +23,8 @@ case class NotCondition(cond: Condition) extends Condition {
   def apply(schema: Schema)(row: Row): Boolean =
     !cond(schema)(row)
 }
+
+case class NullCondition(expr: Expression) extends Condition {
+  def apply(schema: Schema)(row: Row): Boolean =
+    expr(schema)(row) == NullValue
+}

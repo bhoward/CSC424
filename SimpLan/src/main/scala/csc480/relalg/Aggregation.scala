@@ -10,7 +10,7 @@ trait Aggregation {
 
 case class MinAggregation(name: String) extends Aggregation {
   def apply(schema: Schema)(group: Iterable[Row]): Value =
-    group.map(schema(name)(_)).filter(!_.isNull).min
+    group.map(schema(name)(_)).filter(_ != NullValue).min
     
   def typeGiven(schema: Schema): Type = schema.typeOf(name)
   
@@ -19,7 +19,7 @@ case class MinAggregation(name: String) extends Aggregation {
 
 case class MaxAggregation(name: String) extends Aggregation {
   def apply(schema: Schema)(group: Iterable[Row]): Value =
-    group.map(schema(name)(_)).filter(!_.isNull).max
+    group.map(schema(name)(_)).filter(_ != NullValue).max
     
   def typeGiven(schema: Schema): Type = schema.typeOf(name)
   
@@ -47,7 +47,7 @@ case class SumDistinctAggregation(name: String) extends Aggregation {
 case class AvgAggregation(name: String) extends Aggregation {
   def apply(schema: Schema)(group: Iterable[Row]): Value =
     group.map(schema(name)(_).asInt).sum /
-    group.map(schema(name)(_)).filter(!_.isNull).size
+    group.map(schema(name)(_)).filter(_ != NullValue).size
     
   def typeGiven(schema: Schema): Type = IntType
   
@@ -57,7 +57,7 @@ case class AvgAggregation(name: String) extends Aggregation {
 case class AvgDistinctAggregation(name: String) extends Aggregation {
   def apply(schema: Schema)(group: Iterable[Row]): Value =
     group.map(schema(name)(_).asInt).toSet.sum /
-    group.map(schema(name)(_)).filter(!_.isNull).toSet.size
+    group.map(schema(name)(_)).filter(_ != NullValue).toSet.size
     
   def typeGiven(schema: Schema): Type = IntType
   
@@ -66,7 +66,7 @@ case class AvgDistinctAggregation(name: String) extends Aggregation {
 
 case class CountAggregation(name: String) extends Aggregation {
   def apply(schema: Schema)(group: Iterable[Row]): Value =
-    group.map(schema(name)(_)).filter(!_.isNull).size
+    group.map(schema(name)(_)).filter(_ != NullValue).size
     
   def typeGiven(schema: Schema): Type = IntType
   
@@ -75,7 +75,7 @@ case class CountAggregation(name: String) extends Aggregation {
 
 case class CountDistinctAggregation(name: String) extends Aggregation {
   def apply(schema: Schema)(group: Iterable[Row]): Value =
-    group.map(schema(name)(_)).filter(!_.isNull).toSet.size
+    group.map(schema(name)(_)).filter(_ != NullValue).toSet.size
     
   def typeGiven(schema: Schema): Type = IntType
   

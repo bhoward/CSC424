@@ -84,6 +84,8 @@ object Parser extends RegexParsers with PackratParsers {
   | expr ~ ">" ~ expr ^^ {case e1 ~ _ ~ e2 => e1 > e2}
   | expr ~ "<=" ~ expr ^^ {case e1 ~ _ ~ e2 => e1 <= e2}
   | expr ~ ">=" ~ expr ^^ {case e1 ~ _ ~ e2 => e1 >= e2}
+  | expr ~ "is".i ~ "null".i ^^ {case e ~ _ ~ _ => e.isNull}
+  | expr ~ "is".i ~ "not".i ~ "null".i ^^ {case e ~ _ ~ _ ~ _ => NotCondition(e.isNull)}
   )
   
   lazy val expr: P[Expression] =

@@ -20,6 +20,7 @@ trait Expression {
   def >(that: Expression): Condition = new OpCondition(this, that, _ > 0)
   def <=(that: Expression): Condition = new OpCondition(this, that, _ <= 0)
   def >=(that: Expression): Condition = new OpCondition(this, that, _ >= 0)
+  def isNull: Condition = new NullCondition(this)
 }
 
 object Expression {
