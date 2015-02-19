@@ -16,7 +16,9 @@ object Parser extends RegexParsers with PackratParsers {
   ( "create".ignoreCase ~ IDENT ~ "(" ~ rep1sep(col, ",") ~ ")" ~ "(" ~ rep1sep(row, ",") ~ ")" ^^
       {case _ ~ id ~ _ ~ schema ~ _ ~ _ ~ data ~ _ => CreateCommand(id, schema, data)}
   | IDENT ~ "=" ~ texpr ^^
-      {case id ~ _ ~ te => QueryCommand(id, te)}
+      {case id ~ _ ~ te => NamedQueryCommand(id, te)}
+  | texpr ^^
+      {case te => QueryCommand(te)}
   )
   
   lazy val col: P[(String, Type)] =

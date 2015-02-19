@@ -7,9 +7,18 @@ trait Command {
   def eval(env: ChildEnvironment[Table], context: ExecutionContext): Unit
 }
 
-case class QueryCommand(id: String, te: TExpr) extends Command {
+case class QueryCommand(te: TExpr) extends Command {
   def eval(env: ChildEnvironment[Table], context: ExecutionContext): Unit = {
-    context.performStep("Query: " + id)
+    context.performStep("Query")
+    val t = te.eval(env)
+    context.output.println(t)
+    context.output.println("------")
+  }
+}
+
+case class NamedQueryCommand(id: String, te: TExpr) extends Command {
+  def eval(env: ChildEnvironment[Table], context: ExecutionContext): Unit = {
+    context.performStep("Named Query: " + id)
     env.addBinding(id, te.eval(env))
     context.output.println(id + ": " + env(id))
     context.output.println("------")
