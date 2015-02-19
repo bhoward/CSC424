@@ -13,7 +13,7 @@ object Parser extends RegexParsers with PackratParsers {
   lazy val cmds: P[List[Command]] = rep(cmd)
   
   lazy val cmd: P[Command] =
-  ( "create".ignoreCase ~ IDENT ~ "(" ~ rep1sep(col, ",") ~ ")" ~ "(" ~ rep1sep(row, ",") ~ ")" ^^
+  ( "create".ignoreCase ~ IDENT ~ "(" ~ repsep(col, ",") ~ ")" ~ "(" ~ repsep(row, ",") ~ ")" ^^
       {case _ ~ id ~ _ ~ schema ~ _ ~ _ ~ data ~ _ => CreateCommand(id, schema, data)}
   | IDENT ~ "=" ~ texpr ^^
       {case id ~ _ ~ te => NamedQueryCommand(id, te)}
@@ -27,7 +27,7 @@ object Parser extends RegexParsers with PackratParsers {
   )
   
   lazy val row: P[List[Value]] =
-  ( "(" ~ rep1sep(value, ",") ~ ")" ^^ {case _ ~ data ~ _ => data}
+  ( "(" ~ repsep(value, ",") ~ ")" ^^ {case _ ~ data ~ _ => data}
   )
   
   lazy val value: P[Value] =
@@ -39,9 +39,9 @@ object Parser extends RegexParsers with PackratParsers {
   lazy val texpr: P[TExpr] =
   ( "select".ignoreCase ~ "(" ~ texpr ~ "," ~ cond ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ c ~ _ => SelectTExpr(te, c)}
-  | "project".ignoreCase ~ "(" ~ texpr ~ "," ~ "{" ~ rep1sep(ident, ",") ~ "}" ~ ")" ^^
+  | "project".ignoreCase ~ "(" ~ texpr ~ "," ~ "{" ~ repsep(ident, ",") ~ "}" ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ _ ~ fs ~ _ ~ _ => ProjectTExpr(te, fs)}
-  | "sort".ignoreCase ~ "(" ~ texpr ~ "," ~ "[" ~ rep1sep(ident, ",") ~ "]" ~ ")" ^^
+  | "sort".ignoreCase ~ "(" ~ texpr ~ "," ~ "[" ~ repsep(ident, ",") ~ "]" ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ _ ~ fs ~ _ ~ _ => SortTExpr(te, fs)}
   | "rename".ignoreCase ~ "(" ~ texpr ~ "," ~ ident ~ "," ~ ident ~ ")" ^^
       {case _ ~ _ ~ te ~ _ ~ on ~ _ ~ nn ~ _ => RenameTExpr(te, on, nn)}
