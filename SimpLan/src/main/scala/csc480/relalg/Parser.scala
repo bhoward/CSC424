@@ -108,9 +108,13 @@ object Parser extends RegexParsers with PackratParsers {
   
   lazy val agg: P[Aggregation] =
   ( "min".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => MinAggregation(f)}
+  | "mindistinct".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => MinAggregation(f)}
   | "max".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => MaxAggregation(f)}
+  | "maxdistinct".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => MaxAggregation(f)}
   | "sum".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => SumAggregation(f)}
+  | "sumdistinct".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => SumDistinctAggregation(f)}
   | "avg".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => AvgAggregation(f)}
+  | "avgdistinct".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => AvgDistinctAggregation(f)}
   | "count".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => CountAggregation(f)}
   | "countdistinct".i ~ "(" ~ ident ~ ")" ^^ {case _ ~ _ ~ f ~ _ => CountDistinctAggregation(f)}
   )
