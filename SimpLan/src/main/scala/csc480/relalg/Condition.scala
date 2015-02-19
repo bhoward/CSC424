@@ -18,3 +18,8 @@ case class OrCondition(cond1: Condition, cond2: Condition) extends Condition {
   def apply(schema: Schema)(row: Row): Boolean =
     cond1(schema)(row) || cond2(schema)(row)
 }
+
+case class NotCondition(cond: Condition) extends Condition {
+  def apply(schema: Schema)(row: Row): Boolean =
+    !cond(schema)(row)
+}
