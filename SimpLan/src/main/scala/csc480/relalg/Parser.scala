@@ -101,6 +101,7 @@ object Parser extends RegexParsers with PackratParsers {
   
   lazy val factor: P[Expression] =
   ( "(" ~ expr ~ ")" ^^ {case _ ~ e ~ _ => e}
+  | "-" ~ factor     ^^ {case _ ~ e => -e}
   | ident            ^^ {case id => F(id)}
   | value
   )
