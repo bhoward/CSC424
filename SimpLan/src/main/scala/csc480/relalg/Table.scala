@@ -34,8 +34,35 @@ trait Table {
 }
 
 class DefaultTable(val schema: Schema, val rows: Iterable[Row]) extends Table {
-  override def toString: String =
-    schema.names.mkString(", ") + "\n" + rows.mkString("\n")
+  override def toString: String = {
+    val head = schema.names
+    val body = rows.toList
+    val widths = head.map(_.length).toArray
+    for (row <- body; i <- 0 until widths.length) {
+      widths(i) = widths(i) max row(i).toString.length
+    }
+    
+    val separator = "-" * (widths.sum + widths.length - 1)
+    
+    def pad(s: String, i: Int): String = s + " " * (widths(i) + 1 - s.length)
+    
+    val result = new StringBuilder
+    
+    for (i <- 0 until widths.length) {
+      result.append(pad(head(i), i))
+    }
+    result.append("\n" + separator + "\n")
+    
+    for (row <- body) {
+      for (i <- 0 until widths.length) {
+        result.append(pad(row(i).toString, i))
+      }
+      result.append("\n")
+    }
+    result.append(separator + "\n")
+    
+    result.toString
+  }
     
   def select(cond: Condition): Table =
     new DefaultTable(schema, rows filter {row => cond(schema)(row)})

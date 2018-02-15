@@ -12,7 +12,6 @@ case class QueryCommand(te: TExpr) extends Command {
     context.performStep("Query")
     val t = te.eval(env)
     context.output.println(t)
-    context.output.println("------")
   }
 }
 
@@ -20,8 +19,7 @@ case class NamedQueryCommand(id: String, te: TExpr) extends Command {
   def eval(env: ChildEnvironment[Table], context: ExecutionContext): Unit = {
     context.performStep("Named Query: " + id)
     env.addBinding(id, te.eval(env))
-    context.output.println(id + ": " + env(id))
-    context.output.println("------")
+    context.output.println(id + ":\n" + env(id))
   }
 }
 
@@ -31,8 +29,7 @@ case class CreateCommand(id: String, schema: List[(String, Type)], data: List[Li
     val s = Schema(schema: _*)
     val t = Table(s).insert(data map {Row(_: _*)}: _*)
     env.addBinding(id, t)
-    context.output.println(id + ": " + t)
-    context.output.println("------")
+    context.output.println(id + ":\n" + t)
   }
 }
 
